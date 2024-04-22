@@ -242,4 +242,39 @@ class LinkedList {
     // Return the severed node
     return temp;
   }
+
+  // Reverse method basically just reverse the LL.
+  // The head will now point at the tail and the tail
+  // will now point at the head, then all of the node.next
+  // pointers will point in the reverse direction
+  reverse() {
+    // Reverse the head and tail pointers
+    let temp = this.head;
+    this.head = this.tail;
+    this.tail = temp;
+
+    // We need 3 pointers, the first one, prev,  will point to null initially
+    // the second one is the temp, which will point to the head
+    // the third one is the next, which will point to temp.next
+
+    let prev = null;
+    let next = temp.next;
+
+    // Now we need a for loop so we can traverse through the LL
+    // and reverse the next pointer
+
+    // first, set next to temp.next, initially, next was null
+    // then, set temp.next to prev, which is the reverse direction
+    // then, move the prev pointer to point to temp
+    // finally, move the temp pointer to point to next
+    for (let i = 0; i < this.length; i++) {
+      next = temp.next;
+      temp.next = prev;
+      prev = temp;
+      temp = next;
+    }
+
+    // Return the LL
+    return this;
+  }
 }

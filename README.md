@@ -1,2 +1,2 @@
 # stunning-train
-Solutions to common data-structures and algorithm
+Solutions to common data-structures and algorithm problems

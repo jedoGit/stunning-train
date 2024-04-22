@@ -109,7 +109,7 @@ class LinkedList {
 
     // Set a temp variable and point it to head
     // then, point head to the next node in the LL
-    // finally, severe the temp node by setting temp.next to null
+    // finally, sever the temp node by setting temp.next to null
     let temp = this.head;
     this.head = this.head.next;
     temp.next = null;
@@ -166,5 +166,80 @@ class LinkedList {
     // This is the case when get method
     // returns undefined
     return false;
+  }
+
+  // Insert method inserts a node based on an index specified
+  // Return true if successful or false if not
+  insert(index, value) {
+    // if inserting at index 0, call the unshift method
+    // return the LL
+    if (index === 0) {
+      return this.unshift(value);
+    }
+
+    // if inserting at index equal to the length of the LL
+    // call the push method and return the LL
+    // Remember, the index is zero based!
+    if (index === this.length) {
+      return this.push(value);
+    }
+
+    // check for out-of-bound scenarios, return false
+    if (index < 0 || index > this.length) {
+      return false;
+    }
+
+    // create a new node
+    const newNode = new Node(value);
+
+    // set a temp node and find the node prior to the index we
+    // want to insert
+    const temp = this.get(index - 1);
+
+    // now, set newNode.next to temp.next to connect the new node to the old index
+    newNode.next = temp.next;
+
+    // finally, set temp.next to the newNode to finalize the connections
+    temp.next = newNode;
+
+    // increment the length
+    this.length++;
+
+    return true;
+  }
+
+  // Remove method removes a node based on an index specified
+  // Return the removed node if successful or return undefined if not
+  remove(index) {
+    // check for out of bound
+    if (index < 0 || index >= this.length) {
+      return undefined;
+    }
+
+    // if removing index 0
+    if (index === 0) {
+      return this.shift();
+    }
+
+    // if removing index === length - 1, Remember this is 0 based index
+    if (index === this.length - 1) {
+      return this.pop();
+    }
+
+    // set a pointer to the node prior to the index we want to remove
+    const pre = this.get(index - 1);
+
+    // then set a pointer to the node with the index we want to remove
+    const temp = pre.next;
+
+    // sever the temp connections
+    pre.next = temp.next;
+    temp.next = null;
+
+    // decrement the lenght
+    this.length--;
+
+    // Return the severed node
+    return temp;
   }
 }

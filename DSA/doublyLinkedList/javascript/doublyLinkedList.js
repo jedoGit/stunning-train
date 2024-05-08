@@ -41,4 +41,39 @@ class DoublyLinkedList {
     // Return this instance of LL
     return this;
   }
+
+  // Pop method always remove the node
+  // at the end of the LL and return the
+  // popped value
+  pop() {
+    if (this.length === 0) {
+      return undefined;
+    }
+
+    // Set temp pointer
+    let temp = this.tail;
+
+    // Boundary condition, if the length is 1,
+    // this means there's only 1 node left on the DLL.
+    if (this.length === 1) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      // Because we want to pop the last node of the DLL,
+      // we want to move the tail to tail.prev
+      this.tail = this.tail.prev;
+
+      // Now that we moved the tail to the previous node,
+      // we need to sever the last node
+      this.tail.next = null;
+
+      // Now, let's sever the popped node
+      temp.prev = null;
+    }
+
+    this.length--;
+
+    // Then let's return the popped node
+    return temp;
+  }
 }

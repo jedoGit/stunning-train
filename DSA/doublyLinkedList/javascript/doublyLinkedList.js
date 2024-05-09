@@ -101,4 +101,36 @@ class DoublyLinkedList {
     // Return the LL
     return this;
   }
+
+  // Shift method always remove a node from
+  // the beginning of the LL and return the node
+  shift() {
+    // If LL is empty, return undefined
+    if (this.length === 0) {
+      return undefined;
+    }
+
+    // Set a temp variable and point it to head
+    let temp = this.head;
+
+    // Check if that was the only node in the LL
+    // if it was the only node, then set head and tail to null
+    if (this.length === 1) {
+      this.head = null;
+      this.tail = null;
+    } else {
+      // then, point head to the next node in the LL
+      this.head = this.head.next;
+      this.head.prev = null;
+
+      // finally, sever the temp node by setting temp.next to null
+      temp.next = null;
+    }
+
+    // decrement the length
+    this.length--;
+
+    // return the temp node
+    return temp;
+  }
 }

@@ -76,4 +76,29 @@ class DoublyLinkedList {
     // Then let's return the popped node
     return temp;
   }
+
+  // Unshift method always insert a node
+  // at the beginning of the LL and return the LL
+  unshift(value) {
+    const newNode = new Node(value);
+
+    // First, check if the LL is empty
+    if (this.length === 0) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      // LL has at least 1 node. Point the newNode.next to the head
+      newNode.next = this.head;
+      this.head.prev = newNode;
+
+      // Then point the head to the newNode
+      this.head = newNode;
+    }
+
+    // Increment the LL length
+    this.length++;
+
+    // Return the LL
+    return this;
+  }
 }

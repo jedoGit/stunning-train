@@ -133,4 +133,33 @@ class DoublyLinkedList {
     // return the temp node
     return temp;
   }
+
+  // Get method returns the node at the given index
+  // It is zero based index
+  get(index) {
+    // If index < 0 or index > length-1, return undefined
+    if (index < 0 || index >= this.length) {
+      return undefined;
+    }
+
+    // Let's traverse through the LL
+    // We'll use a similar algorithm as binary search
+    // We'll check where index falls, then use either
+    // the head or the tail as starting point for the traversal
+    let temp = this.head;
+
+    if (index < this.length / 2) {
+      for (let i = 0; i < index; i++) {
+        temp = temp.next;
+      }
+    } else {
+      temp = this.tail;
+      for (let i = this.length - 1; i > index; i--) {
+        temp = temp.prev;
+      }
+    }
+
+    // return the temp node
+    return temp;
+  }
 }

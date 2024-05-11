@@ -183,4 +183,47 @@ class DoublyLinkedList {
     // returns undefined
     return false;
   }
+
+  // Insert method inserts a node based on an index specified
+  // Return true if successful or false if not
+  insert(index, value) {
+    // if inserting at index 0, call the unshift method
+    // return the LL
+    if (index === 0) {
+      return this.unshift(value);
+    }
+
+    // if inserting at index equal to the length of the LL
+    // call the push method and return the LL
+    // Remember, the index is zero based!
+    if (index === this.length) {
+      return this.push(value);
+    }
+
+    // check for out-of-bound scenarios, return false
+    if (index < 0 || index > this.length) {
+      return false;
+    }
+
+    // create a new node
+    const newNode = new Node(value);
+
+    // set the before and after node and find the node prior to the index we
+    // want to insert
+    const before = this.get(index - 1);
+    const after = before.next;
+
+    // now, connect the new node to the before pointer
+    before.next = newNode;
+    // Connect the newNode.prev to before
+    newNode.prev = before;
+    newNode.next = after;
+    // Connect the after.prev to newNode
+    after.prev = newNode;
+
+    // increment the length
+    this.length++;
+
+    return true;
+  }
 }

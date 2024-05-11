@@ -226,4 +226,41 @@ class DoublyLinkedList {
 
     return true;
   }
+
+  // Remove method removes a node based on an index specified
+  // Return the removed node if successful or return undefined if not
+  remove(index) {
+    // check for out of bound
+    if (index < 0 || index >= this.length) {
+      return undefined;
+    }
+
+    // if removing index 0
+    if (index === 0) {
+      return this.shift();
+    }
+
+    // if removing index === length - 1, Remember this is 0 based index
+    if (index === this.length - 1) {
+      return this.pop();
+    }
+
+    // set a pointer to point to the index we need to remove
+    const temp = this.get(index);
+
+    // now, we access the before node and connect the next pointer to the after node
+    temp.prev.next = temp.next;
+    // now, connect the after node to the before node
+    temp.next.prev = temp.prev;
+
+    // now, we sever the temp.prev and temp.next
+    temp.next = null;
+    temp.prev = null;
+
+    // decrement the lenght
+    this.length--;
+
+    // Return the severed node
+    return temp;
+  }
 }

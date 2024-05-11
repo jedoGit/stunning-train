@@ -162,4 +162,25 @@ class DoublyLinkedList {
     // return the temp node
     return temp;
   }
+
+  // Set method finds the index and update the value of
+  // that index, return true if successful otherwise return false
+  set(index, value) {
+    // Let's use the get method to find the index
+    // the get method returns an undefined or the
+    // the node
+    let temp = this.get(index);
+
+    // If temp is the node
+    // set the value to the new value and return true
+    if (temp) {
+      temp.value = value;
+      return true;
+    }
+
+    // Return false by default
+    // This is the case when get method
+    // returns undefined
+    return false;
+  }
 }

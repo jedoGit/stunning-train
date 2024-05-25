@@ -13,6 +13,7 @@ class Stack {
   }
 
   // Push will push the node on the top
+  // O(1)
   push(value) {
     const newNode = new Node(value);
 

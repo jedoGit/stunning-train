@@ -31,6 +31,7 @@ class Queue {
   }
 
   // Dequeue will remove a node from the first and return the node
+  // O(1)
   dequeue() {
     if (this.length === 0) {
       return undefined;

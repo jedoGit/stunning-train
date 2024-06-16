@@ -42,10 +42,6 @@
 // The queue should now have the following values:
 // ['grape', 'apple', 'banana', 'orange']
 
-// For a queue, we add to the end of the queue. Since we're using two stacks, for stacks, new values are added to the top of the stack.
-// From the example, this looks like a FIFO queue. Since we're using a stack to store the queue value, the bottom of the stack is the end of the
-// queue and the top of the stack is the front of the queue.
-
 // Example [3, 2, 1]
 // 1<- top of the stack (we pop/push from top of the stack), which is the front of the queue
 // 2

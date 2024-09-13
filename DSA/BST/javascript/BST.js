@@ -56,4 +56,33 @@ class BST {
       }
     }
   }
+
+  contains(value) {
+    // If BST is empty, return false
+    if (this.root === null) {
+      return false;
+    }
+
+    // The BST is not empty
+    let temp = this.root;
+
+    // The BST is null terminated, so we search until we hit null
+    while (temp) {
+      // check if value is less/greater than or equal to temp
+      if (value < temp.value) {
+        // Move temp pointer to left if less than
+        temp = temp.left;
+      } else if (value > temp.value) {
+        // Move temp pointer to right if greater than
+        temp = temp.right;
+      } else {
+        // There's a match, so we return true
+        return true;
+      }
+    }
+
+    // We exited the while loop and therefore
+    // we did not find a match
+    return false;
+  }
 }

@@ -85,4 +85,43 @@ class BST {
     // we did not find a match
     return false;
   }
+
+  // Recursive method to check the BST for a value
+  rContains(value, currentNode = this.root) {
+    if (currentNode === null) return false;
+    if (value === currentNode.value) return true;
+
+    if (value < currentNode.value) {
+      return this.rContains(value, currentNode.left);
+    } else {
+      return this.rContains(value, currentNode.right);
+    }
+  }
+
+  // Recursive private method to insert value to BST
+  #rInsert(value, currentNode = this.root) {
+    // Check if there are no more nodes in this side of the BST
+    // If so, create a new Node return it
+    if (currentNode === null) return new Node(value);
+
+    // If we're not in the end of the tree, compare if
+    // we should go to the left or right of the tree
+    if (value < currentNode.value) {
+      currentNode.left = this.#rInsert(value, currentNode.left);
+    } else if (value > currentNode.value) {
+      currentNode.right = this.#rInsert(value, currentNode.right);
+    }
+
+    // Return the result of the prior recursion
+    return currentNode;
+  }
+
+  // Recursive method to insert value to BST
+  rInsert(value) {
+    // If the BST is empty, create a new node, the call the recursion fuction
+    if (this.root === null) this.root = new Node(value);
+
+    // This recursion uses the default currentNode input
+    this.#rInsert(value);
+  }
 }

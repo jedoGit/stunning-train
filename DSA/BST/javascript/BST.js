@@ -124,4 +124,53 @@ class BST {
     // This recursion uses the default currentNode input
     this.#rInsert(value);
   }
+
+  // Helper method for the recursive deleteNode method
+  // In BST, the left node always have the min value
+  //                     currentNode -> (49)
+  //                                    /  \
+  //                                   /    \
+  //                                  /      \
+  //                                 /        \
+  //                                /          \
+  //                               /            \
+  //                             (45)          (52)
+  //                             /  \          /  \
+  //                        (null)  (null)(null)  (null)
+  minValue(currentNode) {
+    while (currentNode.left !== null) {
+      currentNode = currentNode.left;
+    }
+    return currentNode.value;
+  }
+
+  // Recursive private method to delete a node in BST
+  #rDeleteNode(value, currentNode) {
+    if (currentNode === null) return null;
+
+    if (value < currentNode.value) {
+      currentNode.left = this.#rDeleteNode(value, currentNode.left);
+    } else if (value > currentNode.value) {
+      currentNode.right = this.#rDeleteNode(value, currentNode.right);
+    } else {
+      if (currentNode.left === null && currentNode.right === null) {
+        return null;
+      } else if (currentNode.left === null) {
+        currentNode = currentNode.right;
+      } else if (currentNode.right === null) {
+        currentNode = currentNode.left;
+      } else {
+        let subTreeMin = this.minValue(currentNode.right);
+        currentNode.value = subTreeMin;
+        currentNode.right = this.#rDeleteNode(subTreeMin, currentNode.right);
+      }
+    }
+
+    return currentNode;
+  }
+
+  // Recursive method to delete a node in BST
+  deleteNode(value) {
+    this.root = this.#rDeleteNode(value, this.root);
+  }
 }

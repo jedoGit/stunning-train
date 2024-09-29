@@ -173,4 +173,130 @@ class BST {
   deleteNode(value) {
     this.root = this.#rDeleteNode(value, this.root);
   }
+
+  // Breath First Search
+  // This will traverse the BST level by level starting at the root.
+  // Then, move to the next level then traverse from left to right
+  // until either the left or right node are null
+  //                     currentNode -> (49)
+  //                                   /    \
+  //                                 (45)   (52)
+  //                                 /  \   /  \
+
+  BFS() {
+    let currentNode = this.root;
+    let results = [];
+    let queue = [];
+
+    // We use a queue, FIFO, push the root initially
+    queue.push(currentNode);
+
+    while (queue.length) {
+      // Process the node from front of queue
+      currentNode = queue.shift();
+      results.push(currentNode.value);
+
+      // Push the left and right node to back of queue
+      if (currentNode.left) queue.push(currentNode.left);
+      if (currentNode.right) queue.push(currentNode.right);
+    }
+
+    return results;
+  }
+
+  // Depth First Search - Pre Order
+  // This will traverse the BST level by level starting at the root.
+  // Then, move to the next level then traverse through all the left nodes first
+  // then, traverse through the right nodes until either the left or right node are null
+  // It is Pre-order because we process the current node first before we start traversing.
+  // DFS make use of the function call stack to do the recursion.
+  //
+  //                     currentNode -> (49)
+  //                                   /    \
+  //                                 (45)   (52)
+  //                                 /  \   /  \
+  DFSPreOrder() {
+    let results = [];
+
+    // This is the helper recursive function to traverse through the node
+    function traverse(currentNode) {
+      // Pre order... process the current node first
+      results.push(currentNode.value);
+
+      // Recursion, traverse to the left first until we visit
+      // all the levels and we hit null
+      // For recursion, a new instance of the function is added to the function call stack (LIFO)
+      if (currentNode.left) traverse(currentNode.left);
+      // Then traverse to the right
+      if (currentNode.right) traverse(currentNode.right);
+    }
+
+    // Call the recursive function starting from the root
+    traverse(this.root);
+
+    return results;
+  }
+
+  // Depth First Search - Post Order
+  // This will traverse the BST level by level starting at the root.
+  // Then, move to the next level then traverse through all the left nodes first
+  // then, traverse through the right nodes until either the left or right node are null
+  // It is Post-order because we process the current node after we traverse both left and right nodes.
+  // DFS make use of the function call stack to do the recursion.
+  //
+  //                     currentNode -> (49)
+  //                                   /    \
+  //                                 (45)   (52)
+  //                                 /  \   /  \
+  DFSPostOrder() {
+    let results = [];
+
+    // This is the helper recursive function to traverse through the node
+    function traverse(currentNode) {
+      // Recursion, traverse to the left first until we visit
+      // all the levels and we hit null
+      // For recursion, a new instance of the function is added to the function call stack (LIFO)
+      if (currentNode.left) traverse(currentNode.left);
+      // Then traverse to the right
+      if (currentNode.right) traverse(currentNode.right);
+      // Post order... process the current node after traversing the left and right nodes
+      results.push(currentNode.value);
+    }
+
+    // Call the recursive function starting from the root
+    traverse(this.root);
+
+    return results;
+  }
+
+  // Depth First Search - In Order
+  // This will traverse the BST level by level starting at the root.
+  // Then, move to the next level then traverse through all the left nodes first
+  // then, traverse through the right nodes until either the left or right node are null
+  // It is In-order because we process the current node after we traverse the left and before we traverse the right node.
+  // DFS make use of the function call stack to do the recursion.
+  //
+  //                     currentNode -> (49)
+  //                                   /    \
+  //                                 (45)   (52)
+  //                                 /  \   /  \
+  DFSInOrder() {
+    let results = [];
+
+    // This is the helper recursive function to traverse through the node
+    function traverse(currentNode) {
+      // Recursion, traverse to the left first until we visit
+      // all the levels and we hit null
+      // For recursion, a new instance of the function is added to the function call stack (LIFO)
+      if (currentNode.left) traverse(currentNode.left);
+      // In order... process the current node after traversing the left node
+      results.push(currentNode.value);
+      // Then traverse to the right
+      if (currentNode.right) traverse(currentNode.right);
+    }
+
+    // Call the recursive function starting from the root
+    traverse(this.root);
+    return results;
+  }
 }

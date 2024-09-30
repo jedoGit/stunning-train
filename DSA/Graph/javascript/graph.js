@@ -9,6 +9,7 @@ class Graph {
     // Object.defineProperty(this.adjacencyList, vertex, {value: []}); or
     // this.adjacencyList[vertex] = [];
     if (!this.adjacencyList[vertex]) {
+      // In the adjacency list object, create a vertex key and set the value to an empty array
       this.adjacencyList[vertex] = [];
       //Object.defineProperty(this.adjacencyList, vertex, { value: [] });
       return true;

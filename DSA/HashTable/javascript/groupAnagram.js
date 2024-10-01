@@ -23,12 +23,17 @@ function groupAnagrams(arrStr) {
     chars.sort();
     const sortedStr = chars.join("");
 
-    if (anagramMap.has(sortedStr)) {
-      anagramMap.get(sortedStr).push(str);
-    } else {
-      const strGrp = [str];
-      anagramMap.set(sortedStr, strGrp);
-    }
+    anagramMap.has(sortedStr)
+      ? anagramMap.get(sortedStr).push(str)
+      : anagramMap.set(sortedStr, [str]);
+
+    // if (anagramMap.has(sortedStr)) {
+    //   anagramMap.get(sortedStr).push(str);
+    // } else {
+    //   // Create an array, add array to map
+    //   const strGrp = [str];
+    //   anagramMap.set(sortedStr, strGrp);
+    // }
   }
 
   // Return the map values as array of arrays

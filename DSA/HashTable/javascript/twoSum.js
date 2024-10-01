@@ -32,3 +32,22 @@ function twoSum(arrNums, target) {
 
   return [];
 }
+
+// More Compact solution: TC: O(n), SC: O(nLog(n))
+
+function twoSum(arrNums, target) {
+  const numMap = new Map();
+
+  // Use iterables
+  for (let [i, n] of arrNums.entries()) {
+    const complement = target - n;
+
+    if (numMap.has(complement)) {
+      return [numMap.get(complement), i];
+    }
+
+    numMap.set(n, i);
+  }
+
+  return [];
+}

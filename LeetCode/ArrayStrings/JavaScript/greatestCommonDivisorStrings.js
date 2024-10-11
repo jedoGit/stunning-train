@@ -26,5 +26,6 @@
  * @return {string}
  */
 var gcdOfStrings = function(str1, str2) {
+    let temp
     
 };

@@ -8,10 +8,17 @@ function insertionSort() {
     return; // List is already sorted
   }
 
+  // We use two pointers, one pointing to the head, the other pointing
+  // to the next node. In an insertion sort algo, we alway start in the second element and compare
   let sortedListHead = this.head;
   let unsortedListHead = this.head.next;
+
+  // We initially set the sortedListHead.next to null because later on, we will
+  // update this pointer
   sortedListHead.next = null;
 
+  // We always start in the second element and compare.
+  // We traverse through the unsortedListHead pointer
   while (unsortedListHead !== null) {
     let current = unsortedListHead;
     unsortedListHead = unsortedListHead.next;
@@ -21,6 +28,7 @@ function insertionSort() {
       sortedListHead = current;
     } else {
       let searchPointer = sortedListHead;
+
       while (
         searchPointer.next !== null &&
         current.value > searchPointer.next.value

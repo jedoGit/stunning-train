@@ -13,19 +13,37 @@
 
 // Input: str1 = "LEET", str2 = "CODE"
 // Output: ""
- 
 
 // Constraints:
 
 // 1 <= str1.length, str2.length <= 1000
 // str1 and str2 consist of English uppercase letters.
 
+// TC: O(n+m), we are comparing two concatenated strings
+// SC: O(n+m), we are comparing two concatenated strings
+
 /**
  * @param {string} str1
  * @param {string} str2
  * @return {string}
  */
-var gcdOfStrings = function(str1, str2) {
-    let temp
-    
+function gcd(a, b) {
+  if (b === 0) {
+    return a;
+  }
+
+  return gcd(b, a % b);
+}
+
+var gcdOfStrings = function (str1, str2) {
+  // Compare the concatenation of the two strings
+  if (str1 + str2 !== str2 + str1) {
+    return "";
+  }
+
+  // We need to compute the GCD of two lengths
+  let gcdLength = gcd(str1.length, str2.length);
+
+  // The GCD of Strings can be computed as
+  return str1.slice(0, gcdLength);
 };

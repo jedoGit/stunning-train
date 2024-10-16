@@ -40,3 +40,24 @@ var moveZeroes = function (nums) {
     j--;
   }
 };
+
+/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function (nums) {
+  // Using 2 pointers
+  // First, we loop through and find zeros
+  let left = 0;
+
+  for (let i = 0; i < nums.length; i++) {
+    // if the current element is not zero, we swap it with the left element
+    if (nums[i] !== 0) {
+      // Swap nums[left] = nums[i]
+      // Swap nums[i] = nums[left]
+      [nums[left], nums[i]] = [nums[i], nums[left]];
+      // Only increment this when the current element is non-zero
+      left++;
+    }
+  }
+};

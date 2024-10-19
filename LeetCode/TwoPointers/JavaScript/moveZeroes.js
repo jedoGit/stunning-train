@@ -41,23 +41,39 @@ var moveZeroes = function (nums) {
   }
 };
 
+// TC: O(n), we loop through once
+// SC: O(1), we're doing in-place operation
+
 /**
  * @param {number[]} nums
  * @return {void} Do not return anything, modify nums in-place instead.
  */
 var moveZeroes = function (nums) {
-  // Using 2 pointers
-  // First, we loop through and find zeros
-  let left = 0;
+  // We'll start our pointer at the end of the array
+  let numsLen = nums.length - 1;
+  let curr = numsLen;
 
-  for (let i = 0; i < nums.length; i++) {
-    // if the current element is not zero, we swap it with the left element
-    if (nums[i] !== 0) {
-      // Swap nums[left] = nums[i]
-      // Swap nums[i] = nums[left]
-      [nums[left], nums[i]] = [nums[i], nums[left]];
-      // Only increment this when the current element is non-zero
-      left++;
+  // We move our curr pointer from end of array to the start of array
+  // and we're looking for zeroes
+  while (curr > -1) {
+    if (nums[curr] === 0) {
+      // We move this element all the way to the end of the array
+      // by swapping
+
+      let i = curr;
+
+      while (i < numsLen) {
+        // we'll use array deconstruction to do the swapping
+        [nums[i], nums[i + 1]] = [nums[i + 1], nums[i]];
+
+        i++;
+      }
+      // We want to decrement numsLen because we want to stop the while loop early
+      // Remember, we moved the zero to the back of the array
+      numsLen--;
     }
+
+    // Move the current pointer to the left
+    curr--;
   }
 };

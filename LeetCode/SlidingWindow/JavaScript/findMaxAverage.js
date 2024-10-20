@@ -53,7 +53,11 @@ var findMaxAverage = function (nums, k) {
   // Then, sum = sum - nums[1] + nums[k+1]
   while (rp < nums.length) {
     winSum = winSum - nums[lp] + nums[rp];
+
+    // Keep track of the max sum every time we move the window
     maxSum = Math.max(maxSum, winSum);
+
+    // Move the pointers
     lp++;
     rp++;
   }

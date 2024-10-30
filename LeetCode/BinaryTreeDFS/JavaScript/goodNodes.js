@@ -65,3 +65,40 @@ var goodNodes = function (root) {
 
   return DFS(root, root.val);
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var goodNodes = function (root) {
+  let curMax = -Infinity;
+  let count = 0;
+
+  function DFS(root, curMax) {
+    if (!root) return;
+
+    // Check first if the root.val is greater than the previous nodes.
+    // The children nodes should have larger values than the previous one
+    // in order to be a good node.
+    if (root.val >= curMax) {
+      curMax = Math.max(curMax, root.val);
+      count++;
+    }
+
+    // Let's DFS to the left and right nodes
+    DFS(root.left, curMax);
+    DFS(root.right, curMax);
+  }
+
+  DFS(root, curMax);
+
+  return count;
+};

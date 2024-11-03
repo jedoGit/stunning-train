@@ -24,6 +24,9 @@
 // isConnected[i][i] == 1
 // isConnected[i][j] == isConnected[j][i]
 
+// TC: O(n) we visit all the cities
+// SC: O(n) we visit all the cities
+
 /**
  * @param {number[][]} isConnected
  * @return {number}

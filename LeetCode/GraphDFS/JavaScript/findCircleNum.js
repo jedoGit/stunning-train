@@ -62,3 +62,55 @@ var findCircleNum = function (isConnected) {
 
   return provinceCount;
 };
+
+/**
+ * @param {number[][]} isConnected
+ * @return {number}
+ */
+var findCircleNum = function (isConnected) {
+  let g = new Map();
+  let visited = new Set();
+  let numCities = isConnected.length;
+
+  let provinceCount = 0;
+
+  // Create an adjacency list... basically list the neighbors of the city
+  for (let i = 0; i < isConnected.length; i++) {
+    for (let j = 0; j < isConnected[i].length; j++) {
+      if (isConnected[i][j] === 1) {
+        if (g.has(i)) {
+          let temp = g.get(i);
+          temp.push(j);
+          g.set(i, temp);
+        } else {
+          g.set(i, [j]);
+        }
+      }
+    }
+  }
+
+  // Let's do a dfs on all the cities
+  for (let city = 0; city < numCities; city++) {
+    // Check if we've visited this city before
+    if (!visited.has(city)) {
+      dfs(city);
+      // After we dfs (check the neighbor city basically)
+      // We increment the province count
+      provinceCount = provinceCount + 1;
+    }
+  }
+
+  // This function will only mark the cities as visited
+  // It will visit all the neighbors listed in the adjacency list
+  function dfs(city) {
+    visited.add(city);
+    // visit all of the cities connected to the current city
+    for (let nei of g.get(city)) {
+      if (!visited.has(nei)) {
+        dfs(nei);
+      }
+    }
+  }
+
+  return provinceCount;
+};

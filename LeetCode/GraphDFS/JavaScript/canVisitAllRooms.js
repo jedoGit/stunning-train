@@ -71,3 +71,39 @@ var canVisitAllRooms = function (rooms) {
 
   return false;
 };
+
+/**
+ * @param {number[][]} rooms
+ * @return {boolean}
+ */
+var canVisitAllRooms = function (rooms) {
+  // This is graph problem
+  // For each room, we'll have information (the key) on which room we have access to
+  // We'll visit each room and save the information on a set() so we can keep track of the rooms we visited
+  // Also, we can use either DFS or BFS. We'll use DFS.
+
+  // DFS
+  let numRooms = rooms.length;
+  let visited = new Set();
+
+  // We allways have access to room 0. We just pass in the room 0 index
+  dfs(0);
+
+  function dfs(room) {
+    // Mark the room as visited
+    visited.add(room);
+    // In the current room, we will get a set of keys. So, we'll check our visited set if we
+    // have visited the room that we got the set of keys, if we have not visited it, we add it
+    // if we have visited it, we move on.
+    for (let key of rooms[room]) {
+      if (!visited.has(key)) {
+        dfs(key);
+      }
+    }
+  }
+
+  // At this point, we check our visited set if it's equal to the number of rooms.
+  if (rooms.length === visited.size) return true;
+
+  return false;
+};

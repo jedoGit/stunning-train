@@ -78,13 +78,16 @@ var findCircleNum = function (isConnected) {
   for (let i = 0; i < isConnected.length; i++) {
     for (let j = 0; j < isConnected[i].length; j++) {
       if (isConnected[i][j] === 1) {
-        if (g.has(i)) {
-          let temp = g.get(i);
-          temp.push(j);
-          g.set(i, temp);
-        } else {
-          g.set(i, [j]);
-        }
+        if (!g.has(i)) g.set(i, []);
+        if (!g.has(j)) g.set(j, []);
+
+        let temp = g.get(i);
+        temp.push(j);
+        g.set(i, temp);
+
+        temp = g.get(j);
+        temp.push(i);
+        g.set(j, temp);
       }
     }
   }

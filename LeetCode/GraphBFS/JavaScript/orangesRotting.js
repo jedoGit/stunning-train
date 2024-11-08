@@ -71,6 +71,7 @@ var orangesRotting = function (grid) {
 
     time = time + 1;
 
+    // Only visit the first cells that you added to the queue the previous iteration
     for (let i = 0; i < len; i++) {
       const [r, c] = q.shift();
 
@@ -87,6 +88,8 @@ var orangesRotting = function (grid) {
         // So we found a fresh orange, let's mark that as rotten and
         // add the neibor cell to the queue to be BFS'd
         if (grid[nR][nC] === 1) {
+          // These neighbor cells will be processed the next iteration
+          // you'll call the q.shift(). This is how BFS works.
           q.push([nR, nC]);
           grid[nR][nC] = 2;
         }

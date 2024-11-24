@@ -85,8 +85,7 @@ var countBits = function (n) {
     // In JS, we can use (n/2) | 0 to bit shift right by 1 bit.
 
     while (!exit) {
-      // console.log(i, temp, temp & 1)
-      if (temp & (1 === 1)) {
+      if ((temp & 1) === 1) {
         res[i] += 1;
       }
 
@@ -95,10 +94,9 @@ var countBits = function (n) {
         break;
       }
 
-      temp = (temp / 2) | 0;
+      temp = temp >> 1;
     }
   }
 
-  // console.log(res)
   return res;
 };

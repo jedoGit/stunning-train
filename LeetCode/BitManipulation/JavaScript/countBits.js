@@ -64,3 +64,41 @@ var countBits = function (n) {
   }
   return dp;
 };
+
+// TC: O(nlogn) We loop through 0 through n, but at each value of n, we loop through the number of positions where the MSB is located for that n.
+// SC: O(n) because we need to return an array of the count of 1's for each number from 0 to n.
+
+/**
+ * @param {number} n
+ * @return {number[]}
+ */
+var countBits = function (n) {
+  // This is using bit manipulation instead of DP. DP will produce an O(n) for TC and SC
+  let res = new Array(n + 1).fill(0);
+
+  for (let i = 0; i < n + 1; i++) {
+    let temp = i;
+    let exit = false;
+
+    // We want to check (n>>1 & 0x1). This will tell us how many ones are in the value n.
+    // We want to bit shift right by 1 bit, then bitwise AND by 1 to check the LSB if it's 1.
+    // In JS, we can use (n/2) | 0 to bit shift right by 1 bit.
+
+    while (!exit) {
+      // console.log(i, temp, temp & 1)
+      if (temp & (1 === 1)) {
+        res[i] += 1;
+      }
+
+      if (temp === 0) {
+        exit = true;
+        break;
+      }
+
+      temp = (temp / 2) | 0;
+    }
+  }
+
+  // console.log(res)
+  return res;
+};

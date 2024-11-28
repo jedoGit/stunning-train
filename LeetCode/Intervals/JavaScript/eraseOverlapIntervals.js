@@ -25,7 +25,7 @@
 // -5 * 104 <= starti < endi <= 5 * 104
 
 // TC: O(nlogn + n), we have to sort the intervals array first (nlogn) and visit each intervals (n)
-// SC: O(1) in place processing
+// SC: O(1) in place processing... disregarding the space required for sorting.
 
 /**
  * @param {number[][]} intervals

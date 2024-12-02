@@ -61,3 +61,60 @@ var removeDuplicates = function (nums) {
   }
   return dupCnt + 1;
 };
+
+//TC: O(n) we need to visit each elements of nums
+//SC: O(1) in place processing
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var removeDuplicates = function (nums) {
+  let l = 0;
+  let r = 0;
+  let n = nums.length;
+
+  // What we want to do is use 2 pointers (left and right pointers) and they start at index zero
+  // We stop when the right pointer is out of bounds.
+  // First, we move the right pointer and count how many elements are duplicate.
+  // After moving the right pointer and counting the duplicates,
+  // We move our left pointer and copy the only a max of 2 elements to the index pointed by the left pointer
+
+  while (r < n) {
+    // Initialize count to 1. We know we have at least 1 value
+    let count = 1;
+    // Count the number of duplicates using the right pointer.
+    // The while loop will break and we have the right pointer pointing to an index of the last duplicate value
+    // [1,1,1,2,3,..]
+    //  ^   ^
+    //  |   |
+    //  l   r
+    while (r + 1 < n && nums[r] === nums[r + 1]) {
+      r += 1;
+      count += 1;
+    }
+
+    // Copy at most the min of 2 and count the values pointed by r to the index pointed by l
+    // [1,1,1,2,3,..]
+    //  ^   ^
+    //  |   |
+    //  l   r
+    // [1,1,1,2,3,..]
+    //    ^ ^
+    //    | |
+    //    l r
+    for (let i = 0; i < Math.min(1, count); i++) {
+      nums[l] = nums[r];
+      l += 1;
+    }
+
+    // We then move r
+    // [1,1,1,2,3,..]
+    //    ^   ^
+    //    |   |
+    //    l   r
+    r += 1;
+  }
+
+  return l;
+};

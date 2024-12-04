@@ -99,7 +99,5 @@ var rotate = function (nums, k) {
     nums.splice(0, n, ...arr);
     // nums.length = 0
     // nums.push(...arr)
-  } else {
-    nums;
   }
 };

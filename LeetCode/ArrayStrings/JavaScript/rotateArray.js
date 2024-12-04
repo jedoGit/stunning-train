@@ -68,3 +68,38 @@ var rotate = function (nums, k) {
     r--;
   }
 };
+
+// TC: O(n) looping through all the elements of nums
+// SC: O(n) we're creating a new array from nums
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var rotate = function (nums, k) {
+  let arr = [];
+  let n = nums.length;
+  k = k % n;
+
+  if (n >= k) {
+    // Push the elements starting from n-k index, push it to the new array.
+    for (let i = n - k; i < n; i++) {
+      arr.push(nums[i]);
+    }
+    // Then push the first k elements to the new array
+    for (let j = 0; j < n - k; j++) {
+      arr.push(nums[j]);
+    }
+
+    // Here, we overwrite the values of the new array to the original array
+    // For JS, we use splice method to delete the elements 0 to n and replace with
+    // elements of the new array using the rest operator
+    // We can also, set the length of the original array to 0 and push the elements of the new array using the rest operator
+    nums.splice(0, n, ...arr);
+    // nums.length = 0
+    // nums.push(...arr)
+  } else {
+    nums;
+  }
+};

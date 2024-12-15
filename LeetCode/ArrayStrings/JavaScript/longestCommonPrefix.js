@@ -38,7 +38,7 @@ var longestCommonPrefix = function (strs) {
 
   let i = 0;
 
-  // Because this is sorted, s1 will contain the string with smaller length
+  // We use s1's length. We could use s2 if you want...
   while (i < s1.length && s1[i] === s2[i]) {
     res += s1[i];
     i++;

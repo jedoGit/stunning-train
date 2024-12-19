@@ -43,5 +43,5 @@ var isSubsequence = function (s, t) {
   }
 
   // This means that all of the elements in s are found in t
-  return sp === s.length;
+  return sp === s.length ? true : false;
 };

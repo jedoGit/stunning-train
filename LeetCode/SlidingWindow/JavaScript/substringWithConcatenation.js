@@ -45,8 +45,8 @@
 // 1 <= words[i].length <= 30
 // s and words[i] consist of lowercase English letters.
 
-// TC:
-// SC:
+// TC: O(n) we're visiting each elements of s once
+// SC: O(n) worst case is each elements are unique and we add them to our maps
 
 /**
  * @param {string} s
@@ -55,7 +55,7 @@
  */
 var findSubstring = function (s, words) {
   // Edge case
-  if (!s.length || !words.length) return [];
+  if (s === "" || words === "") return [];
 
   // Let's get a map of the words we need to check
   let word_freq = {};
@@ -70,7 +70,7 @@ var findSubstring = function (s, words) {
 
   // We need these lengths in order to update our window
   const word_len = words[0].length; // represents the length of word at index 0
-  const window_len = words.length * word_len; // represents the length of the window
+  const window_len = words.length * word_len; // represents the length of the window we need to check.
 
   let res = [];
 

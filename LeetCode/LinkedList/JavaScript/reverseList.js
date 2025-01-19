@@ -56,3 +56,16 @@ var reverseList = function (head) {
   // We return the prev pointer. The prev pointer is now the head at this point
   return prev;
 };
+
+// Recursive solution
+
+var reverseList = function (head) {
+  if (!head || !head.next) {
+    return head;
+  }
+
+  var newHead = reverseList(head.next);
+  head.next.next = head;
+  head.next = null;
+  return newHead;
+};

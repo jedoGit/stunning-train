@@ -62,6 +62,8 @@ var reverseBetween = function (head, left, right) {
 
   // At this point, the cur pointer is pointing to the node after "right"
   // prev points to "right"
+  // leftPrev.next.next still point to null... we need to point it to cur, which is the node after "right"
+  // leftPrev.next still point to the end node and we need to point it to right, which is prev
   // 3. Update the pointers
 
   leftPrev.next.next = cur; // cur is node after "right"

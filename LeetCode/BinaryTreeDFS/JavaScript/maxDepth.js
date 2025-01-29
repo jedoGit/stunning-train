@@ -32,7 +32,7 @@
  * @return {number}
  */
 var maxDepth = function (root) {
-  // We'll use Post Order DFS
+  // We'll use Post Order DFS (Recursive)
 
   // First check if root is null
   if (!root) return 0;
@@ -54,4 +54,50 @@ var maxDepth = function (root) {
 
   // Everytime we exit a node, we increment the value returned by 1
   return maxVal + 1;
+};
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxDepth = function (root) {
+  // Using iterative BFS approach
+  // Base case
+  if (!root) {
+    return 0;
+  }
+
+  // Using queue for BFS
+  let level = 0;
+  let q = [];
+  q.push(root); // push the root to the queue
+
+  // let's process our queue while the queue is not empty
+  while (q.length) {
+    // We'll need a snapshot of the current queue as this represents the current level we're processing for BFS
+    let qSize = q.length;
+    // Let's only process the nodes in the current level. We do this by iterating only up to the current queue size
+    for (let i = 0; i < qSize; i++) {
+      let node = q.shift(); // pop the node from the front... in JS this is the shift method of the array
+      // Add the childrent node to the queue if they're not null
+      if (node.left) {
+        q.push(node.left);
+      }
+      if (node.right) {
+        q.push(node.right);
+      }
+    }
+    // After processing all the nodes in the current level, we need to increment our level counter before we move on to the next level.
+    level += 1;
+  }
+
+  return level;
 };

@@ -101,3 +101,42 @@ var maxDepth = function (root) {
 
   return level;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxDepth = function (root) {
+  // Using Iterative DFS
+  // Using stack
+  let stack = [];
+  let level = 0;
+
+  // Push the root and the depth to the stack as a pair.
+  // The initial depth is 1
+  stack.push([root, 1]);
+
+  while (stack.length) {
+    // First thing to do is pop the stack.
+    // Remember we pushed a pair to the stack
+    // The first element is node and the 2nd element is the depth
+    let [node, dep] = stack.pop();
+
+    // Now, let's add the children to the stack if it's not null
+    if (node) {
+      level = Math.max(level, dep); // each time we pop the stack, update the level variable
+      stack.push([node.left, dep + 1]);
+      stack.push([node.right, dep + 1]);
+    }
+  }
+
+  return level;
+};

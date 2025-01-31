@@ -19,7 +19,7 @@
 // -100 <= Node.val <= 100
 
 // TC: O(n) where n is the number of nodes we visit.
-// SC: O(1) in place processing
+// SC: O(h) we're doing recursive DFS, we're using the call stack to store the function calls
 
 /**
  * Definition for a binary tree node.

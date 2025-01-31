@@ -47,3 +47,44 @@ var isSymmetric = function (root) {
 
   return DFS(root.left, root.right);
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isSymmetric = function (root) {
+  if (!root) {
+    return true;
+  }
+
+  // Using Iterative DFS
+  let stack = [];
+
+  stack.push([root.left, root.right]);
+
+  while (stack.length) {
+    let [nodeL, nodeR] = stack.pop();
+
+    if (!nodeL && !nodeR) {
+      continue;
+    } else if (!nodeL || !nodeR) {
+      return false;
+    } else if (nodeL.val !== nodeR.val) {
+      return false;
+    } else {
+      // Add the outer and inner nodes to the stack
+      stack.push([nodeL.left, nodeR.right]);
+      stack.push([nodeL.right, nodeR.left]);
+    }
+  }
+
+  return true;
+};

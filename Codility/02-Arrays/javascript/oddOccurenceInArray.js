@@ -55,15 +55,13 @@ function solution(A) {
 
   // Check all the values in our map and return the value that is odd
 
-  // We need to convert our map entries to an array form
-  let arr = Array.from(m.entries());
   let res = 0;
 
-  for (let i = 0; i < arr.length; i += 1) {
-    // Check if the count is even and set the results variable
-    if (arr[i][1] % 2 !== 0) {
-      // console.log(arr[i][1])
-      res = arr[i][0];
+  for (let [k, v] of m.entries()) {
+    // console.log(k,v)
+    if (v % 2 !== 0) {
+      // not even
+      res = k;
     }
   }
 

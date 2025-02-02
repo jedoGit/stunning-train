@@ -51,3 +51,30 @@ function solution(A) {
     }
   }
 }
+
+// TC: O(n), we're adding all the elements of A to a set. There are n elements. We're access the set to search for the missing value.
+// SC: O(n), We have a set of size n.
+
+// you can write to stdout for debugging purposes, e.g.
+// console.log('this is a debug message');
+
+function solution(A) {
+  // Implement your solution here
+  // Add the elements of A in a set.
+  let s = new Set(A);
+  let N = A.length;
+  let res = 0;
+
+  // console.log(s.values())
+  // Count 1 to N+1 and check the set. If not exist, return i
+  // [1] should return 2
+  // [2] should return 1
+  // [] should return 1, N = 0, = N+1 = 1
+  for (let i = 1; i <= N + 1; i += 1) {
+    if (!s.has(i)) {
+      res = i;
+    }
+  }
+
+  return res;
+}

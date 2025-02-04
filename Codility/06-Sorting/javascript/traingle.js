@@ -40,9 +40,9 @@ function solution(A) {
   // Implement your solution here
 
   // This is our helper function to check if a triplet is a triangle.
-  function checkTriangle(p, q, r) {
+  let checkTriangle = (p, q, r) => {
     return p + q > r && q + r > p && r + p > q;
-  }
+  };
 
   const N = A.length;
 

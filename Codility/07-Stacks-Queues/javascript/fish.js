@@ -54,7 +54,7 @@ function solution(A, B) {
   N = A.length;
   let count = 0;
 
-  // Use a queue to store the upstream fishes
+  // Use a stack to store the upstream fishes
   let stack = [];
 
   // Loop through the B array:

@@ -55,10 +55,16 @@ function solution(A) {
   const N = A.length;
   let stack = [];
 
-  for (let i = 0; i < N; i++) {
-    if (stack.length === 0 || stack[stack.length - 1] === A[i]) {
-      stack.push(A[i]);
-    } else {
+  for (let i = 0; i < N; i += 1) {
+    stack.push(A[i]);
+
+    // console.log(stack)
+    // Check the top 2 elements of the stack
+    if (
+      stack.length > 1 &&
+      stack[stack.length - 1] !== stack[stack.length - 2]
+    ) {
+      stack.pop();
       stack.pop();
     }
   }

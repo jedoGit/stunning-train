@@ -17,6 +17,9 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
+// TC: O(sqrt(n))
+// SC: O(1)
+
 function solution(N) {
   let i = 0;
   let count = 0;

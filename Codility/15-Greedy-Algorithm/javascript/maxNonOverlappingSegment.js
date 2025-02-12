@@ -59,16 +59,17 @@ function solution(A, B) {
     return 0;
   }
 
-  let right = B[0];
+  let lastEnd = B[0];
   let count = 1;
 
   for (let i = 1; i < N; i += 1) {
     // check if the current segment is not overlapping with previous
-    if (A[i] > right) {
+    let curStart = A[i];
+    if (curStart > lastEnd) {
       // increment the count because current segment is not overlapping
       count += 1;
       // update the right to the next segment ending
-      right = B[i];
+      lastEnd = B[i];
     }
   }
 

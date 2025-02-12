@@ -33,6 +33,9 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
+// TC: O(n)
+// SC: O(1)
+
 function solution(A, B) {
   // Implement your solution here
   // What we want to do here is check if there are overlapping segments.

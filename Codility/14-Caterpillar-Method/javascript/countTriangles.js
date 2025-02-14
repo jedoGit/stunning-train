@@ -29,14 +29,32 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
-//  0  1 2 3 4 5
-// [10,2,5,1,8,12]
-//     l
-//       r
-
+// Starting with A = [10,2,5,1,8,12]
+// After sorting the elements of A, we have A = [1,2,5,8,10,12]
+// From the sorted array, we are guaranteed to have A[p] < A[q] < A[r].
+// We need to to find a triplet such that A[p] + A[q] > A[r]
+// By using 2 pointers, l and r, we can start by having and index i start pointing at A[0] and moving A[r] and A[l] to
+// find a triplet such that A[i] + A[l] > A[r]
+//  0 1 2 3  4  5
 // [1,2,5,8,10,12]
-//           l
-//           r
+//  i l
+//      r
+// Since this is a sorted array, we might need to move l to the right first until we hit this condition A[i] + A[l] > A[r]
+// We move l and it now points to 5 and it will satisfy the condition A[i] + A[l] > A[r]. Everytime we move l, we count the difference between l and r: count = r - l
+// If this condition is satisfied, we move r until the condition is not met then we'll move l.
+//  0 1 2 3  4  5
+// [1,2,5,8,10,12]
+//  i        l
+//              r
+// We keep doing this for every i.
+//  0 1 2 3  4  5
+// [1,2,5,8,10,12]
+//    i      l
+//              r
+//  0 1 2 3  4  5  6
+// [1,2,5,8,10,12] null
+//      i   l
+//                 r
 
 // TC: O(nlogn) due to sorting + O(n^2) for the caterpillar method
 // SC: O(nlogn) due to sorting

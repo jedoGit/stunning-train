@@ -51,13 +51,17 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
-// function solution(A) {
-//     // Implement your solution here
-//     // [-8,4,5,-10,3]
-//     // [-10,-8,3,4,5]
+// For example A = [-8,4,5,-10,3]
+// After sorting A, we will have a sorted array A = [-10,-8,3,4,5]
+// We can see that the minimal abs sum of two for any pair of indices in this array exist somewhere in the middle.
+// By using 2 pointers l starting a index 0 and r starting a index N-1, we can move the pointer based on the sum of the elements pointed by l and r.
+// If the sum of A[l] + A[r] > 0, since we need the min value, it means that A[r] is a large value and therefore we need to move r to the left (r--).
+// If the sum of A[l] + A[r] <= 0, it means that A[l] is large negative value and therefore we need to move l to the right (l++).
+// We want the sum to be as close to 0 because we need to return the min absolute sum.
+// We stop when the l and r pointer crosses each other.
 
-//     //
-// }
+// TC: O(nlogn) due to sorting
+// SC: O(1)
 
 function solution(A) {
   const N = A.length;
@@ -78,9 +82,9 @@ function solution(A) {
     }
 
     if (currentSum > 0) {
-      right--;
+      right -= 1;
     } else {
-      left++;
+      left += 1;
     }
   }
 

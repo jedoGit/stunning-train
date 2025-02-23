@@ -165,7 +165,7 @@ function minAbsSum_C(A) {
   res = [];
 
   function backtrack(i, cur) {
-    console.log("i: ", i, cur);
+    // console.log("i: ", i, cur);
     // base case
     if (i === A.length - 1 || cur.length === A.length) {
       let absSum = Math.abs(cur.reduce((acc, val) => acc + val));

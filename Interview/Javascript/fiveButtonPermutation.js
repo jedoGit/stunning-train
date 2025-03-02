@@ -13,19 +13,22 @@
 
 function generatePermutations() {
   let res = [];
+  let visited = new Set();
   function backtrack(i, cur, choices) {
     // console.log(i, cur, choices);
     // at i === 5, we've used all 5 digits
-    if (i === 5) {
+    if (!visited.has(cur) && i === 5) {
       // we have all the five digit, let's save it to our res array
       res.push(cur);
       return;
     }
 
     // At each level, it is a combination, we need to capture it. Don't push if the last char is "-"
-    if (cur.at(-1) !== "-") {
+    if (!visited.has(cur) && i < 6 && cur.at(-1) !== "-") {
       res.push(cur);
     }
+
+    visited.add(cur);
 
     // Before we recurse, let's add the "-"
     cur += "-";
@@ -41,30 +44,32 @@ function generatePermutations() {
     // Then we recurse again without the "-"
     backtrack(i + 1, cur);
 
-    // for (let k = 0; k < choices.length; k += 1) {
-    //   cur += "-";
-    //   cur += choices[k];
-    //   let newChoices = [...choices];
-    //   newChoices.splice(k, 1);
-    //   //   console.log(i, k, cur, choices[k], choices, newChoices);
-    //   // Then we recurse
-    //   console.log("before: ", cur);
-    //   backtrack(i + 1, cur, newChoices);
+    /*
+    for (let k = 0; k < choices.length; k += 1) {
+      cur += "-";
+      cur += choices[k];
+      let newChoices = [...choices];
+      newChoices.splice(k, 1);
+      //   console.log(i, k, cur, choices[k], choices, newChoices);
+      // Then we recurse
+      console.log("before: ", cur);
+      backtrack(i + 1, cur, newChoices);
 
-    //   // After we return from the recursive function, we remove the last char added to cur
-    //   // cur = cur.slice(0, -2);
-    //   // cur += (i + 1).toString();
+      // After we return from the recursive function, we remove the last char added to cur
+      // cur = cur.slice(0, -2);
+      // cur += (i + 1).toString();
 
-    //   // // Then we recurse again without the "-"
-    //   // backtrack(i + 1, cur);
+      // // Then we recurse again without the "-"
+      // backtrack(i + 1, cur);
 
-    //   cur = cur.slice(0, -2);
-    //   cur += choices[k];
-    //   //   console.log(k, cur, choices[k], [...choices.splice(k)]);
-    //   // Then we recurse
-    //   console.log("after: ", cur);
-    //   backtrack(i + 1, cur, newChoices);
-    // }
+      cur.slice(0, -2);
+      // cur += choices[k];
+      //   console.log(k, cur, choices[k], [...choices.splice(k)]);
+      // Then we recurse
+      console.log("after: ", cur);
+      backtrack(i + 1, cur, newChoices);
+    }
+    */
 
     // After we return from the last backtrack, we return to the last caller
     return;

@@ -66,7 +66,8 @@ var solve = function (board) {
   for (let i = 0; i < rows; i += 1) {
     for (let j = 0; j < cols; j += 1) {
       // if cell is an "O", and it's in the perimeter of the board
-      if (i === 0 || i === rows - 1 || j === 0 || j === cols - 1) {
+      // if ( i === 0 || i === rows-1 || j === 0 || j === cols-1 ) {
+      if ([0, rows - 1].includes(i) || [0, cols - 1].includes(j)) {
         if (board[i][j] === "O") {
           // console.log(i, j)
           dfs(i, j);

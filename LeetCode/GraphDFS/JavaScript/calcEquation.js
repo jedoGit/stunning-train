@@ -110,3 +110,77 @@ var calcEquation = function (equations, values, queries) {
   // and create a new array and save the dfs result to the index
   return queries.map((q) => dfs(q[0], q[1], new Set()));
 };
+
+/**
+ * @param {string[][]} equations
+ * @param {number[]} values
+ * @param {string[][]} queries
+ * @return {number[]}
+ */
+var calcEquation = function (equations, values, queries) {
+  // Build the graph
+  // The graph will be an object of object
+  // After visualizing the requirements, we can deduce that
+  // For the direction a->b, we assign the value as-is
+  // For the direction b->a, we assign the value as 1/value
+  let g = {};
+
+  // Let's look at each equations
+  for (let i = 0; i < equations.length; i++) {
+    const [a, b] = equations[i];
+
+    if (!g[a]) {
+      g[a] = [];
+    }
+
+    if (!g[b]) {
+      g[b] = [];
+    }
+
+    g[a].push([b, values[i]]);
+    g[b].push([a, 1 / values[i]]);
+
+    // console.log(g)
+  }
+
+  //   console.log(g)
+
+  // Let's build our DFS
+  // From the requirement, if the equation does not exist, we return -1
+  // From our visualization of the graph, if the src and dest is itself, we return 1
+  // From the visualization, moving from node to node, we multiply the values of that direction
+
+  function dfs(src, tgt, visited) {
+    // This is the case when the variable in the equation does not exist
+    if (!g[src] || !g[tgt]) {
+      return -1;
+    }
+    // This is the case when the variable is the same
+    if (src === tgt) {
+      return 1;
+    }
+
+    // We add the src to the visited so we're not going to visit it only once
+    visited.add(src);
+
+    // These are the other cases
+    // g[src] will return an array [nei, wt]
+    for (let [nei, wt] of g[src]) {
+      // console.log(g[src])
+      if (!visited.has(nei)) {
+        // We multiply every values in the path
+        const result = dfs(nei, tgt, visited) * wt;
+
+        // We check the result if it's positive and return it
+        if (result > 0) {
+          return result;
+        }
+      }
+    }
+    return -1;
+  }
+
+  // Process the queries. We'll use map here. Map will look at element by element
+  // and create a new array and save the dfs result to the index
+  return queries.map((q) => dfs(q[0], q[1], new Set()));
+};

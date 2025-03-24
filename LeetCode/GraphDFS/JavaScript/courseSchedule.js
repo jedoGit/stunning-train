@@ -24,8 +24,8 @@
 // 0 <= ai, bi < numCourses
 // All the pairs prerequisites[i] are unique.
 
-// TC: O(n), where n is number of courses. We create an adjacency list and for each courses. We only visit once
-// SC: O(h), h is the number of adjacency list we have. We create an adjacency list and for each courses. We only visit once.
+// TC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
+// SC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 
 /**
  * @param {number} numCourses

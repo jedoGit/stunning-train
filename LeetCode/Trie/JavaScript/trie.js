@@ -93,7 +93,7 @@ Trie.prototype.search = function (word) {
  * @return {boolean}
  */
 Trie.prototype.startsWith = function (prefix) {
-  // The search method will check each chars in prefix if it exists in our children nodes.
+  // The startsWith method will check each chars in prefix if it exists in our children nodes.
   // If it does not exist, we return false. If we reach the end of the trie, we return true
   let current = this.root;
 

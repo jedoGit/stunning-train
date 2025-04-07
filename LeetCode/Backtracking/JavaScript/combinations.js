@@ -19,9 +19,6 @@
 // 1 <= n <= 20
 // 1 <= k <= n
 
-// TC:
-// SC:
-
 /**
  * @param {number} n
  * @param {number} k
@@ -33,16 +30,20 @@ var combine = function (n, k) {
   //                         2  3  4                    3   4                          4
   // so, [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]. No reuse: [1,2] and [2,1] is the same combination
   //
+  // For combination, order does not matter. [1,2] is the same as [2,1]. So, we only add one of them in our result.
+  //
 
   let res = [];
   let comb = [];
 
   function backtrack(start) {
+    // Check if the combination we have has the correct length k we're looking for
     if (comb.length === k) {
       res.push([...comb]);
       return;
     }
 
+    // Build the combinations from the set of number n starting from number start.
     for (let i = start; i <= n; i += 1) {
       comb.push(i);
       backtrack(i + 1);
@@ -50,6 +51,7 @@ var combine = function (n, k) {
     }
   }
 
+  // Call the backtrack function starting from number 1.
   backtrack(1);
 
   return res;

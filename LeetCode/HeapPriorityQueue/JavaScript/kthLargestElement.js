@@ -27,6 +27,32 @@
  * @return {number}
  */
 var findKthLargest = function (nums, k) {
+  let hmin = new MinPriorityQueue();
+
+  // Add the first k elements to the priority queue
+  nums.slice(0, k).map((n) => {
+    hmin.enqueue(n);
+  });
+
+  // Starting at the kth+1 element, process each one of them
+  nums.slice(k).map((n) => {
+    // check if this element is larger than the front of the priority queue.
+    // if so, remove the front and add this element
+    if (n > hmin.front()) {
+      hmin.dequeue();
+      hmin.enqueue(n);
+    }
+  });
+
+  return hmin.front();
+};
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number}
+ */
+var findKthLargest = function (nums, k) {
   // Use min heap from library https://github.com/datastructures-js/priority-queue/blob/v5/README.md
   // This library is loaded by leetcode. Check the language setting for information
   let h = new MinPriorityQueue();

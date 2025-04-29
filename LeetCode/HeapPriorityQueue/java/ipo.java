@@ -33,8 +33,9 @@ public class ipo {
         // }
 
         // System.out.println(projects);
-        Function<Project, Integer> comp = (project) -> project.capital();
-        projects.sort(Comparator.comparing(comp));
+        // Function<Project, Integer> comp = (project) -> project.capital();
+        // projects.sort(Comparator.comparing(comp));
+        projects.sort(Comparator.comparing(Project::capital));
 
         // System.out.println(projects);
 

@@ -1,12 +1,15 @@
 package LeetCode.HeapPriorityQueue.java;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
+record Actions(String action, List<Integer> input) {
+}
+
 public class findMedianFromDataStream {
+
     private PriorityQueue<Integer> maxH;
     private PriorityQueue<Integer> minH;
 
@@ -37,35 +40,26 @@ public class findMedianFromDataStream {
     }
 
     public static void main(String[] args) {
-        List<String> actions = new ArrayList<>(
-                List.of("MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian"));
-        List<List<Integer>> input = new ArrayList<>(List.of(List.of(), List.of(1), List.of(2), List.of(), List.of(3),
-                List.of()));
-        List<Double> output = new LinkedList<>();
-        // double val = 0;
 
-        // findMedianFromDataStream medianFinder = new findMedianFromDataStream();
-        // output.add(null);
-        // medianFinder.addNum(1);
-        // output.add(null);
-        // medianFinder.addNum(2);
-        // output.add(null);
-        // val = medianFinder.findMedian();
-        // output.add(Double.valueOf(val));
-        // medianFinder.addNum(3);
-        // output.add(null);
-        // val = medianFinder.findMedian();
-        // output.add(Double.valueOf(val));
+        List<Actions> actions = new LinkedList<>();
+        actions.add(new Actions("MedianFinder", List.of()));
+        actions.add(new Actions("addNum", List.of(1)));
+        actions.add(new Actions("addNum", List.of(2)));
+        actions.add(new Actions("findMedian", List.of()));
+        actions.add(new Actions("addNum", List.of(3)));
+        actions.add(new Actions("findMedian", List.of()));
+
+        List<Double> output = new LinkedList<>();
 
         findMedianFromDataStream medianFinder = new findMedianFromDataStream();
 
         for (int i = 0; i < actions.size(); i++) {
-            switch (actions.get(i)) {
+            switch (actions.get(i).action()) {
                 case "MedianFinder" -> {
                     output.add(null);
                 }
                 case "addNum" -> {
-                    medianFinder.addNum(input.get(i).get(0));
+                    medianFinder.addNum(actions.get(i).input().get(0));
                     output.add(null);
                 }
                 case "findMedian" -> {
@@ -74,9 +68,15 @@ public class findMedianFromDataStream {
             }
         }
 
-        System.out.println(actions.toString());
-        System.out.println(input.toString());
-        System.out.println(output.toString());
+        actions.forEach(a -> {
+            System.out.printf("[" + a.action() + "]");
+        });
+        System.out.println();
+        actions.forEach(a -> {
+            System.out.print(a.input());
+        });
+        System.out.println();
+        output.forEach(out -> System.out.print("[" + out + "]"));
 
     }
 }

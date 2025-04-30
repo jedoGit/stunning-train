@@ -53,13 +53,13 @@ public class findMedianFromDataStream {
 
         findMedianFromDataStream medianFinder = new findMedianFromDataStream();
 
-        for (int i = 0; i < actions.size(); i++) {
-            switch (actions.get(i).action()) {
+        for (Actions a : actions) {
+            switch (a.action()) {
                 case "MedianFinder" -> {
                     output.add(null);
                 }
                 case "addNum" -> {
-                    medianFinder.addNum(actions.get(i).input().get(0));
+                    medianFinder.addNum(a.input().get(0));
                     output.add(null);
                 }
                 case "findMedian" -> {
@@ -69,14 +69,14 @@ public class findMedianFromDataStream {
         }
 
         actions.forEach(a -> {
-            System.out.printf("[" + a.action() + "]");
+            System.out.printf("[" + a.action() + "],");
         });
         System.out.println();
         actions.forEach(a -> {
-            System.out.print(a.input());
+            System.out.print(a.input() + ",");
         });
         System.out.println();
-        output.forEach(out -> System.out.print("[" + out + "]"));
+        output.forEach(out -> System.out.print("[" + out + "],"));
 
     }
 }

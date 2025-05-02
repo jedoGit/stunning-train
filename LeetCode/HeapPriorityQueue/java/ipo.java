@@ -4,10 +4,12 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 // class Project {
@@ -21,26 +23,15 @@ record Project(Integer capital, Integer profit) {
 public class ipo {
 
     public int findMaximizedCapital(int k, int w, int[] profits, int[] capital) {
-        List<Project> projects = new ArrayList<>();
-
         int n = profits.length;
 
-        IntStream.range(0, capital.length)
-                .forEach(idx -> projects.add(new Project(capital[idx], profits[idx])));
+        List<Project> projects = IntStream.range(0, capital.length)
+                .mapToObj(i -> new Project(capital[i], profits[i]))
+                .sorted(Comparator.comparing(Project::capital))
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        // for( int i = 0 ; i < n ; i++ ) {
-        // projects.add(new Project(capital[i],profits[i]));
-        // }
-
-        // System.out.println(projects);
-        // Function<Project, Integer> comp = (project) -> project.capital();
-        // projects.sort(Comparator.comparing(comp));
-        projects.sort(Comparator.comparing(Project::capital));
-
-        // System.out.println(projects);
-
-        // Comparator<Integer> compIntegerReverse = (x,y) -> y-x;
         PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+
         int i = 0;
 
         while (k-- > 0) {

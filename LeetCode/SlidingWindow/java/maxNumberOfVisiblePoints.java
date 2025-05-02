@@ -1,45 +1,34 @@
-class Solution {
-    public int visiblePoints(List<List<Integer>> points, int angle, List<Integer> location) {
-        List<Double> candidateAngles = new ArrayList();
 
-        for (int i = 0; i < points.size(); i++) {
-            // System.out.print("x: " + points.get(i).get(0) + " y: " + points.get(i).get(1)
-            // + "\n");
-            int x = points.get(i).get(0);
-            int y = points.get(i).get(1);
-            int lx = location.get(0);
-            int ly = location.get(1);
-            if (!(x == lx && y == ly)) {
-                double a = Math.atan2((y - ly), (x - lx)) * 180 / Math.PI;
-                candidateAngles.add(a);
-            }
-        }
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-        // System.out.println(candidateAngles);
 
-        Collections.sort(candidateAngles);
+public class maxNumberOfVisiblePoints {
+    public static int visiblePoints(List<List<Integer>> points, int angle, List<Integer> location) {
+        List<Double> candidateAngles = points.stream()
+            .filter( p -> !(p.get(0).equals(location.get(0)) && p.get(1).equals(location.get(1))))
+            .map( p -> {
+                return (Math.atan2(p.get(1)-location.get(1), p.get(0) - location.get(0))*180.0) / Math.PI;
+            })
+            .sorted()
+            .collect(Collectors.toList());
 
         int onCenterCount = points.size() - candidateAngles.size();
 
-        // System.out.println("candidateAngles: " + candidateAngles + "\nonCenterCount:
-        // " + onCenterCount);
+        List<Double> tmp = candidateAngles.stream()
+            .filter(a -> a < 0.0)
+            .map(a -> a + 360.0)
+            .collect(Collectors.toList());
 
-        List<Double> aList = new ArrayList(candidateAngles);
-
-        for (Double a : candidateAngles) {
-            if (a < 0) {
-                aList.add(a + 360d);
-            }
-        }
-
-        // System.out.println(aList);
+        candidateAngles.addAll(tmp);
 
         int r = 0;
         int l = 0;
         int res = 0;
 
-        while (r < aList.size()) {
-            while (aList.get(r) - aList.get(l) > Double.valueOf(angle)) {
+        while (r < candidateAngles.size()) {
+            while (candidateAngles.get(r) - candidateAngles.get(l) > Double.valueOf(angle)) {
                 l++;
             }
             res = Math.max(res, r - l + 1);
@@ -47,5 +36,32 @@ class Solution {
         }
 
         return res + onCenterCount;
+    }
+
+    public static void main(String[] args) {
+        List<List<Integer>> points = new LinkedList<>();
+        points.add(List.of(2,1));
+        points.add(List.of(2,2));
+        points.add(List.of(3,4));
+        points.add(List.of(1,1));
+
+        int angle = 90;
+
+        List<Integer> location = List.of(1,1);
+
+        System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
+        System.out.println("Max number of visible points: " + maxNumberOfVisiblePoints.visiblePoints(points,angle,location));
+    
+        points.clear();
+        points.add(List.of(1,0));
+        points.add(List.of(2,1));
+
+        angle = 13;
+
+        location = List.of(1,1);
+
+        System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
+        System.out.println("Max number of visible points: " + maxNumberOfVisiblePoints.visiblePoints(points,angle,location));
+    
     }
 }

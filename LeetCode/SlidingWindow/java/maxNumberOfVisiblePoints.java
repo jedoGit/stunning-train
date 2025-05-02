@@ -16,12 +16,12 @@ public class maxNumberOfVisiblePoints {
 
         int onCenterCount = points.size() - candidateAngles.size();
 
-        List<Double> tmp = candidateAngles.stream()
+        List<Double> transformedAngles = candidateAngles.stream()
             .filter(a -> a < 0.0)
             .map(a -> a + 360.0)
             .collect(Collectors.toList());
 
-        candidateAngles.addAll(tmp);
+        candidateAngles.addAll(transformedAngles);
 
         int r = 0;
         int l = 0;
@@ -48,9 +48,13 @@ public class maxNumberOfVisiblePoints {
         int angle = 90;
 
         List<Integer> location = List.of(1,1);
+        int expected = 4; 
+
+        int result = maxNumberOfVisiblePoints.visiblePoints(points,angle,location);
 
         System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
-        System.out.println("Max number of visible points: " + maxNumberOfVisiblePoints.visiblePoints(points,angle,location));
+        System.out.println("Max number of visible points: " + result);
+        System.out.println("Expected: " + expected + (result == expected ? " Correct!" : " Incorrect!"));
     
         points.clear();
         points.add(List.of(1,0));
@@ -60,8 +64,13 @@ public class maxNumberOfVisiblePoints {
 
         location = List.of(1,1);
 
+        expected = 1;
+
+        result = maxNumberOfVisiblePoints.visiblePoints(points,angle,location);
+
         System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
-        System.out.println("Max number of visible points: " + maxNumberOfVisiblePoints.visiblePoints(points,angle,location));
+        System.out.println("Max number of visible points: " + result);
+        System.out.println("Expected: " + expected + (result == expected ? " Correct!" : " Incorrect!"));
     
     }
 }

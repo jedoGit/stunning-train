@@ -1,23 +1,16 @@
 package LeetCode.HeapPriorityQueue.java;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Comparator;
-import java.util.LinkedList;
+
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-// class Project {
 record Project(Integer capital, Integer profit) {
-    // @Override
-    // public String toString() {
-    // return "Project [capital=" + capital + ", profit=" + profit + "]";
-    // }
 }
 
 public class ipo {

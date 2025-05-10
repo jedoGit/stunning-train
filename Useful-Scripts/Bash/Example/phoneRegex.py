@@ -10,7 +10,7 @@ for str in text:
     match = re.search(pattern, str)
     # print(match.group() + ": " + match.group(1) + match.group(2) + "-" + match.group(3) + "-" +  match.group(4))
     # if match.group() != NoneTy
-    if ( match):
+    if match:
         print(str + " matched: " + match.group())
     else:
         print(str + " No Match for this one")

@@ -167,10 +167,20 @@
 #             print(entry.name)
 
 
+import datetime
 import os
 import stat
 
 class directoryWalker:
+    def timeConvert(self, aTime):
+        dt = aTime
+        newTime = datetime.datetime.fromtimestamp(dt)
+        return newTime.date()
+    
+    def sizeFormat(self,size):
+        newForm = format(size, ".0f")
+        return newForm
+
     def listAllFilesAndDirs(self, path):
         res = {}
 
@@ -202,14 +212,14 @@ class directoryWalker:
         return res
         
     
-    def printDir(self):
-
-        thisdir = os.getcwd()
-
-        for fname in os.listdir(thisdir):
-            filePath = os.path.join(thisdir, fname)
+    def printDir(self, path):
+        for fname in os.listdir(path):
+            filePath = os.path.join(path, fname)
             fileStat = os.stat(filePath)
-            print("{0:s} {1:5d} {2:50s}".format( stat.filemode(fileStat.st_mode), fileStat.st_size, fname))
+            if os.path.isfile(filePath):
+                print("{0:} {1:>5} {2:} {3:<}".format( stat.filemode(fileStat.st_mode), self.sizeFormat(fileStat.st_size), self.timeConvert(fileStat.st_mtime), fname))
+            else:
+                print("{0:} {1:>5} {2:} {3:<}/".format( stat.filemode(fileStat.st_mode), "0", self.timeConvert(fileStat.st_mtime), fname))
     
 if __name__ == "__main__":
 
@@ -240,7 +250,9 @@ if __name__ == "__main__":
         print(f)
    
     print("-" * 50)
-    
-    obj.printDir()
+
+    print(os.getcwd() + ":")
+    # obj.printDir(os.getcwd()+"\LeetCode\HashMap\JavaScript")
+    obj.printDir(os.getcwd())
 
 

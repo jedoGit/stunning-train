@@ -1,3 +1,4 @@
+package LeetCode.DP1D.java;
 
 public class climbingStairs {
     public int computeClimbStairs(int n) {

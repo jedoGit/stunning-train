@@ -1,3 +1,5 @@
+package LeetCode.DP1D.java;
+
 import java.util.Arrays;
 
 public class houseRobber {

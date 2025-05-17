@@ -1,7 +1,7 @@
 from typing import List
 
 
-class countChange:
+class coinChange:
     def computeCoinChange(self, coins: List[int], amount: int) -> int:
         dp = [amount+1] * (amount+1)
         # print(dp)
@@ -19,7 +19,7 @@ class countChange:
     
 
 if __name__ == "__main__":
-    obj = countChange()
+    obj = coinChange()
 
     input1 = { "coins": [1, 2, 5], "amount" : 11}
     expected1 = 3

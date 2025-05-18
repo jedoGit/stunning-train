@@ -1,10 +1,7 @@
 package LeetCode.DP1D.java;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.stream.IntStream;
-
-import javax.print.DocFlavor.INPUT_STREAM;
 
 record InputValueRecord(int[] nums) {
 

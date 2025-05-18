@@ -30,8 +30,8 @@ public class lengthOfLIS {
 
         return Arrays.stream(LIS)
                 .boxed() // Boxed from int to Integer wrapper
-                .reduce(0, (a, b) -> Integer.max(a, b));
-                // .reduce(0, Integer::max);
+                // .reduce(0, (a, b) -> Integer.max(a, b));
+                .reduce(0, Integer::max);
     }
 
     public static void main(String[] args) {

@@ -6,7 +6,11 @@ var lengthOfLIS = function (nums) {
   LIS = Array(nums.length).fill(1);
 
   for (let i = nums.length - 1; i > -1; i -= 1) {
-    for (let j = i + 1; j < nums.length; j += 1) {
+    // for (let j = i + 1; j < nums.length; j += 1) {
+    for (let j of Array.from(
+      { length: nums.length },
+      (_, idx) => idx + i + 1
+    )) {
       if (nums[i] < nums[j]) {
         LIS[i] = Math.max(LIS[i], 1 + LIS[j]);
       }

@@ -1,4 +1,4 @@
-package LeetCode.DPMultiDimension.Java;
+package LeetCode.DPMultiDimension.java;
 
 import java.util.Arrays;
 import java.util.Collections;

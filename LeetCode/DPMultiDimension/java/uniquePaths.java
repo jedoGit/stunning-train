@@ -1,5 +1,10 @@
-class Solution {
-    public int uniquePaths(int m, int n) {
+package LeetCode.DPMultiDimension.Java;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class uniquePaths {
+    public int solveUniquePaths(int m, int n) {
         // List initialize with zeros
         List<List<Integer>> dp = new ArrayList<>(m * n);
 
@@ -30,5 +35,9 @@ class Solution {
 
         return dp.get(0).get(0);
 
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Unique Paths");
     }
 }

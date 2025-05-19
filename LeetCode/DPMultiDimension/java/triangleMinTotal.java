@@ -1,4 +1,4 @@
-package LeetCode.DP1D.java;
+
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +26,7 @@ public class triangleMinTotal {
         // System.out.println(inputRows.toString());
 
         for (List<Integer> row : inputRows) {
-            System.out.println(row.toString());
+            // System.out.println(row.toString());
             for (int i = 0; i < row.size(); i += 1) {
                 // System.out.println(i + " " + row.get(i));
                 dp[i] = row.get(i) + Math.min(dp[i], dp[i + 1]);

@@ -64,4 +64,14 @@ if __name__ == "__main__":
     print("Result: {}".format(result3))
     print("Expected: {}".format(expected3))
     print("-" * 50)
-    
+
+    input4 = {
+    "s1": "bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa",
+    "s2": "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab",
+    "s3": "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab"}
+    expected4 = "false"
+    result4 = obj.isInterleaveMemoize(input4["s1"], input4["s2"], input4["s3"])
+    print("Input: {}".format(input4))
+    print("Result: {}".format(result4))
+    print("Expected: {}".format(expected4))
+    print("-" * 50)

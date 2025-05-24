@@ -9,7 +9,7 @@ record interleavingStringsDTO(String s1, String s2, String s3) {
 }
 
 public class interleavingStrings {
-    private record Pair(int i, int j) {
+    private record Pair<T,U>(T i, U j) {
     }
 
     public boolean isInterleave(String s1, String s2, String s3) {
@@ -64,20 +64,20 @@ public class interleavingStrings {
             return false;
         }
 
-        Map<Pair, Boolean> dp = new HashMap<>();
+        Map<Pair<Integer, Integer>, Boolean> dp = new HashMap<>();
 
         // System.out.println("dp: " + dp.toString());
 
         return dfs(0, 0, s1_len, s2_len, s3_len, dp, s1, s2, s3);
     }
 
-    private boolean dfs(int i, int j, int s1_len, int s2_len, int s3_len, Map<Pair, Boolean> dp, String s1, String s2,
+    private boolean dfs(int i, int j, int s1_len, int s2_len, int s3_len, Map<Pair<Integer, Integer>, Boolean> dp, String s1, String s2,
             String s3) {
         if (i == s1_len & j == s2_len) {
             return true;
         }
 
-        Pair key_ij = new Pair(i, j);
+        Pair<Integer, Integer> key_ij = new Pair<>(i, j);
         if (dp.containsKey(key_ij)) {
             return dp.get(key_ij);
         }
@@ -90,7 +90,7 @@ public class interleavingStrings {
             return true;
         }
 
-        dp.put(new Pair(i, j), false);
+        dp.put(new Pair<>(i, j), false);
 
         return false;
     }

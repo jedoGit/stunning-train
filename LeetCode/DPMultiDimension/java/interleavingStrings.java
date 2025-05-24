@@ -130,5 +130,17 @@ public class interleavingStrings {
         System.out.println("Result: " + result4);
         System.out.println("Expected: " + expected4);
         System.out.println("-".repeat(50));
+
+        interleavingStringsDTO input5 = new interleavingStringsDTO(
+                "bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa",
+                "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab",
+                "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab");
+        boolean expected5 = false;
+        boolean result5 = soln.isInterleaveMemoize(input5.s1(), input5.s2(), input5.s3());
+        System.out.println("Input: " + input5);
+        System.out.println("Result: " + result5);
+        System.out.println("Expected: " + expected5);
+        System.out.println("-".repeat(50));
+
     }
 }

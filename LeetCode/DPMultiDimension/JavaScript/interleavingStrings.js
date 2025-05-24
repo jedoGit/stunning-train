@@ -36,9 +36,47 @@ var isInterleave = function (s1, s2, s3) {
   return dp[0][0];
 };
 
+var isInterleaveMemoize = function (s1, s2, s3) {
+  let s1_len = s1.length;
+  let s2_len = s2.length;
+  let s3_len = s3.length;
+
+  if (s1_len + s2_len !== s3_len) return false;
+
+  dp = {};
+
+  let dfs = (i, j) => {
+    if (i === s1_len && j === s2_len) {
+      return true;
+    }
+
+    // console.log(dp);
+
+    if ([i, j].join("") in dp) {
+      return dp[[i, j].join("")];
+    }
+
+    if (i < s1_len && s1[i] === s3[i + j] && dfs(i + 1, j)) {
+      return true;
+    }
+
+    if (j < s2_len && s2[j] === s3[i + j] && dfs(i, j + 1)) {
+      return true;
+    }
+
+    dp[[i, j].join("")] = false;
+
+    // console.log(dp);
+
+    return false;
+  };
+
+  return dfs(0, 0);
+};
+
 let input1 = { s1: "aabcc", s2: "dbbca", s3: "aadbbcbcac" };
 let expected1 = "True";
-let result1 = isInterleave(input1["s1"], input1["s2"], input1["s3"]);
+let result1 = isInterleaveMemoize(input1["s1"], input1["s2"], input1["s3"]);
 console.log(
   "Input: " +
     Object.keys(input1)[0] +
@@ -59,7 +97,7 @@ console.log("-".repeat(50));
 
 let input2 = { s1: "aabcc", s2: "dbbca", s3: "aadbbbaccc" };
 let expected2 = "False";
-let result2 = isInterleave(input2["s1"], input2["s2"], input2["s3"]);
+let result2 = isInterleaveMemoize(input2["s1"], input2["s2"], input2["s3"]);
 console.log(
   "Input: " +
     Object.keys(input2)[0] +
@@ -80,7 +118,7 @@ console.log("-".repeat(50));
 
 let input3 = { s1: "", s2: "", s3: "" };
 let expected3 = "True";
-let result3 = isInterleave(input3["s1"], input3["s2"], input3["s3"]);
+let result3 = isInterleaveMemoize(input3["s1"], input3["s2"], input3["s3"]);
 console.log(
   "Input: " +
     Object.keys(input3)[0] +
@@ -97,4 +135,29 @@ console.log(
 );
 console.log("Result: " + result3);
 console.log("Expected: " + expected3);
+console.log("-".repeat(50));
+
+let input4 = {
+  s1: "bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa",
+  s2: "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab",
+  s3: "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab",
+};
+let expected4 = "false";
+let result4 = isInterleaveMemoize(input4["s1"], input4["s2"], input4["s3"]);
+console.log(
+  "Input: " +
+    Object.keys(input4)[0] +
+    ": " +
+    input4["s1"] +
+    ", " +
+    Object.keys(input4)[1] +
+    ": " +
+    input4["s2"] +
+    ", " +
+    Object.keys(input4)[2] +
+    ": " +
+    input4["s3"]
+);
+console.log("Result: " + result4);
+console.log("Expected: " + expected4);
 console.log("-".repeat(50));

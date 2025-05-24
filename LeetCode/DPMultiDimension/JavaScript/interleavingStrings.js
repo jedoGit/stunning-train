@@ -52,8 +52,8 @@ var isInterleaveMemoize = function (s1, s2, s3) {
 
     // console.log(dp);
 
-    if ([i, j].join("") in dp) {
-      return dp[[i, j].join("")];
+    if (`${i},${j}` in dp) {
+      return dp[`${i},${j}`];
     }
 
     if (i < s1_len && s1[i] === s3[i + j] && dfs(i + 1, j)) {
@@ -64,7 +64,7 @@ var isInterleaveMemoize = function (s1, s2, s3) {
       return true;
     }
 
-    dp[[i, j].join("")] = false;
+    dp[`${i},${j}`] = false;
 
     // console.log(dp);
 

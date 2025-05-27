@@ -76,3 +76,19 @@ var minDistance = function (word1, word2) {
   // The min value will be saved in dp[0][0]
   return dp[0][0];
 };
+
+let input1 = { word1: "horse", word2: "ros" };
+let expected1 = 3;
+let result1 = minDistance(input1.word1, input1.word2);
+console.log("Input: word1: " + input1.word1 + ", word2: " + input1.word2);
+console.log("Expected: " + expected1);
+console.log("Result: " + result1);
+console.log("-".repeat(50));
+
+let input2 = { word1: "intention", word2: "execution" };
+let expected2 = 5;
+let result2 = minDistance(input2.word1, input2.word2);
+console.log("Input: word1: " + input2.word1 + ", word2: " + input2.word2);
+console.log("Expected: " + expected2);
+console.log("Result: " + result2);
+console.log("-".repeat(50));

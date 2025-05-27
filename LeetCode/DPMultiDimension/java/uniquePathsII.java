@@ -3,7 +3,7 @@ package LeetCode.DPMultiDimension.java;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-record InputRecord(int[][] grid) {
+record uniquePathsIIDTO(int[][] grid) {
 
     @Override
     public String toString() {
@@ -53,7 +53,7 @@ public class uniquePathsII {
     public static void main(String[] args) {
         uniquePathsII soln = new uniquePathsII();
 
-        InputRecord input1 = new InputRecord(new int[][] { { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 0 } });
+        uniquePathsIIDTO input1 = new uniquePathsIIDTO(new int[][] { { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 0 } });
         int result1 = soln.uniquePathsWithObstacles(input1.grid());
         int expected1 = 2;
 
@@ -62,7 +62,7 @@ public class uniquePathsII {
         System.out.println("Expected: " + expected1);
         System.out.println("-".repeat(50));
 
-        InputRecord input2 = new InputRecord(new int[][] { { 0, 1 }, { 0, 0 } });
+        uniquePathsIIDTO input2 = new uniquePathsIIDTO(new int[][] { { 0, 1 }, { 0, 0 } });
         int result2 = soln.uniquePathsWithObstacles(input2.grid());
         int expected2 = 1;
 

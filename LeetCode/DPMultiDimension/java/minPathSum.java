@@ -2,7 +2,7 @@ package LeetCode.DPMultiDimension.java;
 
 import java.util.Arrays;
 
-record InputRecord(int[][] grid) {
+record minPathSumDTO(int[][] grid) {
 
     @Override
     public String toString() {
@@ -60,7 +60,7 @@ public class minPathSum {
     public static void main(String[] args) {
         minPathSum soln = new minPathSum();
 
-        InputRecord input1 = new InputRecord(new int[][] { { 1, 3, 1 }, { 1, 5, 1 }, { 4, 2, 1 } });
+        minPathSumDTO input1 = new minPathSumDTO(new int[][] { { 1, 3, 1 }, { 1, 5, 1 }, { 4, 2, 1 } });
         int result1 = soln.computeMinPathSum(input1.grid());
         int expected1 = 7;
 
@@ -69,7 +69,7 @@ public class minPathSum {
         System.out.println("Expected: " + expected1);
         System.out.println("-".repeat(50));
 
-        InputRecord input2 = new InputRecord(new int[][] { { 1, 2, 3 }, { 4, 5, 6 } });
+        minPathSumDTO input2 = new minPathSumDTO(new int[][] { { 1, 2, 3 }, { 4, 5, 6 } });
         int result2 = soln.computeMinPathSum(input2.grid());
         int expected2 = 12;
 

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-record InputRecord(List<List<Integer>> triangle) {
+record triangleMinTotalDTO(List<List<Integer>> triangle) {
 
     @Override
     public String toString() {
@@ -39,7 +39,7 @@ public class triangleMinTotal {
     public static void main(String[] args) {
         triangleMinTotal soln = new triangleMinTotal();
 
-        InputRecord input1 = new InputRecord(List.of(List.of(2), List.of(3, 4), List.of(6, 5, 7), List.of(4, 1, 8, 3)));
+        triangleMinTotalDTO input1 = new triangleMinTotalDTO(List.of(List.of(2), List.of(3, 4), List.of(6, 5, 7), List.of(4, 1, 8, 3)));
         int expected1 = 11;
         int result1 = soln.minimumTotal(input1.triangle());
 
@@ -48,7 +48,7 @@ public class triangleMinTotal {
         System.out.println("Expected: " + expected1);
         System.out.println("-".repeat(50));
 
-        InputRecord input2 = new InputRecord(List.of(List.of(-10)));
+        triangleMinTotalDTO input2 = new triangleMinTotalDTO(List.of(List.of(-10)));
         int expected2 = -10;
         int result2 = soln.minimumTotal(input2.triangle());
 
@@ -57,7 +57,7 @@ public class triangleMinTotal {
         System.out.println("Expected: " + expected2);
         System.out.println("-".repeat(50));
 
-        InputRecord input3 = new InputRecord(List.of(List.of(-1), List.of(2, 3), List.of(1, -1, -1)));
+        triangleMinTotalDTO input3 = new triangleMinTotalDTO(List.of(List.of(-1), List.of(2, 3), List.of(1, -1, -1)));
         int expected3 = 0;
         int result3 = soln.minimumTotal(input3.triangle());
 

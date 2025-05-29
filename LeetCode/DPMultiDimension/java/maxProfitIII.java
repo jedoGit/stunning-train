@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class maxProfittIII {
+class maxProfitIII {
     private List<List<List<Integer>>> mem;
 
     private int recursion(int[] prices, int pos, int t, int bought) {
@@ -49,7 +49,7 @@ class maxProfittIII {
     }
 
     public static void main(String[] args) {
-        maxProfittIII soln = new maxProfittIII();
+        maxProfitIII soln = new maxProfitIII();
 
         int[] input1 = new int[] { 3, 3, 5, 0, 0, 3, 1, 4 };
         int expected1 = 6;

@@ -16,12 +16,13 @@ public class maxProfitIV {
         int[] dp = new int[N];
         Arrays.fill(dp, 0);
 
-        if (k > N) {
-            return IntStream.range(1, N)
-                    .mapToObj(i -> prices[i] - prices[i - 1]) // map i to new stream of prices[i] - prices[i-1]
-                    .filter(b -> b > 0) // filter only the positive values
-                    .reduce(0, (a, b) -> a + b); // sum all the positive values
-        }
+        // if (k > N) {
+        // return IntStream.range(1, N)
+        // .mapToObj(i -> prices[i] - prices[i - 1]) // map i to new stream of prices[i]
+        // - prices[i-1]
+        // .filter(b -> b > 0) // filter only the positive values
+        // .reduce(0, (a, b) -> a + b); // sum all the positive values
+        // }
 
         for (int t = 0; t < k; t += 1) {
             int pos = -1 * prices[0];

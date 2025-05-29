@@ -32,12 +32,12 @@ var maxProfit = function (k, prices) {
   let N = prices.length;
   let dp = Array(N).fill(0);
 
-  if (k > N) {
-    return Array.from({ length: N }, (_, i) => i + 1) // generate array of values of i starting at 1 to N-1
-      .map((i) => prices[i] - prices[i - 1]) // Map i to prices[i] - prices[i-1]
-      .filter((p) => p > 0) // filter these prices values that are positive only
-      .reduce((a, b) => a + b, 0); // sum all the prices
-  }
+  // if (k > N) {
+  //   return Array.from({ length: N }, (_, i) => i + 1) // generate array of values of i starting at 1 to N-1
+  //     .map((i) => prices[i] - prices[i - 1]) // Map i to prices[i] - prices[i-1]
+  //     .filter((p) => p > 0) // filter these prices values that are positive only
+  //     .reduce((a, b) => a + b, 0); // sum all the prices
+  // }
 
   for (let t = 0; t < k; t += 1) {
     let pos = -1 * prices[0];

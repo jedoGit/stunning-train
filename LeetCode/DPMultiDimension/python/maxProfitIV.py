@@ -8,11 +8,11 @@ class Solution:
         N = len(prices)
         dp = [0]*N
 
-        if k > N:
-            B = [prices[i] - prices[i-1] for i in range(1, N)]
-            # filter b > 0 from B and sum all of them
-            filteredB = [b for b in B if b > 0]
-            return sum(filteredB)
+        # if k > N:
+        #     B = [prices[i] - prices[i-1] for i in range(1, N)]
+        #     # filter b > 0 from B and sum all of them
+        #     filteredB = [b for b in B if b > 0]
+        #     return sum(filteredB)
         
         for t in range(k):
             pos = -prices[0]

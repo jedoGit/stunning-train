@@ -4,23 +4,23 @@ import java.util.Arrays;
 
 record minPathSumDTO(int[][] grid) {
 
-    @Override
-    public String toString() {
-        if (grid == null) {
-            return "null";
-        }
+    // @Override
+    // public String toString() {
+    // if (grid == null) {
+    // return "null";
+    // }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < grid.length; i++) {
-            sb.append(Arrays.toString(grid[i]));
-            if (i < grid.length - 1) {
-                sb.append(", ");
-            }
-        }
-        sb.append("]");
-        return sb.toString();
-    }
+    // StringBuilder sb = new StringBuilder();
+    // sb.append("[");
+    // for (int i = 0; i < grid.length; i++) {
+    // sb.append(Arrays.toString(grid[i]));
+    // if (i < grid.length - 1) {
+    // sb.append(", ");
+    // }
+    // }
+    // sb.append("]");
+    // return sb.toString();
+    // }
 }
 
 public class minPathSum {
@@ -40,6 +40,8 @@ public class minPathSum {
             Arrays.fill(res[i], Integer.MAX_VALUE);
         }
         res[ROWS][COLS - 1] = 0;
+
+        // System.out.println(Arrays.deepToString(res));
 
         // for (int i = 0; i < res.length; i += 1) {
         // for (int j = 0; j < res[0].length; j += 1) {
@@ -64,7 +66,7 @@ public class minPathSum {
         int result1 = soln.computeMinPathSum(input1.grid());
         int expected1 = 7;
 
-        System.out.println("Input: " + input1);
+        System.out.println("Input: " + Arrays.deepToString(input1.grid()));
         System.out.println("Result: " + result1);
         System.out.println("Expected: " + expected1);
         System.out.println("-".repeat(50));
@@ -73,7 +75,7 @@ public class minPathSum {
         int result2 = soln.computeMinPathSum(input2.grid());
         int expected2 = 12;
 
-        System.out.println("Input: " + input2);
+        System.out.println("Input: " + Arrays.deepToString(input2.grid()));
         System.out.println("Result: " + result2);
         System.out.println("Expected: " + expected2);
         System.out.println("-".repeat(50));

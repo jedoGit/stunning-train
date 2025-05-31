@@ -5,23 +5,23 @@ import java.util.stream.IntStream;
 
 record uniquePathsIIDTO(int[][] grid) {
 
-    @Override
-    public String toString() {
-        if (grid == null) {
-            return "null";
-        }
+    // @Override
+    // public String toString() {
+    // if (grid == null) {
+    // return "null";
+    // }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < grid.length; i++) {
-            sb.append(Arrays.toString(grid[i]));
-            if (i < grid.length - 1) {
-                sb.append(", ");
-            }
-        }
-        sb.append("]");
-        return sb.toString();
-    }
+    // StringBuilder sb = new StringBuilder();
+    // sb.append("[");
+    // for (int i = 0; i < grid.length; i++) {
+    // sb.append(Arrays.toString(grid[i]));
+    // if (i < grid.length - 1) {
+    // sb.append(", ");
+    // }
+    // }
+    // sb.append("]");
+    // return sb.toString();
+    // }
 }
 
 public class uniquePathsII {
@@ -57,7 +57,7 @@ public class uniquePathsII {
         int result1 = soln.uniquePathsWithObstacles(input1.grid());
         int expected1 = 2;
 
-        System.out.println("Input: " + input1);
+        System.out.println("Input: " + Arrays.deepToString(input1.grid()));
         System.out.println("Result: " + result1);
         System.out.println("Expected: " + expected1);
         System.out.println("-".repeat(50));
@@ -66,7 +66,7 @@ public class uniquePathsII {
         int result2 = soln.uniquePathsWithObstacles(input2.grid());
         int expected2 = 1;
 
-        System.out.println("Input: " + input2);
+        System.out.println("Input: " + Arrays.deepToString(input2.grid()));
         System.out.println("Result: " + result2);
         System.out.println("Expected: " + expected2);
         System.out.println("-".repeat(50));

@@ -2,7 +2,7 @@ package LeetCode.ArrayStrings.java;
 
 import java.util.Arrays;
 
-record removeDuplicatesRecord(int[] nums, int[] expected) {
+record removeDuplicatesIIRecord(int[] nums, int[] expected) {
 }
 
 public class removeDuplicatesII {
@@ -32,7 +32,7 @@ public class removeDuplicatesII {
 
     public static void main(String[] args) {
         removeDuplicatesII soln = new removeDuplicatesII();
-        removeDuplicatesRecord input1 = new removeDuplicatesRecord(
+        removeDuplicatesIIRecord input1 = new removeDuplicatesIIRecord(
                 new int[] { 1, 1, 1, 2, 2, 3 },
                 new int[] { 1, 1, 2, 2, 3 });
 
@@ -42,7 +42,7 @@ public class removeDuplicatesII {
         System.out.println("Result: " + Arrays.toString(Arrays.stream(input1.nums()).limit(k1).toArray()));
         System.out.println("-".repeat(50));
 
-        removeDuplicatesRecord input2 = new removeDuplicatesRecord(
+        removeDuplicatesIIRecord input2 = new removeDuplicatesIIRecord(
                 new int[] { 0, 0, 1, 1, 1, 1, 2, 3, 3 },
                 new int[] { 0, 0, 1, 1, 2, 3, 3 });
         System.out.println("Input: nums: " + Arrays.toString(input2.nums()));

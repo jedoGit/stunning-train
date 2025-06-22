@@ -2,7 +2,7 @@ package LeetCode.ArrayStrings.java;
 
 import java.util.Arrays;
 
-record maxProfitRecord(int[] prices, int expected) {
+record maxProfitIIRecord(int[] prices, int expected) {
 }
 
 public class maxProfitII {

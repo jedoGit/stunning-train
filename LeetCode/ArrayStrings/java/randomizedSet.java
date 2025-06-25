@@ -74,12 +74,8 @@ public class randomizedSet {
                     soln = new randomizedSet();
                     output[i] = "null";
                 }
-                case "insert" -> {
-                    output[i] = soln.insert(input.val()[i][0]) == true ? "true" : "false";
-                }
-                case "remove" -> {
-                    output[i] = soln.remove(input.val()[i][0]) == true ? "true" : "false";
-                }
+                case "insert" -> output[i] = Boolean.toString(soln.insert(input.val()[i][0]));
+                case "remove" -> output[i] = Boolean.toString(soln.remove(input.val()[i][0]));
                 case "getRandom" -> output[i] = Integer.toString(soln.getRandom());
             }
         }

@@ -39,7 +39,8 @@ public class randomizedSet {
 
         this.list.set(idx, this.list.get(this.list.size() - 1));
         this.map.put(this.list.get(idx), idx);
-        this.list.remove(this.list.size() - 1);
+        // this.list.remove(this.list.size() - 1);
+        this.list.removeLast();
         this.map.remove(val);
 
         return true;

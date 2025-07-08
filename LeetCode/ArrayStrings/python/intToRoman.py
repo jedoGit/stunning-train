@@ -31,7 +31,7 @@ class Solution:
     @staticmethod
     def testSolution(input) -> None:
         print("Input: num: {}".format(input["num"]))
-        print("Input: {}".format(input["expected"]))
+        print("Expected: {}".format(input["expected"]))
         print("Result: {}".format(Solution().intToRoman(input["num"])))
         print("-" * 50 )
 

@@ -64,8 +64,11 @@ public class reverseWord {
     private static void testSolution(reverseWordRecord input) {
         System.out.println("Input: s: " + input.s());
         System.out.println("Expected: " + input.expected());
-        System.out.println("Result1: " + new reverseWord().reverseWords1(input.s()));
-        System.out.println("Result2: " + new reverseWord().reverseWords2(input.s()));
+        reverseWord soln = new reverseWord();
+        String s1 = soln.reverseWords1(input.s());
+        String s2 = soln.reverseWords2(input.s());
+        System.out.println("Result1: " + s1 + "\n\t Result: " + (input.expected().equals(s1) ? "Correct" : "Wrong"));
+        System.out.println("Result2: " + s2 + "\n\t Result: " + (input.expected().equals(s2) ? "Correct" : "Wrong"));
         System.out.println("-".repeat(50));
     }
 

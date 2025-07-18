@@ -11,7 +11,7 @@ public class fullTextJustify {
     public List<String> fullJustify(String[] words, int maxWidth) {
 
         List<String> res = new ArrayList<>();
-        List<String> line = new ArrayList<>();
+        List<StringBuilder> line = new ArrayList<>();
         int length = 0;
         int i = 0;
 
@@ -23,10 +23,10 @@ public class fullTextJustify {
 
                 for (int j = 0; j < Math.max(1, line.size() - 1); j += 1) {
 
-                    line.set(j, line.get(j) + " ".repeat(spaces));
+                    line.get(j).append(" ".repeat(spaces));
 
                     if (remainder > 0) {
-                        line.set(j, line.get(j) + " ");
+                        line.get(j).append(" ");
                         remainder -= 1;
                     }
                 }
@@ -36,7 +36,7 @@ public class fullTextJustify {
                 length = 0;
             }
 
-            line.add(words[i]);
+            line.add(new StringBuilder().append(words[i]));
 
             length += words[i].length();
             i += 1;
@@ -78,10 +78,10 @@ public class fullTextJustify {
     private static void testSolution(fullTextJustifyRecord input) {
         System.out.println("Input: words: " + Arrays.toString(input.words()));
         System.out.println("Input: maxWidth: " + input.maxWidth());
-        System.out.println("Expected: " + input.expected().toString());
+        System.out.println("Expected: \t" + input.expected().toString());
         List<String> val = new fullTextJustify().fullJustify(input.words(), input.maxWidth());
-        System.out.println("Result: " + val +
-                ", " + (val.equals(input.expected()) ? "Correct" : "Wrong"));
+        System.out.println("Result: \t" + val +
+                "\nStatus: " + (val.equals(input.expected()) ? "Correct" : "Wrong"));
         System.out.println("-".repeat(50));
     }
 }

@@ -4,7 +4,7 @@ from typing import List
 class Solution:
     def threeSum(self, nums: List[int]) -> List[List[int]]:
         res = []
-        n =len(nums)
+        n = len(nums)
         nums.sort()
 
         for i in range(0, n):

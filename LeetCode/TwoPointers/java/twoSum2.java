@@ -1,8 +1,6 @@
 package LeetCode.TwoPointers.java;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 record twoSum2Record(int[] numbers, int target, int[] expected) {
 }

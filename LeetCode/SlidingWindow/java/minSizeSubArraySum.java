@@ -7,6 +7,10 @@ record minSizeSubArraySumRecord(int target, int[] nums, int expected) {
 
 public class minSizeSubArraySum {
     public int minSubArrayLen(int target, int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+
         int l = 0;
         int total = 0;
         int res = Integer.MAX_VALUE;

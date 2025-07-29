@@ -1,11 +1,16 @@
+// 1610. Maximum Number of Visible Points
+
 package LeetCode.SlidingWindow.java;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+record maxNumberOfVisiblePointsRecord(List<List<Integer>> points, int angle, List<Integer> location, int expected) {
+}
+
 public class maxNumberOfVisiblePoints {
-    public static int visiblePoints(List<List<Integer>> points, int angle, List<Integer> location) {
+    public int visiblePoints(List<List<Integer>> points, int angle, List<Integer> location) {
         List<Double> candidateAngles = points.stream()
                 .filter(p -> !(p.get(0).equals(location.get(0)) && p.get(1).equals(location.get(1))))
                 .map(p -> {
@@ -39,38 +44,37 @@ public class maxNumberOfVisiblePoints {
     }
 
     public static void main(String[] args) {
-        List<List<Integer>> points = new LinkedList<>();
-        points.add(List.of(2, 1));
-        points.add(List.of(2, 2));
-        points.add(List.of(3, 4));
-        points.add(List.of(1, 1));
+        maxNumberOfVisiblePointsRecord input = new maxNumberOfVisiblePointsRecord(
+                List.of(List.of(2, 1), List.of(2, 2), List.of(3, 3)),
+                90,
+                List.of(1, 1),
+                3);
+        maxNumberOfVisiblePoints.testSolution(input);
 
-        int angle = 90;
+        input = new maxNumberOfVisiblePointsRecord(
+                List.of(List.of(2, 1), List.of(2, 2), List.of(3, 4), List.of(1, 1)),
+                90,
+                List.of(1, 1),
+                4);
+        maxNumberOfVisiblePoints.testSolution(input);
 
-        List<Integer> location = List.of(1, 1);
-        int expected = 4;
+        input = new maxNumberOfVisiblePointsRecord(
+                List.of(List.of(1, 0), List.of(2, 1)),
+                13,
+                List.of(1, 1),
+                1);
+        maxNumberOfVisiblePoints.testSolution(input);
 
-        int result = maxNumberOfVisiblePoints.visiblePoints(points, angle, location);
+    }
 
-        System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
-        System.out.println("Max number of visible points: " + result);
-        System.out.println("Expected: " + expected + (result == expected ? " Correct!" : " Incorrect!"));
-
-        points.clear();
-        points.add(List.of(1, 0));
-        points.add(List.of(2, 1));
-
-        angle = 13;
-
-        location = List.of(1, 1);
-
-        expected = 1;
-
-        result = maxNumberOfVisiblePoints.visiblePoints(points, angle, location);
-
-        System.out.println("Points: " + points + " Angle: " + angle + " Location: " + location);
-        System.out.println("Max number of visible points: " + result);
-        System.out.println("Expected: " + expected + (result == expected ? " Correct!" : " Incorrect!"));
-
+    private static void testSolution(maxNumberOfVisiblePointsRecord input) {
+        System.out.println("Input: points: " + input.points());
+        System.out.println("Input: angle: " + input.angle());
+        System.out.println("Input location: " + input.location());
+        System.out.println("Expected: " + input.expected());
+        int val = new maxNumberOfVisiblePoints().visiblePoints(input.points(), input.angle(), input.location());
+        System.out.println("Result: " + val);
+        System.out.println((val == input.expected() ? "PASS" : "FAIL"));
+        System.out.println("-".repeat(50));
     }
 }

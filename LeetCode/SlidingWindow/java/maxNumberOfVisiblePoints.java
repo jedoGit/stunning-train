@@ -25,7 +25,8 @@ public class maxNumberOfVisiblePoints {
         List<Double> transformedAngles = candidateAngles.stream()
                 .filter(a -> a < 0.0)
                 .map(a -> a + 360.0)
-                .collect(Collectors.toCollection(LinkedList::new));
+                .collect(Collectors.toCollection(() -> new LinkedList<>()));
+        // .collect(Collectors.toCollection(LinkedList::new));
 
         candidateAngles.addAll(transformedAngles);
 

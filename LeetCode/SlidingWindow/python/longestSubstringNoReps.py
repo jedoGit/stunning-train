@@ -27,7 +27,7 @@ class Solution:
     @staticmethod
     def testSolution(input) -> None:
         print("Input: s: {}".format(input["s"]))
-        print("Input: expected: {}".format(input["expected"]))
+        print("Expected: {}".format(input["expected"]))
         val = Solution().lengthOfLongestSubstring(input["s"])
         print("Result: {}".format(val))
         print(("PASS" if val == input["expected"] else "FAIL"))

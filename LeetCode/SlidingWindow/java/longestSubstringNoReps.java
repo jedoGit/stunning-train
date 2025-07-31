@@ -28,7 +28,6 @@ public class longestSubstringNoReps {
 
             // at every iteration, update our max length
             maxLen = Math.max(maxLen, r - l + 1);
-
         }
 
         return maxLen;

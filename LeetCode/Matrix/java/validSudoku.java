@@ -57,17 +57,20 @@ public class validSudoku {
                 }
 
                 // Here we create the key and value is initialized as an empty set.
-                if (!cols.containsKey(c)) {
-                    cols.put(c, new HashSet<>());
-                }
+                // if (!cols.containsKey(c)) {
+                // cols.put(c, new HashSet<>());
+                // }
+                cols.put(c, cols.getOrDefault(c, new HashSet<>()));
 
-                if (!rows.containsKey(r)) {
-                    rows.put(r, new HashSet<>());
-                }
+                // if (!rows.containsKey(r)) {
+                // rows.put(r, new HashSet<>());
+                // }
+                rows.put(r, rows.getOrDefault(r, new HashSet<>()));
 
-                if (!squares.containsKey(rcPair)) {
-                    squares.put(rcPair, new HashSet<>());
-                }
+                // if (!squares.containsKey(rcPair)) {
+                // squares.put(rcPair, new HashSet<>());
+                // }
+                squares.put(rcPair, squares.getOrDefault(rcPair, new HashSet<>()));
 
                 // We get the value for each keys and check if the current r,c pair has
                 // duplicates

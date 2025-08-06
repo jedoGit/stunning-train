@@ -49,7 +49,7 @@ public class validSudoku {
                 // r = 7, c = 3 is cell (2, 1)
                 int r_ = r / 3;
                 int c_ = c / 3;
-                String rcPair = r_ + "," + c_;
+                String rcPair = r_ + "" + c_;
 
                 // If board[r][c] is a dot, it means it's empty, so we continue
                 if (board[r][c] == '.') {

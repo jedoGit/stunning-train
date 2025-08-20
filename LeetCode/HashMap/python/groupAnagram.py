@@ -6,15 +6,12 @@ class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
         res = defaultdict()
 
-        s = ""
-        c = ""
-
         for s in strs:
             count = [0] * 26 # we need an array of size 26 to store the counts for each chars
             # print(count)
             for c in s:
                 # Let's count the chars in each strings
-                idx = ord(c[0]) - ord("a")
+                idx = ord(c) - ord("a")
                 count[idx] += 1
 
             # We need to convert count to a string so we can search our hashmap
@@ -30,7 +27,6 @@ class Solution:
 
             res[countStr].append(s)
             # print(str(res.values()))
-
 
         return list(res.values())
     

@@ -40,19 +40,18 @@
  */
 var groupAnagrams = function (strs) {
   let res = {};
-  let s = "";
-  let c = "";
+  // const charA = "a"
+  // let s = ""
+  // let c = ""
 
   for (let s of strs) {
-    // we need an array of size 26 to store the counts for each chars of s
-    let count = new Array(26).fill(0);
+    let count = new Array(26).fill(0); // we need an array of size 26 to store the counts for each chars
     // console.log(s)
     for (let c of s) {
       // Let's count the chars in each strings
       // What were doing here is to map a char to a certain value
       // for example, "d" = 100, "a" = 97 => d-a = 100 - 97 = 3 => "d"
       // here "d" is mapped to 3, and we count the occurence of d, which is mapped to index 3.
-      // count[3] += 1
       // console.log(c)
       count[c.charCodeAt(0) - "a".charCodeAt(0)] += 1;
     }

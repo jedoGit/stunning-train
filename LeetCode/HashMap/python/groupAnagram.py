@@ -4,6 +4,16 @@ from typing import Dict, List
 
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+             select = 2
+
+             if select == 1:
+                  print("Using groupAnagrams1()")
+                  return self.groupAnagrams1(strs)
+             else:
+                  print("Using groupAnagrams2()")
+                  return self.groupAnagrams2(strs)
+    
+    def groupAnagrams1(self, strs: List[str]) -> List[List[str]]:
         res = defaultdict()
 
         for s in strs:
@@ -27,6 +37,32 @@ class Solution:
 
             res[countStr].append(s)
             # print(str(res.values()))
+
+        return list(res.values())
+    
+    def groupAnagrams2(self, strs: List[str]) -> List[List[str]]:
+        res = defaultdict()
+
+        for s in strs:
+            # Convert the string to a char array and sort them.
+            charsArr = list(s)
+            charsArr.sort()
+            # print(charsArr)
+
+            # We want to use this sorted char array as key to our res map.
+            # We need to convet it to string.
+            countStr = str("".join(charsArr))
+            # print(countStr)
+
+            # Check if our sorted chars string key exists in our res map.
+            # If not, initialize it with an empty arraylist
+            # If so, get the existing arraylist and append the string s.
+            tmp =  res.get(countStr, [])
+            # # print(res)
+            tmp.append(s)
+
+            res[countStr] = tmp
+            # # print(str(res.values()))
 
         return list(res.values())
     

@@ -39,10 +39,19 @@
  * @return {string[][]}
  */
 var groupAnagrams = function (strs) {
+  let select = 2;
+
+  if (select === 1) {
+    console.log("Using groupAnagrams1()");
+    return groupAnagrams1(strs);
+  } else {
+    console.log("Using groupAnagrams2()");
+    return groupAnagrams2(strs);
+  }
+};
+
+var groupAnagrams1 = function (strs) {
   let res = {};
-  // const charA = "a"
-  // let s = ""
-  // let c = ""
 
   for (let s of strs) {
     let count = new Array(26).fill(0); // we need an array of size 26 to store the counts for each chars
@@ -73,3 +82,90 @@ var groupAnagrams = function (strs) {
   // console.log(Object.values(res))
   return Object.values(res);
 };
+
+var groupAnagrams2 = function (strs) {
+  let res = {};
+
+  for (let s of strs) {
+    //  Convert the string to a char array and sort them.
+    let charsArr = s.split("");
+    charsArr.sort();
+
+    // We need to convert count to a string so we can search our hashmap
+    // The whole count array will become our key in the hashmap.
+    const countStr = charsArr.join("");
+
+    // Check first if we have the count string in our hashm
+    // if not, create it and for the value, create an array and push the string s
+    // If so, get the k/v pair and push s to the values array
+    if (!(countStr in res)) {
+      res[countStr] = [];
+    }
+
+    res[countStr].push(s);
+  }
+  // console.log(Object.values(res))
+  return Object.values(res);
+};
+
+var testSolution = (input) => {
+  console.log("Input: strs: " + JSON.stringify(input["strs"]));
+  console.log("Expected: " + JSON.stringify(input["expected"]));
+  let res = groupAnagrams(input["strs"]);
+  console.log("Result: " + JSON.stringify(res));
+  console.log(isEqual(res, input["expected"]) ? "PASS" : "FAIL");
+  console.log("-".repeat(50));
+};
+
+var isEqual = (arr1, arr2) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  // Sort inner arrays
+  const sortedArr1 = arr1.map((innerArr) => [...innerArr].sort());
+  const sortedArr2 = arr2.map((innerArr) => [...innerArr].sort());
+
+  // Sort outer arrays based on stringified inner arrays for consistent comparison
+  sortedArr1.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+  sortedArr2.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
+
+  // Deep compare the sorted matrices
+  for (let i = 0; i < sortedArr1.length; i++) {
+    if (sortedArr1[i].length !== sortedArr2[i].length) {
+      return false;
+    }
+    for (let j = 0; j < sortedArr1[i].length; j++) {
+      if (sortedArr1[i][j] !== sortedArr2[i][j]) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
+// =======================================
+// Test Vectors
+// =======================================
+
+let input = {
+  strs: ["eat", "tea", "tan", "ate", "nat", "bat"],
+  expected: [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]],
+};
+
+testSolution(input);
+
+input = {
+  strs: [""],
+  expected: [[""]],
+};
+
+testSolution(input);
+
+input = {
+  strs: ["a"],
+  expected: [["a"]],
+};
+
+testSolution(input);

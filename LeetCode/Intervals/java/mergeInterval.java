@@ -2,7 +2,6 @@ package LeetCode.Intervals.java;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 record mergeIntervalRecord(int[][] intervals, int[][] expected) {
@@ -11,7 +10,7 @@ record mergeIntervalRecord(int[][] intervals, int[][] expected) {
 public class mergeInterval {
 
     public int[][] merge(int[][] intervals) {
-        int select = 2;
+        int select = 1;
 
         if (select == 1) {
             System.out.println("merge1()");
@@ -26,16 +25,18 @@ public class mergeInterval {
 
         // System.out.println(Arrays.deepToString(intervals));
 
-        Arrays.sort(intervals, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] arr1, int[] arr2) {
-                return Integer.compare(arr1[0], arr2[0]);
-            }
-        });
+        // Arrays.sort(intervals, new Comparator<int[]>() {
+        // @Override
+        // public int compare(int[] arr1, int[] arr2) {
+        // return Integer.compare(arr1[0], arr2[0]);
+        // }
+        // });
+
+        Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
 
         // System.out.println(Arrays.deepToString(intervals));
 
-        List<List<Integer>> merged = new ArrayList<>();
+        List<int[]> merged = new ArrayList<>();
 
         int[] prev = intervals[0];
 
@@ -45,20 +46,16 @@ public class mergeInterval {
             if (interval[0] <= prev[1]) {
                 prev[1] = Math.max(prev[1], interval[1]);
             } else {
-                merged.add(List.of(prev[0], prev[1]));
+                merged.add(prev);
                 prev = interval;
 
             }
         }
 
-        merged.add(List.of(prev[0], prev[1]));
+        merged.add(prev);
 
         return merged.stream()
-                .map(innerList -> innerList.stream()
-                        .mapToInt(i -> i.intValue())
-                        .toArray())
                 .toArray(int[][]::new);
-
     }
 
     public int[][] merge2(int[][] intervals) {

@@ -33,7 +33,7 @@ public class validParentheses {
             }
         }
 
-        return stack.isEmpty() ? true : false;
+        return stack.isEmpty();
     }
 
     public static void main(String[] args) {

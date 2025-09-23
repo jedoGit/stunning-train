@@ -92,8 +92,8 @@ class Solution:
         l1 = Solution.createLinkedList(input["llVals"])
         expected = Solution.createLinkedList(input["expected"])
 
-        print("Input: LL Vals: " + Solution.linkedListValueToString(l1))
-        print("Expected LL Vals: " + Solution.linkedListValueToString(expected))
+        print("Input: head vals: " + Solution.linkedListValueToString(l1))
+        print("Expected: " + Solution.linkedListValueToString(expected))
         
         res = Solution().reverseBetween(l1, input["left"], input["right"])
 

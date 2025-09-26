@@ -23,7 +23,7 @@ class ListNode {
 record removeNNodeFromEndRecord(int[] headVals, int n, int[] expectedVals) {
 }
 
-public class removeNNodeFromEnd {
+class removeNNodeFromEnd {
     public ListNode removeNthFromEnd(ListNode head, int n) {
         ListNode dummy = new ListNode(0, head);
         ListNode left = dummy;

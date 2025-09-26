@@ -23,7 +23,7 @@ class ListNode {
 record removeDuplicatesFromSortedListIIRecord(int[] headVals, int[] expectedVals) {
 }
 
-public class removeDuplicatesFromSortedListII {
+class removeDuplicatesFromSortedListII {
     public ListNode deleteDuplicates(ListNode head) {
         ListNode dummy = new ListNode(0, head);
         ListNode cur = dummy;

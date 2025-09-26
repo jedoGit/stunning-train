@@ -23,7 +23,7 @@ class ListNode {
 record addNumbersRecord(int[] headVals1, int[] headVals2, int[] headValsExpected) {
 }
 
-public class addNumbers {
+class addNumbers {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);
         ListNode cur = dummy;

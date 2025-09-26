@@ -22,7 +22,7 @@ record copyListRandomPointerRecord(List<intStrPairRecord> headVals, List<intStrP
 record intStrPairRecord(int val, String randomStr) {
 }
 
-public class copyListRandomPointer {
+class copyListRandomPointer {
     public Node copyRandomList(Node head) {
         Map<Node, Node> oldToCopy = new HashMap<>();
 

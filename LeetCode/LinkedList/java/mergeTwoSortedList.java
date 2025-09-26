@@ -23,7 +23,7 @@ class ListNode {
 record mergeTwoSortedListRecord(int[] headVals1, int[] headVals2, int[] headValsExpected) {
 }
 
-public class mergeTwoSortedList {
+class mergeTwoSortedList {
     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
         ListNode dummy = new ListNode(0);
         ListNode tail = dummy;

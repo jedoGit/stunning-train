@@ -23,7 +23,7 @@ class ListNode {
 record rotateListRecord(int[] headVals, int k, int[] expectedVals) {
 }
 
-public class rotateList {
+class rotateList {
     public ListNode rotateRight(ListNode head, int k) {
         if (head == null) {
             return head;

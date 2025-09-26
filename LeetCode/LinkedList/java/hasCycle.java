@@ -15,7 +15,7 @@ class ListNode {
 record hasCycleRecord(int[] headVals, int pos, boolean expected) {
 }
 
-public class hasCycle {
+class hasCycle {
     public boolean hasCycleSolution(ListNode head) {
         ListNode slow = head;
         ListNode fast = head;

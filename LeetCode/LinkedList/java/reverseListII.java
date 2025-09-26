@@ -27,7 +27,7 @@ class ListNode {
 record reverseListIIRecord(int[] headVals, int left, int right, int[] expectedVals) {
 }
 
-public class reverseListII {
+class reverseListII {
     public ListNode reverseBetween(ListNode head, int left, int right) {
         ListNode dummy = new ListNode(0, head);
         ListNode leftPrev = dummy;

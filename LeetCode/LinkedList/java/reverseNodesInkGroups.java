@@ -24,7 +24,7 @@ class ListNode {
 record reverseNodesInkGroupsRecord(int[] headVals, int k, int[] expectedVals) {
 }
 
-public class reverseNodesInkGroups {
+class reverseNodesInkGroups {
     public ListNode reverseKGroup(ListNode head, int k) {
 
         ListNode dummy = new ListNode(0, head);

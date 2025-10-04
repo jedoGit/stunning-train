@@ -1,4 +1,4 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.copyListRandomPointer;
 
 import java.util.HashMap;
 import java.util.List;

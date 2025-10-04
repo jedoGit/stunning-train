@@ -1,11 +1,7 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.rotateList;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Definition for singly-linked list.
- **/
 
 class ListNode {
     int val;
@@ -24,53 +20,64 @@ class ListNode {
     }
 }
 
-record reverseListIIRecord(int[] headVals, int left, int right, int[] expectedVals) {
+record rotateListRecord(int[] headVals, int k, int[] expectedVals) {
 }
 
-class reverseListII {
-    public ListNode reverseBetween(ListNode head, int left, int right) {
-        ListNode dummy = new ListNode(0, head);
-        ListNode leftPrev = dummy;
-        ListNode cur = head;
+class rotateList {
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null) {
+            return head;
+        }
 
-        for (int i = 0; i < left - 1; i++) {
-            leftPrev = cur;
+        int len = 1;
+        ListNode tail = head;
+
+        while (tail.next != null) {
+            tail = tail.next;
+            len += 1;
+        }
+
+        int k_ = k % len;
+        if (k_ == 0) {
+            return head;
+        }
+
+        ListNode cur = head;
+        for (var i = 0; i < len - k_ - 1; i++) {
             cur = cur.next;
         }
 
-        ListNode prev = null;
+        ListNode newHead = cur.next;
+        cur.next = null;
+        tail.next = head;
 
-        for (int i = 0; i < right - left + 1; i++) {
-            ListNode tmpNext = cur.next;
-            cur.next = prev;
-            prev = cur;
-            cur = tmpNext;
-        }
-
-        leftPrev.next.next = cur;
-        leftPrev.next = prev;
-
-        return dummy.next;
+        return newHead;
     }
 
     public static void main(String[] args) {
-        reverseListIIRecord input = new reverseListIIRecord(
-                new int[] { 1, 2, 3, 4, 5 }, 2, 4, new int[] { 1, 4, 3, 2, 5 });
-        reverseListII.testSolution(input);
+        rotateListRecord input = new rotateListRecord(
+                new int[] { 1, 2, 3, 4, 5 },
+                2,
+                new int[] { 4, 5, 1, 2, 3 });
+        rotateList.testSolution(input);
 
-        input = new reverseListIIRecord(
-                new int[] { 5 }, 1, 1, new int[] { 5 });
-        reverseListII.testSolution(input);
+        input = new rotateListRecord(
+                new int[] { 0, 1, 2 },
+                4,
+                new int[] { 2, 0, 1 });
+        rotateList.testSolution(input);
     }
 
-    private static void testSolution(reverseListIIRecord input) {
+    private static void testSolution(rotateListRecord input) {
         ListNode l1 = createLinkedList(input.headVals());
         ListNode expected = createLinkedList(input.expectedVals());
 
         System.out.println("Input: head vals: " + linkedListValueToString(l1));
+        System.out.println("\tn: " + input.k());
         System.out.println("Expected vals: " + linkedListValueToString(expected));
 
-        ListNode res = new reverseListII().reverseBetween(l1, input.left(), input.right());
+        ListNode res = new rotateList().rotateRight(l1, input.k());
+
         System.out.println("Result: " + linkedListValueToString(res));
         System.out.println(validateResults(res, expected) ? "PASS" : "FAIL");
         System.out.println("-".repeat(50));
@@ -98,6 +105,10 @@ class reverseListII {
     }
 
     private static String linkedListValueToString(ListNode ll) {
+        if (ll == null) {
+            return "[ ]";
+        }
+
         StringBuilder sb = new StringBuilder();
 
         sb.append("[ ");
@@ -108,6 +119,7 @@ class reverseListII {
 
             ll = ll.next;
         }
+
         // Let's remove the last comma added
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 2);
@@ -119,6 +131,10 @@ class reverseListII {
     }
 
     private static ListNode createLinkedList(int[] headVals) {
+        if (headVals.length < 1) {
+            return null;
+        }
+
         int arLen = headVals.length;
 
         ListNode[] lNodes1 = new ListNode[arLen];

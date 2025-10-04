@@ -1,4 +1,4 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.removeNNodeFromEnd;
 
 import java.util.ArrayList;
 import java.util.List;

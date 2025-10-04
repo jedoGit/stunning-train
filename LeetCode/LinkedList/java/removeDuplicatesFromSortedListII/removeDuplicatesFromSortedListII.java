@@ -1,9 +1,8 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.removeDuplicatesFromSortedListII;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// Definition for singly-linked list.
 class ListNode {
     int val;
     ListNode next;
@@ -21,75 +20,54 @@ class ListNode {
     }
 }
 
-record reverseNodesInkGroupsRecord(int[] headVals, int k, int[] expectedVals) {
+record removeDuplicatesFromSortedListIIRecord(int[] headVals, int[] expectedVals) {
 }
 
-class reverseNodesInkGroups {
-    public ListNode reverseKGroup(ListNode head, int k) {
-
+class removeDuplicatesFromSortedListII {
+    public ListNode deleteDuplicates(ListNode head) {
         ListNode dummy = new ListNode(0, head);
-        ListNode groupPrev = dummy;
+        ListNode cur = dummy;
 
-        while (true) {
-            ListNode kth = this.getKth(groupPrev, k);
+        while (cur != null) {
+            if (cur.next != null && cur.next.next != null && cur.next.val == cur.next.next.val) {
+                // We found some duplicates, now we remove all the duplicates
+                ListNode temp = cur.next.next;
 
-            if (kth == null) {
-                break;
+                while (temp != null && temp.next != null && temp.val == temp.next.val) {
+                    temp = temp.next;
+                }
+
+                cur.next = temp.next;
+            } else {
+                // If there's no duplicates, move cur pointer to next node
+                cur = cur.next;
             }
-
-            ListNode groupNext = kth.next;
-
-            ListNode prev = kth.next;
-            ListNode cur = groupPrev.next;
-            ListNode tmp = null;
-
-            while (cur != groupNext) {
-                tmp = cur.next;
-                cur.next = prev;
-                prev = cur;
-                cur = tmp;
-            }
-
-            tmp = groupPrev.next;
-            groupPrev.next = kth;
-            groupPrev = tmp;
         }
 
         return dummy.next;
-
-    }
-
-    private ListNode getKth(ListNode cur, int k) {
-        while (cur != null && k > 0) {
-            cur = cur.next;
-            k -= 1;
-        }
-        return cur;
     }
 
     public static void main(String[] args) {
-        reverseNodesInkGroupsRecord input = new reverseNodesInkGroupsRecord(
-                new int[] { 1, 2, 3, 4, 5 },
-                2,
-                new int[] { 2, 1, 4, 3, 5 });
-        reverseNodesInkGroups.testSolution(input);
+        removeDuplicatesFromSortedListIIRecord input = new removeDuplicatesFromSortedListIIRecord(
+                new int[] { 1, 2, 3, 3, 4, 4, 5 },
+                new int[] { 1, 2, 5 });
+        removeDuplicatesFromSortedListII.testSolution(input);
 
-        input = new reverseNodesInkGroupsRecord(
-                new int[] { 1, 2, 3, 4, 5 },
-                3,
-                new int[] { 3, 2, 1, 4, 5 });
-        reverseNodesInkGroups.testSolution(input);
+        input = new removeDuplicatesFromSortedListIIRecord(
+                new int[] { 1, 1, 1, 2, 3 },
+                new int[] { 2, 3 });
+        removeDuplicatesFromSortedListII.testSolution(input);
+
     }
 
-    private static void testSolution(reverseNodesInkGroupsRecord input) {
+    private static void testSolution(removeDuplicatesFromSortedListIIRecord input) {
         ListNode l1 = createLinkedList(input.headVals());
         ListNode expected = createLinkedList(input.expectedVals());
 
         System.out.println("Input: head vals: " + linkedListValueToString(l1));
-        System.out.println("\tk: " + input.k());
         System.out.println("Expected vals: " + linkedListValueToString(expected));
 
-        ListNode res = new reverseNodesInkGroups().reverseKGroup(l1, input.k());
+        ListNode res = new removeDuplicatesFromSortedListII().deleteDuplicates(l1);
         System.out.println("Result: " + linkedListValueToString(res));
         System.out.println(validateResults(res, expected) ? "PASS" : "FAIL");
         System.out.println("-".repeat(50));
@@ -117,6 +95,10 @@ class reverseNodesInkGroups {
     }
 
     private static String linkedListValueToString(ListNode ll) {
+        if (ll == null) {
+            return "[ ]";
+        }
+
         StringBuilder sb = new StringBuilder();
 
         sb.append("[ ");
@@ -139,6 +121,10 @@ class reverseNodesInkGroups {
     }
 
     private static ListNode createLinkedList(int[] headVals) {
+        if (headVals.length < 1) {
+            return null;
+        }
+
         int arLen = headVals.length;
 
         ListNode[] lNodes1 = new ListNode[arLen];
@@ -161,5 +147,4 @@ class reverseNodesInkGroups {
         // Return the head of the LL
         return lNodes1[0];
     }
-
 }

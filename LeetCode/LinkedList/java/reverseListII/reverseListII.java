@@ -1,7 +1,11 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.reverseListII;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Definition for singly-linked list.
+ **/
 
 class ListNode {
     int val;
@@ -20,61 +24,53 @@ class ListNode {
     }
 }
 
-record partitionListRecord(int[] headVals, int x, int[] expectedVals) {
+record reverseListIIRecord(int[] headVals, int left, int right, int[] expectedVals) {
 }
 
-class partitionList {
-    public ListNode partition(ListNode head, int x) {
-        ListNode left = new ListNode();
-        ListNode right = new ListNode();
-
+class reverseListII {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode dummy = new ListNode(0, head);
+        ListNode leftPrev = dummy;
         ListNode cur = head;
-        ListNode curLeft = left;
-        ListNode curRight = right;
 
-        while (cur != null) {
-            if (cur.val < x) {
-                curLeft.next = cur;
-                curLeft = curLeft.next;
-            } else {
-                curRight.next = cur;
-                curRight = curRight.next;
-            }
-
+        for (int i = 0; i < left - 1; i++) {
+            leftPrev = cur;
             cur = cur.next;
         }
 
-        curLeft.next = right.next;
+        ListNode prev = null;
 
-        curRight.next = null;
+        for (int i = 0; i < right - left + 1; i++) {
+            ListNode tmpNext = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = tmpNext;
+        }
 
-        return left.next;
+        leftPrev.next.next = cur;
+        leftPrev.next = prev;
+
+        return dummy.next;
     }
 
     public static void main(String[] args) {
-        partitionListRecord input = new partitionListRecord(
-                new int[] { 1, 4, 3, 2, 5, 2 },
-                3,
-                new int[] { 1, 2, 2, 4, 3, 5 });
-        partitionList.testSolution(input);
+        reverseListIIRecord input = new reverseListIIRecord(
+                new int[] { 1, 2, 3, 4, 5 }, 2, 4, new int[] { 1, 4, 3, 2, 5 });
+        reverseListII.testSolution(input);
 
-        input = new partitionListRecord(
-                new int[] { 2, 1 },
-                2,
-                new int[] { 1, 2 });
-        partitionList.testSolution(input);
+        input = new reverseListIIRecord(
+                new int[] { 5 }, 1, 1, new int[] { 5 });
+        reverseListII.testSolution(input);
     }
 
-    private static void testSolution(partitionListRecord input) {
+    private static void testSolution(reverseListIIRecord input) {
         ListNode l1 = createLinkedList(input.headVals());
         ListNode expected = createLinkedList(input.expectedVals());
 
         System.out.println("Input: head vals: " + linkedListValueToString(l1));
-        System.out.println("\tx: " + input.x());
         System.out.println("Expected vals: " + linkedListValueToString(expected));
 
-        ListNode res = new partitionList().partition(l1, input.x());
-
+        ListNode res = new reverseListII().reverseBetween(l1, input.left(), input.right());
         System.out.println("Result: " + linkedListValueToString(res));
         System.out.println(validateResults(res, expected) ? "PASS" : "FAIL");
         System.out.println("-".repeat(50));
@@ -102,10 +98,6 @@ class partitionList {
     }
 
     private static String linkedListValueToString(ListNode ll) {
-        if (ll == null) {
-            return "[ ]";
-        }
-
         StringBuilder sb = new StringBuilder();
 
         sb.append("[ ");
@@ -116,7 +108,6 @@ class partitionList {
 
             ll = ll.next;
         }
-
         // Let's remove the last comma added
         if (sb.length() > 0) {
             sb.setLength(sb.length() - 2);
@@ -128,10 +119,6 @@ class partitionList {
     }
 
     private static ListNode createLinkedList(int[] headVals) {
-        if (headVals.length < 1) {
-            return null;
-        }
-
         int arLen = headVals.length;
 
         ListNode[] lNodes1 = new ListNode[arLen];

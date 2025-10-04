@@ -1,8 +1,9 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.reverseNodesInkGroups;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// Definition for singly-linked list.
 class ListNode {
     int val;
     ListNode next;
@@ -20,64 +21,75 @@ class ListNode {
     }
 }
 
-record rotateListRecord(int[] headVals, int k, int[] expectedVals) {
+record reverseNodesInkGroupsRecord(int[] headVals, int k, int[] expectedVals) {
 }
 
-class rotateList {
-    public ListNode rotateRight(ListNode head, int k) {
-        if (head == null) {
-            return head;
+class reverseNodesInkGroups {
+    public ListNode reverseKGroup(ListNode head, int k) {
+
+        ListNode dummy = new ListNode(0, head);
+        ListNode groupPrev = dummy;
+
+        while (true) {
+            ListNode kth = this.getKth(groupPrev, k);
+
+            if (kth == null) {
+                break;
+            }
+
+            ListNode groupNext = kth.next;
+
+            ListNode prev = kth.next;
+            ListNode cur = groupPrev.next;
+            ListNode tmp = null;
+
+            while (cur != groupNext) {
+                tmp = cur.next;
+                cur.next = prev;
+                prev = cur;
+                cur = tmp;
+            }
+
+            tmp = groupPrev.next;
+            groupPrev.next = kth;
+            groupPrev = tmp;
         }
 
-        int len = 1;
-        ListNode tail = head;
+        return dummy.next;
 
-        while (tail.next != null) {
-            tail = tail.next;
-            len += 1;
-        }
+    }
 
-        int k_ = k % len;
-        if (k_ == 0) {
-            return head;
-        }
-
-        ListNode cur = head;
-        for (var i = 0; i < len - k_ - 1; i++) {
+    private ListNode getKth(ListNode cur, int k) {
+        while (cur != null && k > 0) {
             cur = cur.next;
+            k -= 1;
         }
-
-        ListNode newHead = cur.next;
-        cur.next = null;
-        tail.next = head;
-
-        return newHead;
+        return cur;
     }
 
     public static void main(String[] args) {
-        rotateListRecord input = new rotateListRecord(
+        reverseNodesInkGroupsRecord input = new reverseNodesInkGroupsRecord(
                 new int[] { 1, 2, 3, 4, 5 },
                 2,
-                new int[] { 4, 5, 1, 2, 3 });
-        rotateList.testSolution(input);
+                new int[] { 2, 1, 4, 3, 5 });
+        reverseNodesInkGroups.testSolution(input);
 
-        input = new rotateListRecord(
-                new int[] { 0, 1, 2 },
-                4,
-                new int[] { 2, 0, 1 });
-        rotateList.testSolution(input);
+        input = new reverseNodesInkGroupsRecord(
+                new int[] { 1, 2, 3, 4, 5 },
+                3,
+                new int[] { 3, 2, 1, 4, 5 });
+        reverseNodesInkGroups.testSolution(input);
     }
 
-    private static void testSolution(rotateListRecord input) {
+    private static void testSolution(reverseNodesInkGroupsRecord input) {
         ListNode l1 = createLinkedList(input.headVals());
         ListNode expected = createLinkedList(input.expectedVals());
 
         System.out.println("Input: head vals: " + linkedListValueToString(l1));
-        System.out.println("\tn: " + input.k());
+        System.out.println("\tk: " + input.k());
         System.out.println("Expected vals: " + linkedListValueToString(expected));
 
-        ListNode res = new rotateList().rotateRight(l1, input.k());
-
+        ListNode res = new reverseNodesInkGroups().reverseKGroup(l1, input.k());
         System.out.println("Result: " + linkedListValueToString(res));
         System.out.println(validateResults(res, expected) ? "PASS" : "FAIL");
         System.out.println("-".repeat(50));
@@ -105,10 +117,6 @@ class rotateList {
     }
 
     private static String linkedListValueToString(ListNode ll) {
-        if (ll == null) {
-            return "[ ]";
-        }
-
         StringBuilder sb = new StringBuilder();
 
         sb.append("[ ");
@@ -131,10 +139,6 @@ class rotateList {
     }
 
     private static ListNode createLinkedList(int[] headVals) {
-        if (headVals.length < 1) {
-            return null;
-        }
-
         int arLen = headVals.length;
 
         ListNode[] lNodes1 = new ListNode[arLen];
@@ -157,4 +161,5 @@ class rotateList {
         // Return the head of the LL
         return lNodes1[0];
     }
+
 }

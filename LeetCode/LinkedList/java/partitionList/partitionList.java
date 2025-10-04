@@ -1,4 +1,4 @@
-package LeetCode.LinkedList.java;
+package LeetCode.LinkedList.java.partitionList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,54 +20,61 @@ class ListNode {
     }
 }
 
-record removeDuplicatesFromSortedListIIRecord(int[] headVals, int[] expectedVals) {
+record partitionListRecord(int[] headVals, int x, int[] expectedVals) {
 }
 
-class removeDuplicatesFromSortedListII {
-    public ListNode deleteDuplicates(ListNode head) {
-        ListNode dummy = new ListNode(0, head);
-        ListNode cur = dummy;
+class partitionList {
+    public ListNode partition(ListNode head, int x) {
+        ListNode left = new ListNode();
+        ListNode right = new ListNode();
+
+        ListNode cur = head;
+        ListNode curLeft = left;
+        ListNode curRight = right;
 
         while (cur != null) {
-            if (cur.next != null && cur.next.next != null && cur.next.val == cur.next.next.val) {
-                // We found some duplicates, now we remove all the duplicates
-                ListNode temp = cur.next.next;
-
-                while (temp != null && temp.next != null && temp.val == temp.next.val) {
-                    temp = temp.next;
-                }
-
-                cur.next = temp.next;
+            if (cur.val < x) {
+                curLeft.next = cur;
+                curLeft = curLeft.next;
             } else {
-                // If there's no duplicates, move cur pointer to next node
-                cur = cur.next;
+                curRight.next = cur;
+                curRight = curRight.next;
             }
+
+            cur = cur.next;
         }
 
-        return dummy.next;
+        curLeft.next = right.next;
+
+        curRight.next = null;
+
+        return left.next;
     }
 
     public static void main(String[] args) {
-        removeDuplicatesFromSortedListIIRecord input = new removeDuplicatesFromSortedListIIRecord(
-                new int[] { 1, 2, 3, 3, 4, 4, 5 },
-                new int[] { 1, 2, 5 });
-        removeDuplicatesFromSortedListII.testSolution(input);
+        partitionListRecord input = new partitionListRecord(
+                new int[] { 1, 4, 3, 2, 5, 2 },
+                3,
+                new int[] { 1, 2, 2, 4, 3, 5 });
+        partitionList.testSolution(input);
 
-        input = new removeDuplicatesFromSortedListIIRecord(
-                new int[] { 1, 1, 1, 2, 3 },
-                new int[] { 2, 3 });
-        removeDuplicatesFromSortedListII.testSolution(input);
-
+        input = new partitionListRecord(
+                new int[] { 2, 1 },
+                2,
+                new int[] { 1, 2 });
+        partitionList.testSolution(input);
     }
 
-    private static void testSolution(removeDuplicatesFromSortedListIIRecord input) {
+    private static void testSolution(partitionListRecord input) {
         ListNode l1 = createLinkedList(input.headVals());
         ListNode expected = createLinkedList(input.expectedVals());
 
         System.out.println("Input: head vals: " + linkedListValueToString(l1));
+        System.out.println("\tx: " + input.x());
         System.out.println("Expected vals: " + linkedListValueToString(expected));
 
-        ListNode res = new removeDuplicatesFromSortedListII().deleteDuplicates(l1);
+        ListNode res = new partitionList().partition(l1, input.x());
+
         System.out.println("Result: " + linkedListValueToString(res));
         System.out.println(validateResults(res, expected) ? "PASS" : "FAIL");
         System.out.println("-".repeat(50));

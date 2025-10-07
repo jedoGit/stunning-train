@@ -34,6 +34,7 @@ record treeNodeIntegerPair(TreeNode node, Integer val) {
 class maxDepth {
 
     public int findMaxDepth(TreeNode root) {
+        // Iterative DFS using Stack
         Stack<treeNodeIntegerPair> stack = new Stack<>();
         int level = 0;
 

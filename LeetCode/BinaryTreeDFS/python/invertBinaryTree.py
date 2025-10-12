@@ -149,8 +149,8 @@ class Solution:
                 qExpected.append(curNode.left)
                 qExpected.append(curNode.right)
 
-        print(resList)
-        print(expectedList)
+        # print(resList)
+        # print(expectedList)
 
         return resList == expectedList
 

@@ -32,7 +32,7 @@ class Solution:
         binTree = Solution.BFSCreateBinaryTree(input["root"])
 
         # Print the Binary Tree and the expected output
-        print("Input: " + Solution.BFSTraversalPrint(binTree))
+        print("Input: " + Solution.BFSBinaryTreeToStr(binTree))
         print("Expected: " + str(input["expected"]))
 
         # Call the function to be tested
@@ -83,35 +83,42 @@ class Solution:
         return root
     
     @staticmethod
-    def BFSTraversalPrint(node: Optional[TreeNode]) -> None:
-        #  Using BFS traversal to print tree value level by level
-
-        if node == None:
+    def BFSBinaryTreeToStr(root: Optional[TreeNode]) -> None:
+        if root is None:
             return "[ ]"
+        
+        sb = []
 
-        s = "[ "
+        # Using queue (BFS) to build the tree level by level
+        queue = deque([root])
 
-        queue = deque([node])
 
         while len(queue) > 0:
-            cur_node = queue.popleft()
+            curNode = queue.popleft()
 
-            val = cur_node.val if cur_node is not None else "null"
-            s += str(val)
-            s += ", "
+            tmp = str(curNode.val) if curNode is not None else "null"
 
-            if cur_node is not None:
-                queue.append(cur_node.left)
-            
-            if cur_node is not None:
-                queue.append(cur_node.right) 
+            sb.append(tmp)
+ 
+            if curNode is not None:
+                queue.append(curNode.left)
+                queue.append(curNode.right)
 
-        if len(s) > 0:
-            s = s[0 : len(s) - 2]
+        new_len = 0
 
-        s += " ]"
+        # Check starting from end of sb_array where the value is not "null"
+        for i in range(len(sb) - 1, -1, -1):
+            if sb[i] == "null":
+                continue
+            else:
+                new_len = i
+                break
 
-        return s
+        # Remove those extra "null"
+        if len(sb) > 0:
+            sb = sb[0 : new_len + 1]
+
+        return "[ " + ", ".join(sb) + " ]"
 
 if __name__ == "__main__":
     input = {"root": [3,9,20,"null","null",15,7], "expected": 3}

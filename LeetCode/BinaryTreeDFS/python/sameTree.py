@@ -31,8 +31,8 @@ class Solution:
         qBinTree = Solution.BFSCreateBinaryTree(input["q"])
 
         # Print the binary trees
-        print("Input: p: " + Solution.BFSPrintBinaryTree(pBinTree))
-        print("Input: q: " + Solution.BFSPrintBinaryTree(qBinTree))
+        print("Input: p: " + Solution.BFSBinaryTreeToStr(pBinTree))
+        print("Input: q: " + Solution.BFSBinaryTreeToStr(qBinTree))
         print("Expected: " + str(input["expected"]))
 
         # Call the function to be tested
@@ -77,34 +77,42 @@ class Solution:
         return root
     
     @staticmethod
-    def BFSPrintBinaryTree(root: Optional[TreeNode]) -> str:
-
+    def BFSBinaryTreeToStr(root: Optional[TreeNode]) -> str:
         if root is None:
             return "[ ]"
         
-        sb = "[ "
+        sb = []
 
         # Using queue (BFS) to build the tree level by level
         queue = deque([root])
+
 
         while len(queue) > 0:
             curNode = queue.popleft()
 
             tmp = str(curNode.val) if curNode is not None else "null"
 
-            sb += tmp
-            sb += ", "
-
+            sb.append(tmp)
+ 
             if curNode is not None:
                 queue.append(curNode.left)
                 queue.append(curNode.right)
 
+        new_len = 0
+
+        # Check starting from end of sb_array where the value is not "null"
+        for i in range(len(sb) - 1, -1, -1):
+            if sb[i] == "null":
+                continue
+            else:
+                new_len = i
+                break
+
+        # Remove those extra "null"
         if len(sb) > 0:
-            sb = sb[0 : len(sb) - 2]
+            sb = sb[0 : new_len + 1]
 
-        sb += " ]"
-
-        return sb
+        return "[ " + ", ".join(sb) + " ]"
 
 if __name__ == "__main__":
     input = {"p": [1,2,3], "q": [1,2,3], "expected": True}

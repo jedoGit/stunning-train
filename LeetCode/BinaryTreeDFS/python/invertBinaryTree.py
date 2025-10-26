@@ -42,14 +42,14 @@ class Solution:
         expectedTree = Solution.BFSCreateBinaryTree(input["expected"])
 
         # Print the Binary Tree and the expected output
-        print("Input: " + Solution.BFSTraversalPrint(binTree))
-        print("Expected: " + Solution.BFSTraversalPrint(expectedTree))
+        print("Input: " + Solution.BFSBinaryTreeToStr(binTree))
+        print("Expected: " + Solution.BFSBinaryTreeToStr(expectedTree))
 
         # Call the function to be tested
         res = Solution().invertTree(binTree)
    
         # Print the result
-        print("Result: " + Solution.BFSTraversalPrint(res))
+        print("Result: " + Solution.BFSBinaryTreeToStr(res))
 
         # Validate the result
         print("PASS" if Solution.validateResult(res, expectedTree) else "FAIL")
@@ -93,35 +93,43 @@ class Solution:
         return root
     
     @staticmethod
-    def BFSTraversalPrint(node: Optional[TreeNode]) -> None:
-        #  Using BFS traversal to print tree value level by level
+    def BFSBinaryTreeToStr(root: Optional[TreeNode]) -> None:
 
-        if node == None:
+        if root is None:
             return "[ ]"
+        
+        sb = []
 
-        s = "[ "
+        # Using queue (BFS) to build the tree level by level
+        queue = deque([root])
 
-        queue = deque([node])
 
         while len(queue) > 0:
-            cur_node = queue.popleft()
+            curNode = queue.popleft()
 
-            val = cur_node.val if cur_node is not None else "null"
-            s += str(val)
-            s += ", "
+            tmp = str(curNode.val) if curNode is not None else "null"
 
-            if cur_node is not None:
-                queue.append(cur_node.left)
-            
-            if cur_node is not None:
-                queue.append(cur_node.right) 
+            sb.append(tmp)
+ 
+            if curNode is not None:
+                queue.append(curNode.left)
+                queue.append(curNode.right)
 
-        if len(s) > 0:
-            s = s[0 : len(s) - 2]
+        new_len = 0
 
-        s += " ]"
+        # Check starting from end of sb_array where the value is not "null"
+        for i in range(len(sb) - 1, -1, -1):
+            if sb[i] == "null":
+                continue
+            else:
+                new_len = i
+                break
 
-        return s
+        # Remove those extra "null"
+        if len(sb) > 0:
+            sb = sb[0 : new_len + 1]
+
+        return "[ " + ", ".join(sb) + " ]"
 
     @staticmethod
     def validateResult(res: Optional[TreeNode], expected: Optional[TreeNode]) -> bool:

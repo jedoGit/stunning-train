@@ -92,7 +92,7 @@ public class binaryTreeFromInorderAndPostorder {
 
     private static void testSolution(binaryTreeFromInorderAndPostorderRecord input) {
         // Print the input and expected
-        System.out.println("Input: inorder  : " + Arrays.toString(input.inorder()));
+        System.out.println("Input: inorder: " + Arrays.toString(input.inorder()));
         System.out.println("Input: postorder: " + Arrays.toString(input.postorder()));
         System.out.println("Expected: " + input.expected().toString());
         // Call the function to be tested

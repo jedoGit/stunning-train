@@ -77,13 +77,13 @@ class Solution:
 
             if curNode is not None:
                 # left child
-                if i < arLen and listVal[i] is not "null":
+                if i < arLen and listVal[i] != "null":
                     curNode.left = Node(listVal[i], None, None)
                     queue.append(curNode.left)
                 i += 1
 
                 # right child
-                if i < arLen and listVal[i] is not "null":
+                if i < arLen and listVal[i] != "null":
                     curNode.right = Node(listVal[i], None, None)
                     queue.append(curNode.right)
                 i += 1
@@ -152,18 +152,14 @@ class Solution:
                 sb.append(tmp)
 
                 if curNodeLine.next is None:
+                    # Add "#" to signify end of each level
+                    sb.append("#")
                     break
                 else:
                     curNodeLine = curNodeLine.next
  
             if curNode is not None:
                 queue.append(curNode.left)
-            
-            sb.append("#")
-
-        # Remove those extra "#"
-        if len(sb) > 0:
-            sb = sb[0 : len(sb) - 1]
 
         return "[" + ", ".join(sb) + "]"
     

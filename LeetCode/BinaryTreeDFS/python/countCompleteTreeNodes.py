@@ -23,7 +23,8 @@ class Solution:
         self.DFS(root)
 
         return self.nodeCount
-    
+
+    # Helper function to call recursively
     def DFS(self, node: Optional[TreeNode]) -> None:
         if node is None:
             return

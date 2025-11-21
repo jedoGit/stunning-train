@@ -11,6 +11,7 @@ class TreeNode:
 
 class Solution:
     def __init__(self):
+        # Init to 0
         self.nodeCount = 0
 
     def countNodes(self, root: Optional[TreeNode]) -> int:

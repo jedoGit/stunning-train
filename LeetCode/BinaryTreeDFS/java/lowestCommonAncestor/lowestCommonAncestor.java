@@ -61,7 +61,9 @@ public class lowestCommonAncestor {
                 new lowestCommonAncestorRecord(new String[] { "1", "2" }, 1, 2, 1),
         };
 
+        int i = 1;
         for (lowestCommonAncestorRecord record : records) {
+            System.out.println("Test Case " + i++);
             lowestCommonAncestor.testSolution(record);
         }
     }
@@ -85,7 +87,7 @@ public class lowestCommonAncestor {
         System.out.println("Result: " + res.val);
 
         // Validate the result
-        System.out.println(res.val == input.expected() ? "PASS" : "FAIL");
+        System.out.println(res.val == input.expected() ? "\u001B[32mPASS\u001B[0m" : "\u001B[31mFAIL\u001B[0m");
         System.out.println("-".repeat(50));
     }
 

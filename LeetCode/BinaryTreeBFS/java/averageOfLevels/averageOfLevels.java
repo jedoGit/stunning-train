@@ -75,7 +75,7 @@ public class averageOfLevels {
 
         int j = 1;
         for (averageOfLevelsRecord i : input) {
-            System.out.println("Test Case#: " + j++);
+            System.out.println("Test Case " + j++);
             averageOfLevels.testSolution(i);
         }
     }

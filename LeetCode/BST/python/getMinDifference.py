@@ -39,8 +39,8 @@ class TreeNode:
 class Solution:
 
     def __init__(self):
-        self.min_distance = [float('inf')]
-        self.prev = [None]
+        self.min_distance = float('inf')
+        self.prev = None
 
     def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
         # Binary Search Tree
@@ -48,7 +48,7 @@ class Solution:
         # Call recursive DFS
         self.dfs(root)
 
-        return self.min_distance[0]
+        return self.min_distance
     
     def dfs(self, node: Optional[TreeNode]) -> None:
         if node is None:
@@ -56,10 +56,10 @@ class Solution:
 
         self.dfs(node.left)
 
-        if self.prev[0] is not None:
-            self.min_distance[0] = min(self.min_distance[0], node.val - self.prev[0])
+        if self.prev is not None:
+            self.min_distance = min(self.min_distance, node.val - self.prev.val)
 
-        self.prev[0] = node.val
+        self.prev = node
 
         self.dfs(node.right)
     

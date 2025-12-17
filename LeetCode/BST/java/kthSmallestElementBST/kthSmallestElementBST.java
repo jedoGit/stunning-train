@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Definition for a binary tree node.
+ * Definition for a binary tree node
  **/
 class TreeNode {
     int val;

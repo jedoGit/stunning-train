@@ -23,15 +23,11 @@
 # TC: O(n)
 # SC: O(h), h is the max num of node of all levels
 
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
+
 from collections import deque
 from typing import Dict, List, Optional
 
+# Definition for a binary tree node.
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val

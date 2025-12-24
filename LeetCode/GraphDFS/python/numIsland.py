@@ -34,6 +34,13 @@
 # TC: O(m*n)
 # SC: O(m*n)
 
+from typing import Dict, List
+from enum import Enum
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
         dir = [[-1,0],[1,0],[0,1],[0,-1]]
@@ -62,6 +69,27 @@ class Solution:
                     dfs(i,j)
 
         return count
+    
+    @staticmethod
+    def testSolution(input: Dict[str, List[List[str]]]) -> None:
+        print(f"Input: grid: {input.get("grid", [[]])}")
+        print(f"Expected: {input.get("expected", 0)}")
+
+        res = Solution().numIslands(input.get("grid", [[]]))
+        print(f"Result: {res}")
+        print(Result.PASS.value if res == input.get("expected", 0) else Result.FAIL.value)
+    
+if __name__ == "__main__":
+    # Example test cases
+    test_cases = [
+        {"grid": [["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]], "expected": 1},
+        {"grid": [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]], "expected": 3},
+    ]
+
+    for i, test_case in enumerate(test_cases):
+        print(f"Test Case {i+1}:")
+        Solution.testSolution(test_case)
+        print(f"{'-'*30}")   
 
         
     # class Solution:

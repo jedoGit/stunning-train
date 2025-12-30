@@ -48,22 +48,26 @@
 # TC: O(n)
 # SC: O(n)
 
-"""
+from enum import Enum
+from typing import Dict, List, Optional
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 # Definition for a Node.
 class Node:
     def __init__(self, val = 0, neighbors = None):
         self.val = val
         self.neighbors = neighbors if neighbors is not None else []
-"""
 
-from typing import Optional
 class Solution:
     def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
-        if not node: return None
+        if node is None: return None
 
         oldToNew = {}
 
-        def dfs(node) :
+        def dfs(node: Node) :
             # Check if the node is in our old to new node hashmap, if so, return the old to new mapping
             if node in oldToNew:
                 return oldToNew[node]
@@ -80,3 +84,80 @@ class Solution:
             return copy
         
         return dfs(node)
+    
+    @staticmethod
+    def testSolution(input: Dict[str, List[List[int]]]) -> None:
+        input_graph = Solution.createGraph(input["edges"])
+        expected_graph = Solution.createGraph(input["expected"])
+        print(f"Input: edges: ")
+        Solution.printGraph(input_graph)
+        print(f"Expected: ")
+        Solution.printGraph(expected_graph)
+
+        res_graph: List[Node] = []
+        for graph_node in input_graph:
+            tmp_res_node = Solution().cloneGraph(graph_node)
+            res_graph.append(tmp_res_node)
+
+        print(f"Result:")
+        Solution.printGraph(res_graph)
+
+        print(Result.PASS.value if Solution.validateResult(res_graph, input["expected"]) else Result.FAIL.value)
+        
+    @staticmethod
+    def createGraph(edges: List[List[int]]) -> List[Node]:
+        node_array: List[Node] = []
+        
+        # Create the node with the value
+        for i in range(len(edges)):
+            node_array.append(Node(i + 1))
+
+        # Add the neighbor list for each nodes
+        for i in range(len(node_array)):
+            # Access the neighbor list of each elements of the node_array
+            nei_list = node_array[i].neighbors
+            # Get the List of neighbors from the edges list input
+            edge_list = edges[i]
+
+            # Let's append the neighbor list based on the edge neighbor list. Don't forget that the node_array is 0 based index.
+            for edge_nei in edge_list:
+                nei_list.append(node_array[edge_nei - 1])
+
+        return node_array
+
+    @staticmethod
+    def printGraph(graph: List[Node]) -> None:
+        if(len(graph) < 1):
+            print(f"[]")
+            return
+
+        for graph_node in graph:
+            tmp_nei: List[int] = []
+            neighbors: List[Node] = graph_node.neighbors
+            for item in neighbors:
+                tmp_nei.append(item.val)
+            print(f"\t[node {graph_node.val}] => val: {graph_node.val}, neighbors: {tmp_nei}")
+
+    @staticmethod
+    def validateResult(result: List[Node], expected: List[List[int]]) -> bool:
+        if(len(result) < 1 and len(expected) < 1):
+            return True
+
+        for i in range(len(result)):
+            res_nei = [i.val for i in result[i].neighbors]
+            # result[i].val should be equal to i + 1 (0 based index), if not, return false
+            if res_nei != expected[i] or result[i].val != i + 1:
+                return False
+
+        return True
+    
+if __name__ == "__main__":
+    records = [ {"edges": [[2,4],[1,3],[2,4],[1,3]], "expected": [[2,4],[1,3],[2,4],[1,3]]},
+             {"edges": [[]], "expected": [[]]},
+             {"edges": [], "expected": []}
+             ]
+    
+    for i, record in enumerate(records):
+        print(f"Test case {i+1}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

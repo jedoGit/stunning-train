@@ -62,28 +62,29 @@ class Node:
         self.neighbors = neighbors if neighbors is not None else []
 
 class Solution:
+    def __init__(self):
+        self.oldToNew = {}
+
     def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
         if node is None: return None
+      
+        return self.dfs(node)
+    
+    def dfs(self, node: Node) -> Node:
+        # Check if the node is in our old to new node hashmap, if so, return the old to new mapping
+        if node in self.oldToNew:
+            return self.oldToNew[node]
 
-        oldToNew = {}
+        # The node is not in our hashmap, so we save a copy of the node to the hashmap
+        copy = Node(node.val)
+        self.oldToNew[node] = copy
 
-        def dfs(node: Node) :
-            # Check if the node is in our old to new node hashmap, if so, return the old to new mapping
-            if node in oldToNew:
-                return oldToNew[node]
-
-            # The node is not in our hashmap, so we save a copy of the node to the hashmap
-            copy = Node(node.val)
-            oldToNew[node] = copy
-
-            # Copy and update the adjacency list of the old node to the neighbor
-            for nei in node.neighbors:
-                copy.neighbors.append(dfs(nei))
+        # Copy and update the adjacency list of the old node to the neighbor
+        for nei in node.neighbors:
+            copy.neighbors.append(self.dfs(nei))
         
-            # Return copy
-            return copy
-        
-        return dfs(node)
+        # Return copy
+        return copy
     
     @staticmethod
     def testSolution(input: Dict[str, List[List[int]]]) -> None:

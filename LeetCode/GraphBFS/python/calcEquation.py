@@ -41,6 +41,14 @@
 # TC: O(e), e is the number of edges
 # SC: O(n), n is the number of nodes we have to perform recursion.
 
+from collections import defaultdict, deque
+from enum import Enum
+from typing import Dict, List
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 class Solution:
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
         #   Build the graph
@@ -48,7 +56,7 @@ class Solution:
         #   After visualizing the requirements, we can deduce that
         #   For the direction a->b, we assign the value as-is
         #   For the direction b->a, we assign the value as 1/value
-        g = collections.defaultdict(list) # map of lists
+        g = defaultdict(list) # map of lists
 
         for i, eq in enumerate(equations):
             a,b = eq
@@ -80,3 +88,38 @@ class Solution:
             return -1
 
         return [bfs(q[0], q[1]) for q in queries]
+    
+    @staticmethod
+    def testSolution(input: Dict[str, List[int] | List[List[str]] | List[float]]) -> None:
+        print(f"Input: equations: {input.get("equations")}")
+        print(f"values: {input.get("values")}")
+        print(f"queries: {input.get("queries")}")
+
+        expected_formatted = [f"{x:.5f}" for x in input.get("expected")]
+        print(f"expected: {expected_formatted}")
+
+        res_list = Solution().calcEquation(input.get("equations"), input.get("values"), input.get("queries"))
+        res_list_formatted = [f"{x:.5f}" for x in res_list]
+        print(f"result: {res_list_formatted}")
+
+        print(f"{Result.PASS.value if res_list_formatted == expected_formatted else Result.FAIL.value}")
+    
+if __name__ == "__main__":
+    records = [{"equations": [["a","b"],["b","c"]], 
+                "values": [2.0,3.0], 
+                "queries": [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]], 
+                "expected": [6.00000,0.50000,-1.00000,1.00000,-1.00000]},
+                {"equations": [["a","b"],["b","c"],["bc","cd"]], 
+                "values": [1.5,2.5,5.0], 
+                "queries": [["a","c"],["c","b"],["bc","cd"],["cd","bc"]], 
+                "expected": [3.75000,0.40000,5.00000,0.20000]},
+                {"equations": [["a","b"]], 
+                "values": [0.5], 
+                "queries": [["a","b"],["b","a"],["a","c"],["x","y"]], 
+                "expected": [0.50000,2.00000,-1.00000,-1.00000]}
+                ]
+    
+    for i, record in enumerate(records):
+        print(f"Test case {i + 1}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

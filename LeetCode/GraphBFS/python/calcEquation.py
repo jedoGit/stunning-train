@@ -50,44 +50,48 @@ class Result(Enum):
     FAIL = "\033[91mFAIL\033[00m"
 
 class Solution:
+
+    def __init__(self):
+        self.graph = defaultdict(list)
+
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
         #   Build the graph
         #   The graph will be an object of object
         #   After visualizing the requirements, we can deduce that
         #   For the direction a->b, we assign the value as-is
         #   For the direction b->a, we assign the value as 1/value
-        g = defaultdict(list) # map of lists
-
+        
         for i, eq in enumerate(equations):
             a,b = eq
 
-            g[a].append([b,values[i]])
-            g[b].append([a, 1 / values[i]])
+            self.graph[a].append([b,values[i]])
+            self.graph[b].append([a, 1 / values[i]])
         
+        return [self.bfs(q[0], q[1]) for q in queries]
+    
+    def bfs(self, src: str, tgt: str) -> float:
         # Let's build our bfs
         # From the requirement, if the equation does not exist, we return -1
         # From our visualization of the graph, if the src and dest is itself, we return 1
         # From the visualization, moving from node to node, we multiply the values of that direction
-        def bfs(src, tgt):
-            if src not in g or tgt not in g:
-                return -1
+        
+        if src not in self.graph or tgt not in self.graph:
+            return -1.0
             
-            q = deque()
-            visited = set()
-            q.append([src,1])
-            visited.add(src)
+        q = deque()
+        visited = set()
+        q.append([src,1])
+        visited.add(src)
 
-            while q:
-                n,w = q.popleft()
-                if n == tgt:
-                    return w
-                for nei, weight in g[n]:
-                    if nei not in visited:
-                        q.append([nei, w*weight])
-                        visited.add(nei)
-            return -1
-
-        return [bfs(q[0], q[1]) for q in queries]
+        while q:
+            n,w = q.popleft()
+            if n == tgt:
+                return w
+            for nei, weight in self.graph[n]:
+                if nei not in visited:
+                    q.append([nei, w*weight])
+                    visited.add(nei)
+        return -1.0
     
     @staticmethod
     def testSolution(input: Dict[str, List[int] | List[List[str]] | List[float]]) -> None:

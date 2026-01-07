@@ -31,6 +31,14 @@
 # TC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 # SC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 
+from enum import Enum
+from typing import Dict, List
+
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 class Solution:
     def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
         # Create an adjacency list
@@ -73,3 +81,27 @@ class Solution:
                 return [] # We detected a cycle, therefore we can't continue, return an empty array
         
         return output
+    
+    @staticmethod
+    def testSolution(record: Dict[str, int | List[List[int]] | List[int]]) -> None:
+        print(f"Input: numCourses: {record.get("numCourses")}")
+        print(f"prerequisites: {record["prerequisites"]}")
+        print(f"expected: {record.get("expected")}")
+
+        res: List[int] = Solution().findOrder(record.get("numCourses"), record.get("prerequisites"))
+
+        print(f"result: {res}")
+        
+        # Compare the set of the result and the expected. Order of the element value does not matter here
+        validated_result: bool = set(res) == set(record.get("expected"))
+        print(f"{Result.PASS.value if validated_result == True else Result.FAIL.value}")
+
+if __name__ == "__main__":
+    records = [{"numCourses": 2, "prerequisites": [[1,0]], "expected": [1,0]}, 
+               {"numCourses": 4, "prerequisites": [[1,0],[2,0],[3,1],[3,2]], "expected": [0,2,1,3]},
+               {"numCourses": 1, "prerequisites": [], "expected": [0]}]
+
+    for i, record in enumerate(records):
+        print(f"Test case {i+1}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

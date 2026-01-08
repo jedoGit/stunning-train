@@ -40,47 +40,50 @@ class Result(Enum):
     FAIL = "\033[91mFAIL\033[00m"
 
 class Solution:
+    def __init__(self):
+        self.prereq = {}
+        self.output = []
+        self.visited = set()
+        self.cycle = set()
+
     def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
         # Create an adjacency list
         # object comprehension. Create a k/v pair where k is the course number and the value is an empty array
-        prereq = { c:[] for c in range(numCourses) } 
+        self.prereq = { c:[] for c in range(numCourses) } 
 
         # Map the courses to the prereqs
         # prereqsuisites returns an array of array: [[crs, pre],...,[crs, pre]]
         for crs, pre in prerequisites:
-            prereq[crs].append(pre)
+            self.prereq[crs].append(pre)
 
         # print(prereq)
 
-        output = []
-        visited = set()
-        cycle = set()
-
-        # Helper function to dfs the adjacency list of each course. Returns false if there's a cycle, otherwise returns true add to visited set
-        def dfs(crs) :
-            if crs in cycle:
-                return False
-            if crs in visited:
-                return True
-            
-            cycle.add(crs)
-
-            # prereq[crs] returns an array
-            for pre in prereq[crs]:
-                if dfs(pre) == False:
-                    return False # there is a cycle and we can't continue
-            
-            cycle.remove(crs)
-            visited.add(crs)
-            output.append(crs)
-
-            return True
-
         for c in range(numCourses):
-            if dfs(c) == False:
+            if self.DFS(c) == False:
                 return [] # We detected a cycle, therefore we can't continue, return an empty array
         
-        return output
+        return self.output
+    
+    # Helper function to dfs the adjacency list of each course. Returns false if there's a cycle, otherwise returns true add to visited set
+    def DFS(self, crs: int) -> bool:
+        if crs in self.cycle:
+            return False
+            
+        if crs in self.visited:
+            return True
+            
+        self.cycle.add(crs)
+
+        # prereq[crs] returns an array
+        for pre in self.prereq[crs]:
+            if self.DFS(pre) == False:
+                return False # there is a cycle and we can't continue
+            
+        self.cycle.remove(crs)
+        self.visited.add(crs)
+        self.output.append(crs)
+
+        return True    
     
     @staticmethod
     def testSolution(record: Dict[str, int | List[List[int]] | List[int]]) -> None:

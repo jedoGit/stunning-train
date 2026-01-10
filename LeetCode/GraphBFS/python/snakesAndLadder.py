@@ -40,25 +40,25 @@
 # SC: O(k). Worst case is when there are no ladders and you keep getting 1 on the die. You'll add 6 moves to your queue.
 
 
+from collections import deque
+from enum import Enum
+from typing import Dict, List
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 class Solution:
+    def __init__(self):
+        self.length = 0
+
     def snakesAndLadders(self, board: List[List[int]]) -> int:
-        length = len(board)
+        self.length = len(board)
         #  We need to reverse the board. If you look at the snakes and ladder board, cell 1 is in position [5, 0]. Also, in each row, every odd row, the positions are flipped. We have to account for that.
         #   Reversing the rows now will move cell 1 to position [0,0] and cell 36 to position [5,0]. This will make the coding easier.
         board.reverse()
-
+        
         # print(board)
-
-        # Helper function that converts the value in a cell to a position in the grid. This is used to jump from a cell to another cell if you hit a snake or a ladder
-        def intToPos(cell):
-            # Convert the cell number to a row, column position of the grid
-            r = (cell-1)//length
-            c = (cell-1) % length
-            # For every even row, we need to inverse the column value
-            if r % 2:
-                c = length - 1 - c
-
-            return [r, c]
 
         # Using BFS
         q = deque()
@@ -75,13 +75,14 @@ class Solution:
 
                 # The value in the cell represents the number of cell we need to jump to.
                 # This helper function will return the position of the grid were we need to jump to
-                r,c = intToPos(nextCell)
+                r,c = self.intToPos(nextCell)
 
                 # Jump to the next cell if the cell we landed is not -1
                 if board[r][c] != -1:
                     nextCell = board[r][c]
                 # this is the case were we reached the cell last cell and we're done!
-                if nextCell == length*length: return numMoves + 1
+                if nextCell == (self.length * self.length):
+                    return numMoves + 1
 
                 # Check if we've have not visited this cell. Add it to the visited and BFS to the next cell
                 if nextCell not in visited:
@@ -89,3 +90,44 @@ class Solution:
                     q.append([nextCell, numMoves + 1])
 
         return -1
+
+    # Helper function that converts the value in a cell to a position in the grid. This is used to jump from a cell to another cell if you hit a snake or a ladder
+    def intToPos(self, cell: int) -> List[int]:
+        # Convert the cell number to a row, column position of the grid
+        r = (cell - 1) // self.length
+        c = (cell - 1) % self.length
+        # For every even row, we need to inverse the column value
+        if r % 2:
+            c = self.length - 1 - c
+
+        return [r, c]    
+
+    @staticmethod
+    def testSolution(record: Dict[str, List[List[int]] | int]) -> None:
+        print(f"Input: board:")
+        Solution.printBoard(record.get("board"))
+        print(f"expected: {record.get("expected")}")
+
+        res = Solution().snakesAndLadders(record.get("board"))
+        print(f"result: {res}")
+        print(f"{Result.PASS.value if res == record.get("expected") else Result.FAIL.value}")
+
+    @staticmethod
+    def printBoard(board: List[List[int]]) -> None:
+        for i in range(len(board)):
+            print("[ ", end="")
+            for j in range(len(board[0])):
+                print(str(board[i][j]) + " ", end="")
+            print("]")
+    
+if __name__ == "__main__":
+
+    records = [{"board": [[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]],
+                "expected": 4},
+               {"board": [[-1,-1],[-1,3]],
+                "expected": 1}]
+    
+    for i, record in enumerate(records):
+        print(f"Test case {1+i}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

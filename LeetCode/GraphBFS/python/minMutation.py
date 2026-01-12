@@ -1,3 +1,10 @@
+from enum import Enum
+from typing import Deque, Dict, List
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
 class Solution:
     def minMutation(self, startGene: str, endGene: str, bank: List[str]) -> int:
         # Gene char choices. 
@@ -12,7 +19,7 @@ class Solution:
         # print(bank)
         # We'll use BFS to find the minimum step of mutation needed from start to end
         # We'll start with first char of startGene and change every char of the gene and check the bank if the geneString is there...
-        q = deque() # Our queue will hold a pair [geneString, numMutationStep]
+        q = Deque() # Our queue will hold a pair [geneString, numMutationStep]
         q.append([startGene,0]) # Push the initial value
         # Add the startGene to the visited set
         visited = set()
@@ -41,4 +48,24 @@ class Solution:
 
         # We didn't find the answer, we return -1
         return -1
+    
+    @staticmethod
+    def testSolution(record: Dict[str, str | List[str] | int]) -> None:
+        print(f"input:\tstartGene: {record.get(("startGene"))}")
+        print(f"\tendGene: {record.get("endGene")}")
+        print(f"\tbank: {record.get("bank")}")
+        print(f"expected: {record.get("expected")}")
+
+        res = Solution().minMutation(record.get("startGene"), record.get("endGene"), record.get("bank"))
+
+        print(f"result: {res}")
+        print(f"{Result.PASS.value if res == record.get("expected") else Result.FAIL.value}")
         
+if __name__ == "__main__":
+    records = [{"startGene": "AACCGGTT", "endGene": "AACCGGTA", "bank": ["AACCGGTA"], "expected": 1}, 
+               {"startGene": "AACCGGTT", "endGene": "AAACGGTA", "bank": ["AACCGGTA","AACCGCTA","AAACGGTA"], "expected": 2}]
+        
+    for i, record in enumerate(records):
+        print(f"Test case {i+1}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

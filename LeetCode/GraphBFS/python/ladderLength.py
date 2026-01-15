@@ -1,7 +1,7 @@
 from collections import deque
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 class Result(Enum):
@@ -87,8 +87,8 @@ class Solution:
         print(f"{Result.PASS.value if res == record.expected else Result.FAIL.value}")
 
 if __name__ == "__main__":
-    records = [ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log","cog"], 5), 
-               ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log"], 0)]
+    records: Tuple[ladderLengthRecord] = (ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log","cog"], 5), 
+               ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log"], 0))
     
     for i, record in enumerate(records):
         print(f"Test case {i+1}")

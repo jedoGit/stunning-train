@@ -50,7 +50,7 @@ class Solution:
 
         res = 1
 
-        while len(queue) >= 0:
+        while len(queue) > 0:
             # we just want to loop until q is empty
             for _ in range(len(queue)):
                 word = queue.popleft()

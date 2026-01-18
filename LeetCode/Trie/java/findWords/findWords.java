@@ -1,4 +1,4 @@
-package LeetCode.Trie.java;
+package LeetCode.Trie.java.findWords;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -17,20 +17,22 @@ class ladderLengthRecord:
 
 class Solution:
     def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        wordSet = set(wordList)
         # check if the endWord is not in the wordList, if so, return 0
-        if endWord not in wordList: 
+        if endWord not in wordSet: 
             return 0
         
         # nei is a k/v where k is a pattern of words and v is an array of words from the wordList that match the pattern
         # nei = {"h*t":[hot, hit, hat], "*nt":[ant, int]}
         nei: Dict[str, List[str]] = {}
-        wordList.append(beginWord)
+        wordSet.add(beginWord)
 
         # create an adjacency list
         # go through each words in the wordlist and match it to the pattern.
         # create a pattern for each word, hit=> *it, h*t, hi*. for each of these patterns, add the word to the nei.
         # example: "*it": [hit], "h*t":[hit], "hi*":[hit]
-        for word in wordList:
+        for word in wordSet:
+            # print(f"{word}")
             for j in range(len(word)):
                 pattern = word[:j] + "*" + word[j+1:] # patterns: *XY, X*Y, XY*
                 tmp: List[str] = nei.get(pattern, [])
@@ -52,9 +54,10 @@ class Solution:
 
         while len(queue) > 0:
             # we just want to loop until q is empty
-            for _ in range(len(queue)):
+            qLen = len(queue)
+            for _ in range(qLen):
                 word = queue.popleft()
-
+                # print(f"{word}")
                 # If word is equal to endWord, we're done and return res
                 if word == endWord:
                     return res
@@ -88,7 +91,8 @@ class Solution:
 
 if __name__ == "__main__":
     records: Tuple[ladderLengthRecord] = (ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log","cog"], 5), 
-               ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log"], 0))
+               ladderLengthRecord("hit", "cog", ["hot","dot","dog","lot","log"], 0),
+               ladderLengthRecord("red", "tax", ["ted", "tex", "red", "tax", "tad", "den", "rex", "pee"], 4))
     
     for i, record in enumerate(records):
         print(f"Test case {i+1}")

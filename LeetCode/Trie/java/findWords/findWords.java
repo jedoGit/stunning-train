@@ -5,6 +5,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+}
+
 record FindWordsInputRecord(char[][] board, String[] words, String[] expected) {
 }
 
@@ -82,34 +98,36 @@ class findWords {
 
     public static void main(String[] args) {
 
-        findWords soln = new findWords();
+        FindWordsInputRecord[] records = new FindWordsInputRecord[] {
+                new FindWordsInputRecord(
+                        new char[][] { { 'o', 'a', 'a', 'n' }, { 'e', 't', 'a', 'e' }, { 'i', 'h', 'k', 'r' },
+                                { 'i', 'f', 'l', 'v' } },
+                        new String[] { "oath", "pea", "eat", "rain" },
+                        new String[] { "oath", "eat" }),
+                new FindWordsInputRecord(
+                        new char[][] { { 'a', 'b' }, { 'c', 'd' } },
+                        new String[] { "abcb" },
+                        new String[] {}),
+        };
 
-        FindWordsInputRecord input1 = new FindWordsInputRecord(
-                new char[][] { { 'o', 'a', 'a', 'n' }, { 'e', 't', 'a', 'e' }, { 'i', 'h', 'k', 'r' },
-                        { 'i', 'f', 'l', 'v' } },
-                new String[] { "oath", "pea", "eat", "rain" },
-                new String[] { "oath", "eat" });
+        int i = 1;
 
-        List<String> result1 = soln.findWordsSolution(input1.board(), input1.words());
+        for (FindWordsInputRecord record : records) {
+            System.out.println("# Test case " + i++);
+            findWords.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+
+    }
+
+    private static void testSolution(FindWordsInputRecord record) {
         System.out.println(
-                "Input: board: " + Arrays.deepToString(input1.board()) + ",\n\twords: "
-                        + Arrays.toString(input1.words()));
-        System.out.println("Expected: " + Arrays.toString(input1.expected()));
-        System.out.println("Result: " + result1);
-        System.out.println("-".repeat(50));
-
-        FindWordsInputRecord input2 = new FindWordsInputRecord(
-                new char[][] { { 'a', 'b' }, { 'c', 'd' } },
-                new String[] { "abcb" },
-                new String[] {});
-
-        List<String> result2 = soln.findWordsSolution(input2.board(), input2.words());
-        System.out.println(
-                "Input: board: " + Arrays.deepToString(input2.board()) + ",\n\twords: "
-                        + Arrays.toString(input2.words()));
-        System.out.println("Expected: " + Arrays.toString(input2.expected()));
-        System.out.println("Result: " + result2);
-        System.out.println("-".repeat(50));
-
+                "Input: board: " + Arrays.deepToString(record.board()) + ",\n\twords: "
+                        + Arrays.toString(record.words()));
+        System.out.println("Expected: " + Arrays.toString(record.expected()));
+        List<String> res = new findWords().findWordsSolution(record.board(), record.words());
+        System.out.println("Result: " + res);
+        System.out.println(Arrays.equals(res.toArray(), record.expected()) ? testResult.PASS.getValue()
+                : testResult.FAIL.getValue());
     }
 }

@@ -39,6 +39,21 @@
 # TC: O(n) for insert because at worst, we all the trie nodes until we hit the endOfWord indicator
 # SC: O(1) in place processing
 
+from dataclasses import dataclass
+from enum import Enum
+from typing import List, Tuple
+
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
+@dataclass
+class TrieRecord:
+    operations: List[str]
+    words: List[List[str]]
+    expected: List[str]
+
 # Create a TridNode class
 class TrieNode:
     def __init__(self):
@@ -88,3 +103,38 @@ class Trie:
 # obj.insert(word)
 # param_2 = obj.search(word)
 # param_3 = obj.startsWith(prefix)
+
+    @staticmethod
+    def testSolution(record: TrieRecord) -> None:
+        print(f"input:\toperations: {record.operations}")
+        print(f"\twords: {record.words}")
+        print(f"expected: {record.expected}")
+
+        output: List[str] = []
+        obj = None
+        for i, operation in enumerate(record.operations):
+            if operation == "Trie":
+                obj = Trie()
+                output.append("null")
+            elif operation == "insert":
+                obj.insert(record.words[i][0])
+                output.append("null")
+            elif operation == "search":
+                tmp: bool = obj.search(record.words[i][0])
+                output.append(str(tmp).lower())
+            elif operation == "startsWith":
+                tmp: bool = obj.startsWith(record.words[i][0])
+                output.append(str(tmp).lower())
+            
+        print(f"result: {output}")
+        print(f"{Result.PASS.value if output == record.expected else Result.FAIL.value}")
+
+if __name__ == "__main__":
+    records: List[TrieRecord] = [TrieRecord(["Trie","insert","search","search","startsWith","insert","search"], 
+                   [[],["apple"],["apple"],["app"],["app"],["app"],["app"]], 
+                   ["null","null","true","false","true","null","true"])]
+
+    for i, record in enumerate(records):
+        print(f"# Test case {i+1}")
+        Trie.testSolution(record)
+        print(f"{'-' * 50}")

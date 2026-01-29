@@ -23,6 +23,20 @@
 # TC: O(n*4^n) because at each level of the backtracking tree, you'll have a worst case 4^n leaf nodes the you'll do that for every digits, n is the length of digits
 # SC: O(n) you'll do recursion of n levels
 
+from dataclasses import dataclass
+from enum import Enum
+from typing import List
+
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
+@dataclass
+class letterCombinationsRecord:
+    digits: str
+    expected: List[str]
+
 class Solution:
     def letterCombinations(self, digits: str) -> List[str]:
         res = []
@@ -47,3 +61,23 @@ class Solution:
         backtrack(0,"")
 
         return res
+    
+    @staticmethod
+    def testSolution(record: letterCombinationsRecord) -> None:
+        print(f"input: digits: {record.digits}")
+        print(f"expected: {record.expected}")
+        res = Solution().letterCombinations(record.digits)
+        print(f"result: {res}")
+        print(Result.PASS.value if res == record.expected else Result.FAIL.value)
+    
+if __name__ == "__main__":
+    records: List[letterCombinationsRecord] = [
+        letterCombinationsRecord("23", ["ad","ae","af","bd","be","bf","cd","ce","cf"]),
+        letterCombinationsRecord("2", ["a","b","c"])
+    ]
+
+    print(f"{'-' * 50}")
+    for i, record in enumerate(records):
+        print(f"# Test case {i + 1}")
+        Solution.testSolution(record)
+        print(f"{'-' * 50}")

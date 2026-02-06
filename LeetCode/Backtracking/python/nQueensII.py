@@ -19,37 +19,71 @@
 # TC:
 # SC:
 
+from dataclasses import dataclass
+from enum import Enum
+from typing import List
+
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
+@dataclass
+class totalNQueensRecord:
+    n: int
+    expected: int
+
 class Solution:
+
+    def __init__(self):
+        self.col = set()
+        self.posDiag = set()
+        self.negDiag = set()
+        self.res = 0
+
     def totalNQueens(self, n: int) -> int:
-        col = set()
-        posDiag = set()
-        negDiag = set()
-
-        res = 0
-
-        def backtrack(r):
-            if r == n:
-                nonlocal res
-                res += 1
-                return
-
-            for c in range(n):
-                if c in col or (r+c) in posDiag or (r-c) in negDiag:
-                    continue
                 
-                col.add(c)
-                posDiag.add(r+c)
-                negDiag.add(r-c)
+        self.backtrack(0, n)
 
-                backtrack(r+1)
-
-                col.remove(c)
-                posDiag.remove(r+c)
-                negDiag.remove(r-c)
-            
+        return self.res
+    
+    def backtrack(self, r: int, n: int ) -> None:
+        if r == n:
+            self.res += 1
             return
-        
-        backtrack(0)
 
-        return res
+        for c in range(n):
+            if c in self.col or (r + c) in self.posDiag or (r - c) in self.negDiag:
+                continue
+                
+            self.col.add(c)
+            self.posDiag.add(r + c)
+            self.negDiag.add(r - c)
+
+            self.backtrack(r + 1, n)
+
+            self.col.remove(c)
+            self.posDiag.remove(r + c)
+            self.negDiag.remove(r - c)
+            
+        return
+    
+    @staticmethod
+    def testSolution(record: totalNQueensRecord) -> None:
+        print(f"input: n: {record.n}")
+        print(f"expected: {record.expected}")
+        res: int = Solution().totalNQueens(record.n)
+        print(f"result: {res}")
+        print(Result.PASS.value if res == record.expected else Result.FAIL.value)
+
+if __name__ == "__main__":
+    records: List[totalNQueensRecord] = [
+        totalNQueensRecord(4, 2),
+        totalNQueensRecord(1, 1),
+    ]
+
+    for i, record in enumerate(records):
+        print(f"# Test case {i + 1}")
+        Solution.testSolution(record)
+        print("-" * 50)
         

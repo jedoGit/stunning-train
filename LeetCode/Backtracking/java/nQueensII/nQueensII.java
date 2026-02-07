@@ -43,10 +43,16 @@ record backtrackRecord(int n, int expected) {
 }
 
 class Solution {
-    private Set<Integer> col;
-    private Set<Integer> posDiag;
-    private Set<Integer> negDiag;
-    private Integer res;
+    private Set<Integer> col = new HashSet<>();
+    private Set<Integer> posDiag = new HashSet<>();
+    private Set<Integer> negDiag = new HashSet<>();
+    private Integer res = 0;
+
+    public int totalNQueens(int n) {
+        backtrack(0, n);
+
+        return res;
+    }
 
     private void backtrack(int r, int n) {
         if (r == n) {
@@ -71,19 +77,6 @@ class Solution {
         }
 
         return;
-    }
-
-    public Solution() {
-        col = new HashSet<>();
-        posDiag = new HashSet<>();
-        negDiag = new HashSet<>();
-        res = 0;
-    }
-
-    public int totalNQueens(int n) {
-        backtrack(0, n);
-
-        return res;
     }
 
     public static void main(String[] args) {

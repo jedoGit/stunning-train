@@ -1,3 +1,5 @@
+package findPeakElements;
+
 class Solution {
     public int findPeakElement(int[] nums) {
         int l = 0;

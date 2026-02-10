@@ -1,3 +1,5 @@
+package findMinRotatedSortedArr;
+
 class Solution {
     public int findMin(int[] nums) {
 

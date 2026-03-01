@@ -1,4 +1,7 @@
 package searchMatrix;
+
+import java.util.Arrays;
+
 // You are given an m x n integer matrix matrix with the following two properties:
 
 // Each row is sorted in non-decreasing order.
@@ -23,33 +26,38 @@ package searchMatrix;
 // 1 <= m, n <= 100
 // -104 <= matrix[i][j], target <= 104
 
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+}
+
+record searchMatrixRecord(int[][] matrix, int target, boolean expected) {
+}
+
 class Solution {
     public boolean searchMatrix(int[][] matrix, int target) {
 
-        List<List<Integer>> mat = new ArrayList<>();
-
-        // Convert int[][] to List<List<Integer>>
-        for (int[] row : matrix) {
-            List<Integer> el = new ArrayList<>();
-            for (int e : row) {
-                el.add(e);
-            }
-            mat.add(el);
-        }
-
-        // System.out.println(mat);
-
-        Integer rows = mat.size();
-        Integer cols = mat.get(0).size();
-        Integer row = 0;
-        Integer col = cols - 1;
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int row = 0;
+        int col = cols - 1;
 
         while (row < rows && col > -1) {
-            Integer cur = mat.get(row).get(col);
+            int cur = matrix[row][col];
             if (cur == target) {
                 return true;
             }
-            if (cur < target) {
+            if (target > cur) {
                 row++;
             } else {
                 col--;
@@ -57,24 +65,31 @@ class Solution {
         }
 
         return false;
+    }
 
-        // int rows = matrix.length;
-        // int cols = matrix[0].length;
-        // int row = 0;
-        // int col = cols - 1;
+    public static void main(String[] args) {
+        searchMatrixRecord[] records = new searchMatrixRecord[] {
+                new searchMatrixRecord(new int[][] { { 1, 3, 5, 7 }, { 10, 11, 16, 20 }, { 23, 30, 34, 60 } }, 3, true),
+                new searchMatrixRecord(new int[][] { { 1, 3, 5, 7 }, { 10, 11, 16, 20 }, { 23, 30, 34, 60 } }, 13,
+                        false),
+        };
 
-        // while ( row < rows && col > -1 ) {
-        // int cur = matrix[row][col];
-        // if ( cur == target ){
-        // return true;
-        // }
-        // if( target > cur) {
-        // row++;
-        // }
-        // else {
-        // col--;
-        // }
-        // }
-        // return false;
+        int i = 1;
+        for (searchMatrixRecord record : records) {
+            System.out.println("# Test case " + i++);
+            Solution.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+    }
+
+    private static void testSolution(searchMatrixRecord record) {
+        System.out.println("input:\tmatrix: " + Arrays.deepToString(record.matrix()));
+        System.out.println("\ttarget: " + record.target());
+        System.out.println("expected: " + record.expected());
+
+        boolean res = new Solution().searchMatrix(record.matrix(), record.target());
+
+        System.out.println("result: " + res);
+        System.out.println(res == record.expected() ? testResult.PASS.getValue() : testResult.FAIL.getValue());
     }
 }

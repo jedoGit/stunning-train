@@ -1,5 +1,25 @@
 package searchRotatedSortedArray;
 
+import java.util.Arrays;
+
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+}
+
+record searchRotatedSortedArrayRecord(int[] nums, int target, int expected) {
+}
+
 class Solution {
     public int search(int[] nums, int target) {
         var l = 0;
@@ -36,5 +56,29 @@ class Solution {
         }
 
         return -1;
+    }
+
+    public static void main(String[] args) {
+        searchRotatedSortedArrayRecord[] records = new searchRotatedSortedArrayRecord[] {
+                new searchRotatedSortedArrayRecord(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 0, 4),
+                new searchRotatedSortedArrayRecord(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 3, -1),
+                new searchRotatedSortedArrayRecord(new int[] { 1 }, 0, -1),
+        };
+
+        int i = 1;
+        for (searchRotatedSortedArrayRecord record : records) {
+            System.out.println("# Test case " + i++);
+            Solution.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+    }
+
+    private static void testSolution(searchRotatedSortedArrayRecord record) {
+        System.out.println("input:\tnums: " + Arrays.toString(record.nums()));
+        System.out.println("\ttarget: " + record.target());
+        System.out.println("expected: " + record.expected());
+        int res = new Solution().search(record.nums(), record.target());
+        System.out.println("result: " + res);
+        System.out.println(res == record.expected() ? testResult.PASS.getValue() : testResult.FAIL.getValue());
     }
 }

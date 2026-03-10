@@ -83,3 +83,40 @@ var findMedianSortedArrays = function (nums1, nums2) {
   // [54 78 983 1023 8122] [52 123 178]
   // [52 54 78 123 178 983 1023 8122]
 };
+
+var findMedianSortedArrays = function (nums1, nums2) {
+  let A = nums1;
+  let B = nums2;
+  const total = A.length + B.length;
+  const half = Math.floor((total + 1) / 2); // Use (total + 1) to handle odd/even uniformly
+
+  if (B.length < A.length) {
+    [A, B] = [B, A];
+  }
+
+  let l = 0;
+  let r = A.length; // Range should include the possibility of taking ALL elements of A
+
+  while (l <= r) {
+    let i = Math.floor((l + r) / 2);
+    let j = half - i;
+
+    let Aleft = i > 0 ? A[i - 1] : -Infinity;
+    let Aright = i < A.length ? A[i] : Infinity;
+    let Bleft = j > 0 ? B[j - 1] : -Infinity;
+    let Bright = j < B.length ? B[j] : Infinity;
+
+    if (Aleft <= Bright && Bleft <= Aright) {
+      // Odd: The median is the max of the left side
+      if (total % 2 !== 0) {
+        return Math.max(Aleft, Bleft);
+      }
+      // Even: Average of the two middle elements
+      return (Math.max(Aleft, Bleft) + Math.min(Aright, Bright)) / 2;
+    } else if (Aleft > Bright) {
+      r = i - 1;
+    } else {
+      l = i + 1;
+    }
+  }
+};

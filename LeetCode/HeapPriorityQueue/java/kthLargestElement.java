@@ -3,11 +3,28 @@ package LeetCode.HeapPriorityQueue.java;
 import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
-
 import java.util.stream.Collectors;
 
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+}
+
+record kthLargestElementRecord(int[] nums, int k, int expected) {
+}
+
 class kthLargestElement {
-    public static int findKthLargest(int[] nums, int k) {
+    public int findKthLargest(int[] nums, int k) {
         PriorityQueue<Integer> hMin = new PriorityQueue<>();
 
         // List<Integer> list = new ArrayList<>();
@@ -38,16 +55,27 @@ class kthLargestElement {
 
     public static void main(String[] args) {
 
-        int[] input1 = new int[] { 3, 2, 3, 1, 2, 4, 5, 5, 6 };
-        int k1 = 4;
-        int res1 = findKthLargest(input1, k1);
+        kthLargestElementRecord[] records = new kthLargestElementRecord[] {
+                new kthLargestElementRecord(new int[] { 3, 2, 3, 1, 2, 4, 5, 5, 6 }, 4, 4),
+                new kthLargestElementRecord(new int[] { 3, 2, 1, 5, 6, 4 }, 2, 5)
+        };
 
-        System.out.println("Input: " + Arrays.toString(input1) + ", k: " + k1 + " result " + res1);
+        int i = 1;
+        for (kthLargestElementRecord record : records) {
+            System.out.println("# Test case " + i++);
+            kthLargestElement.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+    }
 
-        int[] input2 = new int[] { 3, 2, 1, 5, 6, 4 };
-        int k2 = 2;
-        int res2 = findKthLargest(input2, k2);
+    private static void testSolution(kthLargestElementRecord record) {
+        System.out.println("input:\tnums: " + Arrays.toString(record.nums()));
+        System.out.println("\tk: " + record.k());
+        System.out.println("expected: " + record.expected());
 
-        System.out.println("Input: " + Arrays.toString(input2) + ", k: " + k2 + " result: " + res2);
+        int res = new kthLargestElement().findKthLargest(record.nums(), record.k());
+        System.out.println("result: " + res);
+        System.out.println(res == record.expected() ? testResult.PASS.getValue() : testResult.FAIL.getValue());
+
     }
 }

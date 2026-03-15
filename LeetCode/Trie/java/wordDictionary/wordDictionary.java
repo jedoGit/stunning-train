@@ -19,7 +19,6 @@ enum testResult {
     public String getValue() {
         return this.value;
     }
-
 }
 
 record wordDictionaryRecord(String[] operations, String[][] words, List<String> expected) {

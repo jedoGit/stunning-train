@@ -1,14 +1,30 @@
 package LeetCode.HeapPriorityQueue.java;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-record Actions(String action, List<Integer> input) {
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
 }
 
-public class findMedianFromDataStream {
+record findMedianFromDataStreamRecord(String[] operation, int[][] value, List<String> expected) {
+}
+
+class findMedianFromDataStream {
 
     private PriorityQueue<Integer> maxH;
     private PriorityQueue<Integer> minH;
@@ -40,43 +56,51 @@ public class findMedianFromDataStream {
     }
 
     public static void main(String[] args) {
+        findMedianFromDataStreamRecord[] records = new findMedianFromDataStreamRecord[] {
+                new findMedianFromDataStreamRecord(
+                        new String[] { "MedianFinder", "addNum", "addNum", "findMedian", "addNum", "findMedian" },
+                        new int[][] { {}, { 1 }, { 2 }, {}, { 3 }, {} },
+                        List.of("null", "null", "null", "1.50000", "null", "2.00000"))
+        };
 
-        List<Actions> actions = new LinkedList<>();
-        actions.add(new Actions("MedianFinder", List.of()));
-        actions.add(new Actions("addNum", List.of(1)));
-        actions.add(new Actions("addNum", List.of(2)));
-        actions.add(new Actions("findMedian", List.of()));
-        actions.add(new Actions("addNum", List.of(3)));
-        actions.add(new Actions("findMedian", List.of()));
+        int i = 1;
+        for (findMedianFromDataStreamRecord record : records) {
+            System.out.println("# Test case " + i++);
+            findMedianFromDataStream.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+    }
 
-        List<Double> output = new LinkedList<>();
+    private static void testSolution(findMedianFromDataStreamRecord record) {
+        System.out.println("input:\toperations: " + Arrays.toString(record.operation()));
+        System.out.println("\tvalues: " + Arrays.deepToString(record.value()));
 
-        findMedianFromDataStream medianFinder = new findMedianFromDataStream();
+        System.out.println("expected: " + record.expected());
 
-        for (Actions a : actions) {
-            switch (a.action()) {
+        List<String> output = new LinkedList<>();
+        findMedianFromDataStream medianFinder = null;
+
+        for (int i = 0; i < record.operation().length; i++) {
+            String operation = record.operation()[i];
+
+            switch (operation) {
                 case "MedianFinder" -> {
-                    output.add(null);
+                    medianFinder = new findMedianFromDataStream();
+                    output.add("null");
                 }
                 case "addNum" -> {
-                    medianFinder.addNum(a.input().get(0));
-                    output.add(null);
+                    medianFinder.addNum(record.value()[i][0]);
+                    output.add("null");
                 }
                 case "findMedian" -> {
-                    output.add(Double.valueOf(medianFinder.findMedian()));
+                    double median = medianFinder.findMedian();
+                    String formattedValue = String.format("%.5f", median);
+                    output.add(formattedValue);
                 }
             }
         }
 
-        actions.forEach(a -> {
-            System.out.printf("[" + a.action() + "],");
-        });
-        System.out.println();
-        actions.forEach(a -> {
-            System.out.print(a.input() + ",");
-        });
-        System.out.println();
-        output.forEach(out -> System.out.print("[" + out + "],"));
-
+        System.out.println("result: " + output);
+        System.out.println(output.equals(record.expected()) ? testResult.PASS.getValue() : testResult.FAIL.getValue());
     }
 }

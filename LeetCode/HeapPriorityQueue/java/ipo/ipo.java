@@ -1,4 +1,4 @@
-package LeetCode.HeapPriorityQueue.java;
+package LeetCode.HeapPriorityQueue.java.ipo;
 
 import java.util.ArrayList;
 import java.util.Arrays;

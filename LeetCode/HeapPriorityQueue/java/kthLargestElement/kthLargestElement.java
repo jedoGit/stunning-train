@@ -1,4 +1,4 @@
-package LeetCode.HeapPriorityQueue.java;
+package LeetCode.HeapPriorityQueue.java.kthLargestElement;
 
 import java.util.Arrays;
 import java.util.List;

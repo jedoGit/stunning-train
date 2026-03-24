@@ -1,4 +1,4 @@
-package LeetCode.HeapPriorityQueue.java;
+package LeetCode.HeapPriorityQueue.java.findMedianFromDataStream;
 
 import java.util.Arrays;
 import java.util.Comparator;

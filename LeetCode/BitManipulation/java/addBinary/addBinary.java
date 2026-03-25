@@ -1,4 +1,4 @@
-package LeetCode.BitManipulation.java;
+package LeetCode.BitManipulation.java.addBinary;
 
 import java.math.BigInteger;
 

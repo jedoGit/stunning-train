@@ -1,7 +1,6 @@
 package LeetCode.MathProbs.java.plusOne;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 enum testResult {
     PASS("\u001B[32mPASS\u001B[0m"),

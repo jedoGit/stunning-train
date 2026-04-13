@@ -1,3 +1,7 @@
+// Trailing zeros in a factorial come from multiplying pairs of 2 and 5.
+// Since factors of 2 are more frequent,we only need to count
+// the number of 5 s in the prime factorization of n!.
+
 /**
  * @param {number} n
  * @return {number}

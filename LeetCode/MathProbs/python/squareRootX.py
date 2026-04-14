@@ -21,6 +21,19 @@
 
 # 0 <= x <= 231 - 1
 
+from dataclasses import dataclass
+from enum import Enum
+from typing import Tuple
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
+@dataclass
+class SquareRootXRecord:
+    x: int
+    expected: int
+
 class SquareRootX:
     def mySqrt(self, x: int) -> int:
         l = 0
@@ -37,22 +50,23 @@ class SquareRootX:
             else:
                 return m
         return res
+    
+    @staticmethod
+    def testSolution(record: SquareRootXRecord) -> None:
+        print(f"input: x: {record.x}")
+        print(f"expected: {record.expected}")
+
+        res: int = SquareRootX().mySqrt(record.x)
+        print(f"result: {res}")
+        print(Result.PASS.value if res == record.expected else Result.FAIL.value)
 
 if __name__ == "__main__":
-    obj = SquareRootX()
+    records: Tuple[SquareRootXRecord] = (
+        SquareRootXRecord(4, 2),
+        SquareRootXRecord(8, 2)
+    )
 
-    input = {"x":4, "expected":2}
-    result = obj.mySqrt(input["x"])
-    print("Input: x: {}".format(input["x"]))
-    print("Expected: {}".format(input["expected"]))
-    print("Result: ", result)
-
-    print("-" * 50)
-
-    input = {"x":8, "expected":2}
-    result = obj.mySqrt(input["x"])
-    print("Input: x: {}".format(input["x"]))
-    print("Expected: {}".format(input["expected"]))
-    print("Result: ", result)
-
-    print("-" * 50)
+    for i, record in enumerate(records):
+        print(f"# Test case {i + 1}")
+        SquareRootX.testSolution(record)
+        print("-" * 50)

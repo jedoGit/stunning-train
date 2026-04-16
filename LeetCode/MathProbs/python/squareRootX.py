@@ -63,7 +63,8 @@ class SquareRootX:
 if __name__ == "__main__":
     records: Tuple[SquareRootXRecord] = (
         SquareRootXRecord(4, 2),
-        SquareRootXRecord(8, 2)
+        SquareRootXRecord(8, 2),
+        SquareRootXRecord(2147395599, 46339)
     )
 
     for i, record in enumerate(records):

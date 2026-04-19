@@ -49,30 +49,3 @@ if __name__ == "__main__":
         print(f"# Test case {i + 1}")
         PowerXN.testSolution(record)
         print("-" * 50)    
-
-# if __name__ == "__main__":
-#     obj = PowerXN()
-
-#     input = {"x":2.00000, "n":10,"expected":1024.00000}
-#     result = obj.myPow(input["x"], input["n"])
-#     print("Input: x: {:.5f}, n: {}".format(input["x"], input["n"]))
-#     print("Expected: {:.5f}".format(input["expected"]))
-#     print("Result: {:.5f}".format(result))
-
-#     print("-" * 50)
-
-#     input = {"x":2.10000, "n":3,"expected":9.26100}
-#     result = obj.myPow(input["x"], input["n"])
-#     print("Input: x: {:.5f}, n: {}".format(input["x"], input["n"]))
-#     print("Expected: {:.5f}".format(input["expected"]))
-#     print("Result: {:.5f}".format(result))
-
-#     print("-" * 50)
-
-#     input = {"x":2.00000, "n":-2,"expected":0.25000}
-#     result = obj.myPow(input["x"], input["n"])
-#     print("Input: x: {:.5f}, n: {}".format(input["x"], input["n"]))
-#     print("Expected: {:.5f}".format(input["expected"]))
-#     print("Result: {:.5f}".format(result))
-
-#     print("-" * 50)

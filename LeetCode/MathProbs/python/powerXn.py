@@ -48,4 +48,4 @@ if __name__ == "__main__":
     for i, record, in enumerate(records):
         print(f"# Test case {i + 1}")
         PowerXN.testSolution(record)
-        print("-" * 50)    
+        print("-" * 50)

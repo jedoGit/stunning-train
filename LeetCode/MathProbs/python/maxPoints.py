@@ -24,7 +24,18 @@
 
 
 import collections
-from typing import List
+from dataclasses import dataclass
+from enum import Enum
+from typing import List, Tuple
+
+class Result(Enum):
+    PASS = "\033[92mPASS\033[00m"
+    FAIL = "\033[91mFAIL\033[00m"
+
+@dataclass
+class MaxPointInLineRecord:
+    points: List[List[int]]
+    expected: int
 
 class MaxPointInLine:
     def maxPoints(self, points: List[List[int]]) -> int:
@@ -42,25 +53,27 @@ class MaxPointInLine:
                 count[slope] += 1
                 res = max(res, count[slope] + 1)
         return res
+    
+    @staticmethod
+    def testSolution(record: MaxPointInLineRecord) -> None:
+        print(f"input: points: {record.points}")
+        print(f"expected: {record.expected}")
+
+        res: int = MaxPointInLine().maxPoints(record.points)
+
+        print(f"result: {res}")
+        print(Result.PASS.value if res == record.expected else Result.FAIL.value)
             
 if __name__ == "__main__":
-    obj = MaxPointInLine()
-    
-    input = {"points":[[1,1],[2,2],[3,3]], "expected":3}
-    result = obj.maxPoints(input["points"])
-    print("Input: points: {}".format(input["points"]))
-    print("Expected: {}".format(input["expected"]))
-    print("Result: {}".format(result))
 
-    print("-" * 50)
+    records: Tuple[MaxPointInLineRecord] = (
+        MaxPointInLineRecord([[1,1],[2,2],[3,3]], 3),
+        MaxPointInLineRecord([[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]], 4)
+    )
 
-    input = {"points":[[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]], "expected":4}
-    result = obj.maxPoints(input["points"])
-    print("Input: points: {}".format(input["points"]))
-    print("Expected: {}".format(input["expected"]))
-    print("Result: {}".format(result))
-
-    print("-" * 50)
-
+    for i, record in enumerate(records):
+        print(f"# Test case {i + 1}")
+        MaxPointInLine.testSolution(record)
+        print("-" * 50)
 
     

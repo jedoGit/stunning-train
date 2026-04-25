@@ -1,6 +1,24 @@
 package LeetCode.DP1D.java;
 
-public class climbingStairs {
+enum testResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    testResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+}
+
+record climbingStairsRecord(int n, int expected) {
+}
+
+class climbingStairs {
     public int computeClimbStairs(int n) {
         if (n <= 3)
             return n;
@@ -18,23 +36,28 @@ public class climbingStairs {
         return cur;
     }
 
-    public static void main(String[] args) {
-        int input = 2;
-        int expected = 2;
-        int result = new climbingStairs().computeClimbStairs(input);
+    private static void testSolution(climbingStairsRecord record) {
+        System.out.println("input: n: " + record.n());
+        System.out.println("expected: " + record.expected());
 
-        System.out.println("-".repeat(50));
-        System.out.println("Input: " + input);
-        System.out.println("Result: " + result);
-        System.out.println("Expected: " + expected);
+        int res = new climbingStairs().computeClimbStairs(record.n());
+        System.out.println("result: " + res);
 
-        input = 3;
-        expected = 3;
-        result = new climbingStairs().computeClimbStairs(input);
-
-        System.out.println("-".repeat(50));
-        System.out.println("Input: " + input);
-        System.out.println("Result: " + result);
-        System.out.println("Expected: " + expected);
+        System.out.println(res == record.expected() ? testResult.PASS.getValue() : testResult.FAIL.getValue());
     }
+
+    public static void main(String[] args) {
+        climbingStairsRecord[] records = new climbingStairsRecord[] {
+                new climbingStairsRecord(2, 2),
+                new climbingStairsRecord(3, 3)
+        };
+
+        int i = 1;
+        for (climbingStairsRecord record : records) {
+            System.out.println("# Test case " + i++);
+            climbingStairs.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
+    }
+
 }

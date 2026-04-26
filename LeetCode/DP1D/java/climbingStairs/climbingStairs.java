@@ -1,4 +1,4 @@
-package LeetCode.DP1D.java;
+package LeetCode.DP1D.java.climbingStairs;
 
 enum testResult {
     PASS("\u001B[32mPASS\u001B[0m"),

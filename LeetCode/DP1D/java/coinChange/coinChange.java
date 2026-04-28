@@ -19,12 +19,27 @@
 // TC: O(amount * coins.length)
 // SC: O(amount)
 
-package LeetCode.DP1D.java;
+package LeetCode.DP1D.java.coinChange;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-record CoinInput(int[] coins, int amount) {
+enum TestResult {
+    PASS("\u001B[32mPASS\u001B[0m"),
+    FAIL("\u001B[31mFAIL\u001B[0m");
+
+    private final String value;
+
+    TestResult(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+}
+
+record CoinInputRecord(int[] coins, int amount, int expected) {
 
     @Override
     public String toString() {
@@ -64,33 +79,30 @@ public class coinChange {
         return dp[amount];
     }
 
+    private static void testSolution(CoinInputRecord record) {
+        System.out.println("input: " + record.toString());
+        System.out.println("expected: " + record.expected());
+
+        int res = new coinChange().computeCoinChange(record.coins(), record.amount());
+        System.out.println("result: " + res);
+
+        System.out.println(res == record.expected() ? TestResult.PASS.getValue() : TestResult.FAIL.getValue());
+    }
+
     public static void main(String[] args) {
-        CoinInput input1 = new CoinInput(new int[] { 1, 2, 5 }, 11);
-        int expected1 = 3;
-        int result1 = new coinChange().computeCoinChange(input1.coins(), input1.amount());
+        CoinInputRecord[] records = new CoinInputRecord[] {
+                new CoinInputRecord(new int[] { 1, 2, 5 }, 11, 3),
+                new CoinInputRecord(new int[] { 2 }, 3, -1),
+                new CoinInputRecord(new int[] { 1 }, 0, 0),
+                new CoinInputRecord(new int[] { 1, 3, 4 }, 6, 2),
+                new CoinInputRecord(new int[] { 2, 5, 10, 1 }, 27, 4)
+        };
 
-        System.out.println("Input: " + input1.toString());
-        System.out.println("Result: " + result1);
-        System.out.println("Expected: " + expected1);
-        System.out.println("-".repeat(50));
-
-        CoinInput input2 = new CoinInput(new int[] { 2 }, 3);
-        int expected2 = -1;
-        int result2 = new coinChange().computeCoinChange(input2.coins(), input2.amount());
-
-        System.out.println("Input: " + input2.toString());
-        System.out.println("Result: " + result2);
-        System.out.println("Expected: " + expected2);
-        System.out.println("-".repeat(50));
-
-        CoinInput input3 = new CoinInput(new int[] { 1 }, 0);
-        int expected3 = 0;
-        int result3 = new coinChange().computeCoinChange(input3.coins(), input3.amount());
-
-        System.out.println("Input: " + input3.toString());
-        System.out.println("Result: " + result3);
-        System.out.println("Expected: " + expected3);
-        System.out.println("-".repeat(50));
-
+        int i = 1;
+        for (CoinInputRecord record : records) {
+            System.out.println("# Test case " + i++);
+            coinChange.testSolution(record);
+            System.out.println("-".repeat(50));
+        }
     }
 }

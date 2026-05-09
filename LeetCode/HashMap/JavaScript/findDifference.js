@@ -27,34 +27,72 @@
 // TC: O(n), we're looping through 2 arrays
 // SC: O(n), we're creating memory for 2 arrays
 
-/**
- * @param {number[]} nums1
- * @param {number[]} nums2
- * @return {number[][]}
- */
-var findDifference = function (nums1, nums2) {
-  // We'll create sets and push the array values to the sets so we can use it for LUT
-  let set1 = new Set(nums1);
-  let set2 = new Set(nums2);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Here, we'll check which element in nums1, which we pushed to set1 does not exist in nums2, which we pushed to set2
-  // If we find an element not in the other set, we add it to an array which captures all the values which are not
-  // present in the other array.
-  const nums1Diff = [];
-  for (let num of set1) {
-    if (!set2.has(num)) {
-      nums1Diff.push(num);
-    }
+class FindDifferenceRecord {
+  constructor(nums1, nums2, expected) {
+    this.nums1 = nums1;
+    this.nums2 = nums2;
+    this.expected = expected;
   }
+}
 
-  // We do the same for the other set.
-  const nums2Diff = [];
-  for (let num of set2) {
-    if (!set1.has(num)) {
-      nums2Diff.push(num);
+class Solution {
+  /**
+   * @param {number[]} nums1
+   * @param {number[]} nums2
+   * @return {number[][]}
+   */
+  findDifference(nums1, nums2) {
+    // We'll create sets and push the array values to the sets so we can use it for LUT
+    let set1 = new Set(nums1);
+    let set2 = new Set(nums2);
+
+    // Here, we'll check which element in nums1, which we pushed to set1 does not exist in nums2, which we pushed to set2
+    // If we find an element not in the other set, we add it to an array which captures all the values which are not
+    // present in the other array.
+    const nums1Diff = [];
+    for (let num of set1) {
+      if (!set2.has(num)) {
+        nums1Diff.push(num);
+      }
     }
-  }
 
-  // We return the array of differences in packaged in an array
-  return [nums1Diff, nums2Diff];
-};
+    // We do the same for the other set.
+    const nums2Diff = [];
+    for (let num of set2) {
+      if (!set1.has(num)) {
+        nums2Diff.push(num);
+      }
+    }
+
+    // We return the array of differences in packaged in an array
+    return [nums1Diff, nums2Diff];
+  }
+}
+
+function arraysEqual(actual, expected) {
+  return JSON.stringify(actual) === JSON.stringify(expected);
+}
+
+function testSolution(record) {
+  console.log(`input: nums1: ${JSON.stringify(record.nums1)}, nums2: ${JSON.stringify(record.nums2)}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+
+  const solution = new Solution();
+  const result = solution.findDifference([...record.nums1], [...record.nums2]);
+
+  console.log(`result: ${JSON.stringify(result)}`);
+  console.log(arraysEqual(result, record.expected) ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new FindDifferenceRecord([1, 2, 3], [2, 4, 6], [[1, 3], [4, 6]]),
+  new FindDifferenceRecord([1, 2, 3, 3], [1, 1, 2, 2], [[3], []]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

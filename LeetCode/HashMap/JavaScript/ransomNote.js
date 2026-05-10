@@ -23,37 +23,72 @@
 // TC: O(m+n), where n is the length of ransomeNote and m is the length of magazine
 // SC: O(1)
 
-/**
- * @param {string} ransomNote
- * @param {string} magazine
- * @return {boolean}
- */
-var canConstruct = function (ransomNote, magazine) {
-  let count = {};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let's build a count of each chars in the magazine
-  for (const c of magazine) {
-    if (count[c]) {
-      count[c] += 1;
-    } else {
-      count[c] = 1;
-    }
+class RansomNoteRecord {
+  constructor(ransomNote, magazine, expected) {
+    this.ransomNote = ransomNote;
+    this.magazine = magazine;
+    this.expected = expected;
   }
+}
 
-  // Here, we check each chars in ransomNote if it exists in our count dictionary
-  // If it exist, we decrement the count in the count dictionary... if it it's the
-  // last one, we'll remove the entry from out count dictionary
+class Solution {
+  /**
+   * @param {string} ransomNote
+   * @param {string} magazine
+   * @return {boolean}
+   */
+  canConstruct(ransomNote, magazine) {
+    let count = {};
 
-  for (const c of ransomNote) {
-    if (!count[c]) {
-      return false;
-    } else {
-      count[c] -= 1;
-      if (!count[c]) {
-        delete count[c];
+    // Let's build a count of each chars in the magazine
+    for (const c of magazine) {
+      if (count[c]) {
+        count[c] += 1;
+      } else {
+        count[c] = 1;
       }
     }
-  }
 
-  return true;
-};
+    // Here, we check each chars in ransomNote if it exists in our count dictionary
+    // If it exist, we decrement the count in the count dictionary... if it it's the
+    // last one, we'll remove the entry from out count dictionary
+
+    for (const c of ransomNote) {
+      if (!count[c]) {
+        return false;
+      } else {
+        count[c] -= 1;
+        if (!count[c]) {
+          delete count[c];
+        }
+      }
+    }
+
+    return true;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.canConstruct(record.ransomNote, record.magazine);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: ransomNote = ${record.ransomNote}, magazine = ${record.magazine}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new RansomNoteRecord("a", "b", false),
+  new RansomNoteRecord("aa", "ab", false),
+  new RansomNoteRecord("aa", "aab", true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

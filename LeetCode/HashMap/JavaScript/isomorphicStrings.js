@@ -41,35 +41,70 @@
 // TC: O(n) we're accessing each elements of the string
 // SC: O(n) we're using 2 Hashmaps to store values of size n
 
-/**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
- */
-var isIsomorphic = function (s, t) {
-  // We'll two maps and compare the k/v
-  let mapST = {};
-  let mapTS = {};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Since s and t have the same length, we'll just use s here..
-  for (let i = 0; i < s.length; i++) {
-    // Access the chars of s and t
-    let c1 = s[i];
-    let c2 = t[i];
+class IsomorphicStringsRecord {
+  constructor(s, t, expected) {
+    this.s = s;
+    this.t = t;
+    this.expected = expected;
+  }
+}
 
-    // Here, we check if c1 is a key in mapST and this key is not equal to c2
-    // Also, check if c2 is a key in mapTS and this key is not equal to c1
-    if (
-      (c1 in mapST && mapST[c1] !== c2) ||
-      (c2 in mapTS && mapTS[c2] !== c1)
-    ) {
-      return false;
+class Solution {
+  /**
+   * @param {string} s
+   * @param {string} t
+   * @return {boolean}
+   */
+  isIsomorphic(s, t) {
+    // We'll two maps and compare the k/v
+    let mapST = {};
+    let mapTS = {};
+
+    // Since s and t have the same length, we'll just use s here..
+    for (let i = 0; i < s.length; i++) {
+      // Access the chars of s and t
+      let c1 = s[i];
+      let c2 = t[i];
+
+      // Here, we check if c1 is a key in mapST and this key is not equal to c2
+      // Also, check if c2 is a key in mapTS and this key is not equal to c1
+      if (
+        (c1 in mapST && mapST[c1] !== c2) ||
+        (c2 in mapTS && mapTS[c2] !== c1)
+      ) {
+        return false;
+      }
+
+      // here we're just adding the k/v to the maps
+      mapST[c1] = c2;
+      mapTS[c2] = c1;
     }
 
-    // here we're just adding the k/v to the maps
-    mapST[c1] = c2;
-    mapTS[c2] = c1;
+    return true;
   }
+}
 
-  return true;
-};
+function testSolution(record) {
+  console.log(`input: s: ${JSON.stringify(record.s)}, t: ${JSON.stringify(record.t)}`);
+  console.log(`expected: ${record.expected}`);
+
+  const solution = new Solution();
+  const result = solution.isIsomorphic(record.s, record.t);
+
+  console.log(`result: ${result}`);
+  console.log(result === record.expected ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new IsomorphicStringsRecord("egg", "add", true),
+  new IsomorphicStringsRecord("foo", "bar", false),
+  new IsomorphicStringsRecord("paper", "title", true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

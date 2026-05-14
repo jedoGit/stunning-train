@@ -13,30 +13,65 @@
 // Map: A built-in object that lets you store key-value pairs in an organized manner.
 // Object: A fundamental data structure in JavaScript that can also be used as a hash table for storing key-value pairs.
 
-function findDuplicates(nums) {
-  // What we want to do is for each values in the nums array, we want to save it to a Map with the array entries as the key
-  // and the number of times it exists in the nums array as the value.
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  const numCount = new Map();
-
-  for (let num of nums) {
-    // Check if the number has been added to the Map. If it exists, get that number, else set it to 0
-    // Remember 1 OR 0 = 1, 0 OR 0 = 0
-    let count = numCount.get(num) || 0;
-
-    // Add num to the Map, increment the count everytime you add to the map
-    numCount.set(num, count + 1);
+class FindDuplicatesRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
-
-  // This is our duplicate array
-  const duplicates = [];
-
-  // Loop through the K/V in the map, if any values are greater than 1, add the key to the duplicate array
-  for (let [k, v] of numCount.entries()) {
-    if (v > 1) {
-      duplicates.push(k);
-    }
-  }
-
-  return duplicates;
 }
+
+class Solution {
+  findDuplicates(nums) {
+    // What we want to do is for each values in the nums array, we want to save it to a Map with the array entries as the key
+    // and the number of times it exists in the nums array as the value.
+
+    const numCount = new Map();
+
+    for (let num of nums) {
+      // Check if the number has been added to the Map. If it exists, get that number, else set it to 0
+      // Remember 1 OR 0 = 1, 0 OR 0 = 0
+      let count = numCount.get(num) || 0;
+
+      // Add num to the Map, increment the count everytime you add to the map
+      numCount.set(num, count + 1);
+    }
+
+    // This is our duplicate array
+    const duplicates = [];
+
+    // Loop through the K/V in the map, if any values are greater than 1, add the key to the duplicate array
+    for (let [k, v] of numCount.entries()) {
+      if (v > 1) {
+        duplicates.push(k);
+      }
+    }
+
+    return duplicates;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findDuplicates([...record.nums]);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new FindDuplicatesRecord([1, 2, 3, 4, 4, 5, 6, 6], [4, 6]),
+  new FindDuplicatesRecord([1, 2, 3], []),
+  new FindDuplicatesRecord([7, 7, 7, 8, 8, 9], [7, 8]),
+  new FindDuplicatesRecord([], []),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

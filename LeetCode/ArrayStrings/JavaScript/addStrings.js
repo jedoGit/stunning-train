@@ -24,86 +24,64 @@
 // TC: O(max(length of n1, length of n2))
 // SC: O(max(length of n1, length of n2)), we created a output string and at worst, the length is max(length of n1, length of n2)
 
-/**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
-// var addStrings = function (num1, num2) {
-//   // num = "123"
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-//   // cumSum += num[0] * Math.power(10, num.length-1-0) = 1 * 10^(3-1-0) = 1 * 10^2 = 100
-//   // cumSum += num[1] * Math.power(10, num.length-1-1) = 100 + 2 * 10^(3-1-1) = 100 + 2 * 10^1 = 100 + 20 = 120
-//   // cumSum += num[2] * Math.power(10, num.length-1-2) = 120 + 3 * 10^(3-1-2) = 120 + 3 * 10^0 = 120 + 3 = 123
-
-//   const n1Len = num1.length;
-//   const n2Len = num2.length;
-
-//   let n1Int = 0;
-//   let n2Int = 0;
-
-//   // Convert n1 to integer
-//   for (let i = 0; i < n1Len; i += 1) {
-//     n1Int += num1[i] * Math.pow(10, n1Len - 1 - i);
-//   }
-
-//   // Convert n2 to integer
-//   for (let i = 0; i < n2Len; i += 1) {
-//     n2Int += num2[i] * Math.pow(10, n2Len - 1 - i);
-//   }
-
-//   // Take the sum
-//   let sum = n1Int + n2Int;
-
-//   // if sum is zero, return right away
-//   if (sum === 0) return "0";
-
-//   let revVal = "";
-
-//   // sum = 123, 10000 + 1000 = 11000
-
-//   // Read each digit of the sum and convert to string
-//   while (sum > 0) {
-//     let val = sum % 10;
-//     revVal += val;
-//     sum = Math.floor(sum / 10);
-//   }
-
-//   // retVal = "321" => "123"
-//   //           l r
-
-//   let retVal = "";
-
-//   // Since our string was reversed from the last conversion, we'll need to reverse it.
-//   for (let i = revVal.length - 1; i > -1; i -= 1) {
-//     retVal += revVal[i];
-//   }
-
-//   return retVal;
-// };
-
-/**
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
-
-var addStrings = function (num1, num2) {
-  let i = num1.length - 1;
-  let j = num2.length - 1;
-  let sum = [];
-  let carry = 0;
-  while (i >= 0 || j >= 0 || carry) {
-    let n1 = num1[i] || 0;
-    let n2 = num2[j] || 0;
-
-    let curSum = parseInt(n1) + parseInt(n2) + carry;
-    let reminder = curSum % 10;
-    sum.push(reminder);
-    carry = curSum >= 10 ? 1 : 0;
-    j--;
-    i--;
+class Record {
+  constructor(num1, num2, expected) {
+    this.num1 = num1;
+    this.num2 = num2;
+    this.expected = expected;
   }
+}
 
-  return sum.reverse().join("");
-};
+class Solution {
+  /**
+   * @param {string} num1
+   * @param {string} num2
+   * @return {string}
+   */
+  addStrings(num1, num2) {
+    let i = num1.length - 1;
+    let j = num2.length - 1;
+    const sum = [];
+    let carry = 0;
+
+    while (i >= 0 || j >= 0 || carry) {
+      const n1 = num1[i] || 0;
+      const n2 = num2[j] || 0;
+      const curSum = parseInt(n1) + parseInt(n2) + carry;
+      const remainder = curSum % 10;
+
+      sum.push(remainder);
+      carry = curSum >= 10 ? 1 : 0;
+      j -= 1;
+      i -= 1;
+    }
+
+    return sum.reverse().join("");
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.addStrings(record.num1, record.num2);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: num1 = ${record.num1}, num2 = ${record.num2}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new Record("11", "123", "134"),
+  new Record("456", "77", "533"),
+  new Record("0", "0", "0"),
+  new Record("999", "1", "1000"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

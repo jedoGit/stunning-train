@@ -20,37 +20,72 @@
 // TC: O(n), we'll have to visit all elements of nums
 // SC: O(n), we're using a set as LUT, it is the same size as nums array
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var longestConsecutive = function (nums) {
-  // Create a set from the nums array. Here using the rest operator to perform
-  // a deep copy of the array
-  let numSet = new Set([...nums]);
-  let longest = 0; // This is used to capture the longest length value
-  // console.log(numSet)
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let's go through all the elements of the set
-  // then check if it's a start of a sequence... it's a start of a sequence
-  // if the value n-1 does not exist
-  for (let n of numSet) {
-    // console.log(n)
-    // Check if its the start of a sequence
-    // It is a start of the sequence if to the left of the number,
-    // the number n-1 does not exist
-    if (!numSet.has(n - 1)) {
-      // This is start of a sequence... then keep checking the set if the
-      // value n+1 exist and if so, keep doing it until it's not
-      // increment the length value by 1 each time.
-      // After which, update the max longest value
-      let length = 0;
-      while (numSet.has(n + length)) {
-        length += 1;
-      }
-      longest = Math.max(length, longest);
-    }
+class LongestConsecutiveRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return longest;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {number}
+   */
+  longestConsecutive(nums) {
+    // Create a set from the nums array. Here using the rest operator to perform
+    // a deep copy of the array
+    let numSet = new Set([...nums]);
+    let longest = 0; // This is used to capture the longest length value
+    // console.log(numSet)
+
+    // Let's go through all the elements of the set
+    // then check if it's a start of a sequence... it's a start of a sequence
+    // if the value n-1 does not exist
+    for (let n of numSet) {
+      // console.log(n)
+      // Check if its the start of a sequence
+      // It is a start of the sequence if to the left of the number,
+      // the number n-1 does not exist
+      if (!numSet.has(n - 1)) {
+        // This is start of a sequence... then keep checking the set if the
+        // value n+1 exist and if so, keep doing it until it's not
+        // increment the length value by 1 each time.
+        // After which, update the max longest value
+        let length = 0;
+        while (numSet.has(n + length)) {
+          length += 1;
+        }
+        longest = Math.max(length, longest);
+      }
+    }
+
+    return longest;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.longestConsecutive(record.nums);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new LongestConsecutiveRecord([100, 4, 200, 1, 3, 2], 4),
+  new LongestConsecutiveRecord([0, 3, 7, 2, 5, 8, 4, 6, 0, 1], 9),
+  new LongestConsecutiveRecord([], 0),
+  new LongestConsecutiveRecord([1, 2, 0, 1], 3),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log('--------------------');
+});

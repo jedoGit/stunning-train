@@ -37,34 +37,68 @@
 // TC: O(n) loop through the input
 // SC: O(1) in place processing
 
-/**
- * @param {number[]} gas
- * @param {number[]} cost
- * @return {number}
- */
-var canCompleteCircuit = function (gas, cost) {
-  // Get the sum of the elements and compare if gasSum if less than costSum. If so, return -1
-  const gasSum = gas.reduce((acc, curVal) => acc + curVal, 0);
-  const costSum = cost.reduce((acc, curVal) => acc + curVal, 0);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  if (gasSum < costSum) {
-    return -1;
+class CanCompleteCircuitRecord {
+  constructor(gas, cost, expected) {
+    this.gas = gas;
+    this.cost = cost;
+    this.expected = expected;
   }
+}
 
-  let total = 0;
-  let res = 0;
+class Solution {
+  /**
+   * @param {number[]} gas
+   * @param {number[]} cost
+   * @return {number}
+   */
+  canCompleteCircuit(gas, cost) {
+    // Get the sum of the elements and compare if gasSum if less than costSum. If so, return -1
+    const gasSum = gas.reduce((acc, curVal) => acc + curVal, 0);
+    const costSum = cost.reduce((acc, curVal) => acc + curVal, 0);
 
-  // Loop through gas and cost and compute the difference and add to total
-  // Do this until total becomes positive
-  for (let i = 0; i < gas.length; i++) {
-    total += gas[i] - cost[i];
-
-    // If total is negative, reset total to zero and update the result variable
-    if (total < 0) {
-      total = 0;
-      res = i + 1;
+    if (gasSum < costSum) {
+      return -1;
     }
-  }
 
-  return res;
-};
+    let total = 0;
+    let res = 0;
+
+    // Loop through gas and cost and compute the difference and add to total
+    // Do this until total becomes positive
+    for (let i = 0; i < gas.length; i++) {
+      total += gas[i] - cost[i];
+
+      // If total is negative, reset total to zero and update the result variable
+      if (total < 0) {
+        total = 0;
+        res = i + 1;
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.canCompleteCircuit(record.gas, record.cost);
+  const passFail = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: gas = ${JSON.stringify(record.gas)}, cost = ${JSON.stringify(record.cost)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(passFail);
+}
+
+const records = [
+  new CanCompleteCircuitRecord([1, 2, 3, 4, 5], [3, 4, 5, 1, 2], 3),
+  new CanCompleteCircuitRecord([2, 3, 4], [3, 4, 3], -1),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

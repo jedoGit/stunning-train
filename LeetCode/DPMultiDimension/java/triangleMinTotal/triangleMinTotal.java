@@ -23,7 +23,6 @@ record TriangleMinTotalRecord(List<List<Integer>> triangle, int expected) {
 
 class triangleMinTotal {
     public int computeMinimumTotal(List<List<Integer>> triangle) {
-        // New comment
         Integer[] dp = new Integer[triangle.size() + 1];
         Arrays.fill(dp, 0);
 

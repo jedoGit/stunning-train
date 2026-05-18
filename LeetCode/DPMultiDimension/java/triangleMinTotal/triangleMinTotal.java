@@ -22,6 +22,7 @@ record TriangleMinTotalRecord(List<List<Integer>> triangle, int expected) {
 }
 
 class triangleMinTotal {
+    // Multi Dimension DP
     public int computeMinimumTotal(List<List<Integer>> triangle) {
         Integer[] dp = new Integer[triangle.size() + 1];
         Arrays.fill(dp, 0);
@@ -48,18 +49,23 @@ class triangleMinTotal {
     }
 
     public static void main(String[] args) {
-        TriangleMinTotalRecord[] records = new TriangleMinTotalRecord[]{
-                new TriangleMinTotalRecord(List.of(List.of(2), List.of(3, 4), List.of(6, 5, 7), List.of(4, 1, 8, 3)), 11),
+        TriangleMinTotalRecord[] records = new TriangleMinTotalRecord[] {
+                new TriangleMinTotalRecord(List.of(List.of(2), List.of(3, 4), List.of(6, 5, 7), List.of(4, 1, 8, 3)),
+                        11),
                 new TriangleMinTotalRecord(List.of(List.of(-10)), -10),
                 new TriangleMinTotalRecord(List.of(List.of(-1), List.of(2, 3), List.of(1, -1, -1)), 0),
-                new TriangleMinTotalRecord(List.of(List.of(1), List.of(2, 3), List.of(4, 5, 6), List.of(7, 8, 9, 10)), 14),
-                new TriangleMinTotalRecord(List.of(List.of(5), List.of(9, 6), List.of(4, 6, 8), List.of(0, 7, 1, 5)), 18),
+                new TriangleMinTotalRecord(List.of(List.of(1), List.of(2, 3), List.of(4, 5, 6), List.of(7, 8, 9, 10)),
+                        14),
+                new TriangleMinTotalRecord(List.of(List.of(5), List.of(9, 6), List.of(4, 6, 8), List.of(0, 7, 1, 5)),
+                        18),
                 new TriangleMinTotalRecord(List.of(List.of(10), List.of(9, 8), List.of(1, 2, 3)), 20),
-                new TriangleMinTotalRecord(List.of(List.of(0), List.of(1, 2), List.of(3, 1, 3), List.of(1, 1, 5, 1), List.of(4, 2, 1, 2, 4)), 4),
+                new TriangleMinTotalRecord(List.of(List.of(0), List.of(1, 2), List.of(3, 1, 3), List.of(1, 1, 5, 1),
+                        List.of(4, 2, 1, 2, 4)), 4),
                 new TriangleMinTotalRecord(List.of(List.of(-2)), -2),
                 new TriangleMinTotalRecord(List.of(List.of(3), List.of(-1, -2)), 1),
                 new TriangleMinTotalRecord(List.of(List.of(0), List.of(1, 2), List.of(-3, 1, 3)), -2),
-                new TriangleMinTotalRecord(List.of(List.of(-1), List.of(-2, -3), List.of(-4, -5, -6), List.of(-7, -8, -9, -10), List.of(-11, -12, -13, -14, -15)), -35)
+                new TriangleMinTotalRecord(List.of(List.of(-1), List.of(-2, -3), List.of(-4, -5, -6),
+                        List.of(-7, -8, -9, -10), List.of(-11, -12, -13, -14, -15)), -35)
         };
 
         int i = 1;

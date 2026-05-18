@@ -22,7 +22,6 @@ record TriangleMinTotalRecord(List<List<Integer>> triangle, int expected) {
 }
 
 class triangleMinTotal {
-    // Multi Dimension DP
     public int computeMinimumTotal(List<List<Integer>> triangle) {
         Integer[] dp = new Integer[triangle.size() + 1];
         Arrays.fill(dp, 0);

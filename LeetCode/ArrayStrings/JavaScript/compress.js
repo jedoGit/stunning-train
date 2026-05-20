@@ -34,43 +34,92 @@
 // TC: O(n), we're looping through the array once
 // SC: O(1), updating in-place
 
-/**
- * @param {character[]} chars
- * @return {number}
- */
-var compress = function (chars) {
-  // we loop and count each occurence of the chars
-  let j = 0; // We'll use for the current pointer
-  let i = 0; // We'll use to track the new length of the chars array
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (j < chars.length) {
-    // Initially, we set our current pointer to the first element
-    // and loop through the elements until the value changes
-    // Also, keep track of the count
-    let count = 0;
-    let currentPointer = chars[j];
+class CompressRecord {
+  constructor(chars, expectedLength, expectedChars) {
+    this.chars = chars;
+    this.expectedLength = expectedLength;
+    this.expectedChars = expectedChars;
+  }
+}
 
-    while (j < chars.length && chars[j] === currentPointer) {
-      j++;
-      count++;
-    }
+class Solution {
+  /**
+   * @param {character[]} chars
+   * @return {number}
+   */
+  compress(chars) {
+    // we loop and count each occurence of the chars
+    let j = 0; // We'll use for the current pointer
+    let i = 0; // We'll use to track the new length of the chars array
 
-    // At this point, we saw that there's a change in the element
-    // so we update the chars input array and write the char and the count
-    chars[i] = currentPointer;
-    i++;
+    while (j < chars.length) {
+      // Initially, we set our current pointer to the first element
+      // and loop through the elements until the value changes
+      // Also, keep track of the count
+      let count = 0;
+      let currentPointer = chars[j];
 
-    // If the count is only 1, we don't need to append the count
-    // If the count is greater than 1, we need to append the count
-    // If the count is greater than 1 digit, we need to append each digit separately
-    if (count > 1) {
-      for (let digit of count.toString()) {
-        chars[i] = digit;
-        i++;
+      while (j < chars.length && chars[j] === currentPointer) {
+        j++;
+        count++;
+      }
+
+      // At this point, we saw that there's a change in the element
+      // so we update the chars input array and write the char and the count
+      chars[i] = currentPointer;
+      i++;
+
+      // If the count is only 1, we don't need to append the count
+      // If the count is greater than 1, we need to append the count
+      // If the count is greater than 1 digit, we need to append each digit separately
+      if (count > 1) {
+        for (let digit of count.toString()) {
+          chars[i] = digit;
+          i++;
+        }
       }
     }
-  }
 
-  // We need to return the new length of the chars array
-  return i;
-};
+    // We need to return the new length of the chars array
+    return i;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const chars = [...record.chars];
+  const result = solution.compress(chars);
+  const compressedChars = chars.slice(0, result);
+  const status =
+    result === record.expectedLength &&
+    JSON.stringify(compressedChars) === JSON.stringify(record.expectedChars)
+      ? Result.PASS
+      : Result.FAIL;
+
+  console.log(`Input: chars = ${JSON.stringify(record.chars)}`);
+  console.log(
+    `Expected: length = ${record.expectedLength}, chars = ${JSON.stringify(record.expectedChars)}`,
+  );
+  console.log(`Result: length = ${result}, chars = ${JSON.stringify(compressedChars)}`);
+  console.log(status);
+}
+
+const records = [
+  new CompressRecord(["a", "a", "b", "b", "c", "c", "c"], 6, ["a", "2", "b", "2", "c", "3"]),
+  new CompressRecord(["a"], 1, ["a"]),
+  new CompressRecord(["a", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b"], 4, [
+    "a",
+    "b",
+    "1",
+    "2",
+  ]),
+  new CompressRecord(["a", "a", "a", "b", "b", "a", "a"], 6, ["a", "3", "b", "2", "a", "2"]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

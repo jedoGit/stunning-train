@@ -6,38 +6,51 @@
  * @param {number} n
  * @return {number}
  */
-var trailingZeroes = function (n) {
-  let count = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (n > 0) {
-    count = count + Math.floor(n / 5);
-    n = Math.floor(n / 5);
+class TrailingZeroesRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  return count;
-};
+class Solution {
+  /**
+   * @param {number} n
+   * @return {number}
+   */
+  trailingZeroes(n) {
+    let count = 0;
 
-let input = { n: 3 };
-let expected = 0;
-let result = trailingZeroes(input["n"]);
-console.log("Input: ", input);
-console.log("Result: ", result);
-console.log("Expected: ", expected);
+    while (n > 0) {
+      count = count + Math.floor(n / 5);
+      n = Math.floor(n / 5);
+    }
 
-console.log("-".repeat(50));
+    return count;
+  }
+}
 
-input = { n: 5 };
-expected = 1;
-result = trailingZeroes(input["n"]);
-console.log("Input: ", input);
-console.log("Result: ", result);
-console.log("Expected: ", expected);
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.trailingZeroes(record.n);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
 
-console.log("-".repeat(50));
+  console.log(`input: n: ${record.n}`);
+  console.log(`expected: ${record.expected}`);
+  console.log(`result: ${result}`);
+  console.log(status);
+}
 
-input = { n: 0 };
-expected = 0;
-result = trailingZeroes(input["n"]);
-console.log("Input: ", input);
-console.log("Result: ", result);
-console.log("Expected: ", expected);
+const records = [
+  new TrailingZeroesRecord(3, 0),
+  new TrailingZeroesRecord(5, 1),
+  new TrailingZeroesRecord(0, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

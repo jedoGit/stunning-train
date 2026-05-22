@@ -25,43 +25,94 @@
 // TC: O(n)
 // SC: O(1)
 
-/**
- * @param {number} n
- * @return {string[]}
- */
-var fizzBuzz = function (n) {
-  // n = 15
-  // 1 = 1
-  // 2 = 2
-  // 3 = fizz
-  // 4 = 4
-  // 5 = buzz
-  // 6 = fizz
-  // 7 = 7
-  // 8 = 8
-  // 9 = fizz
-  // 10 = buzz
-  // 11 = 11
-  // 12 = fizz
-  // 13 = 13
-  // 14 = 14
-  // 15 = fizzbuzz
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = [];
-
-  for (let i = 1; i < n + 1; i += 1) {
-    const div3 = i % 3;
-    const div5 = i % 5;
-    if (div3 === 0 && div5 === 0) {
-      res.push("FizzBuzz");
-    } else if (div3 === 0) {
-      res.push("Fizz");
-    } else if (div5 === 0) {
-      res.push("Buzz");
-    } else {
-      res.push(i.toString());
-    }
+class FizzBuzzRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {number} n
+   * @return {string[]}
+   */
+  fizzBuzz(n) {
+    // n = 15
+    // 1 = 1
+    // 2 = 2
+    // 3 = fizz
+    // 4 = 4
+    // 5 = buzz
+    // 6 = fizz
+    // 7 = 7
+    // 8 = 8
+    // 9 = fizz
+    // 10 = buzz
+    // 11 = 11
+    // 12 = fizz
+    // 13 = 13
+    // 14 = 14
+    // 15 = fizzbuzz
+
+    let res = [];
+
+    for (let i = 1; i < n + 1; i += 1) {
+      const div3 = i % 3;
+      const div5 = i % 5;
+      if (div3 === 0 && div5 === 0) {
+        res.push("FizzBuzz");
+      } else if (div3 === 0) {
+        res.push("Fizz");
+      } else if (div5 === 0) {
+        res.push("Buzz");
+      } else {
+        res.push(i.toString());
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.fizzBuzz(record.n);
+  const status =
+    JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`input: n: ${record.n}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+  console.log(`result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new FizzBuzzRecord(3, ["1", "2", "Fizz"]),
+  new FizzBuzzRecord(5, ["1", "2", "Fizz", "4", "Buzz"]),
+  new FizzBuzzRecord(15, [
+    "1",
+    "2",
+    "Fizz",
+    "4",
+    "Buzz",
+    "Fizz",
+    "7",
+    "8",
+    "Fizz",
+    "Buzz",
+    "11",
+    "Fizz",
+    "13",
+    "14",
+    "FizzBuzz",
+  ]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

@@ -26,6 +26,14 @@
  * @param {number} x
  * @return {boolean}
  */
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class PalindromeNumberRecord {
+  constructor(x, expected) {
+    this.x = x;
+    this.expected = expected;
+  }
+}
 
 // TC: O(n), we process digit by digit
 // SC: O(n), we create an array of digits
@@ -89,21 +97,46 @@
 //     return true
 // };
 
-// Another way is starting with x, reverse the digits of x and compare to x
-// TC: O(n)
-// SC: O(1)
+class Solution {
+  /**
+   * @param {number} x
+   * @return {boolean}
+   */
+  isPalindrome(x) {
+    let x_ = x;
+    let xR = 0;
 
-var isPalindrome = function (x) {
-  let x_ = x;
-  let xR = 0;
+    // To reverse the digits of x, we multiply xR by 10. Add x_ % 10 to XR. Then divide x_ by 10.
+    while (x_ > 0) {
+      xR = xR * 10 + (x_ % 10);
+      x_ = Math.floor(x_ / 10);
+    }
 
-  // To reverse the digits of x, we multiply xR by 10. Add x_ % 10 to XR. Then divide x_ by 10.
-
-  while (x_ > 0) {
-    xR = xR * 10 + (x_ % 10);
-    x_ = Math.floor(x_ / 10);
+    // if the reversed x is equal to the original x, then it's a palindrome.
+    return xR === x;
   }
+}
 
-  // if the reversed x is equal to the original x, then it's a palindrome.
-  return xR === x;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.isPalindrome(record.x);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`input: x: ${record.x}`);
+  console.log(`expected: ${record.expected}`);
+  console.log(`result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new PalindromeNumberRecord(121, true),
+  new PalindromeNumberRecord(-121, false),
+  new PalindromeNumberRecord(10, false),
+  new PalindromeNumberRecord(0, true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

@@ -58,49 +58,101 @@
  * @param {number} maxWidth
  * @return {string[]}
  */
-var fullJustify = function (words, maxWidth) {
-  let res = []; // This will hold our results
-  let line = []; // This is the current line of the justified words we are currently processing
-  let length = 0; // This is the length of the words of the current line we're processing without spaces
-  let i = 0; // This is our index to each words in the string array
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We want to loop through each words in the string array
-  while (i < words.length) {
-    // Check if the length of the current line we're processing, the length of the current word we're processing
-    // and the length of incoming word we're about to process will fit on the max width for each line
-    // If so, we need to process the spaces between words
-    if (length + line.length + words.at(i).length > maxWidth) {
-      // Line Complete
-      // Calculate the extra spaces we need
-      let extra_space = maxWidth - length; // Compute the space remaining after we added the current word on the the current line
-      let spaces = (extra_space / Math.max(1, line.length - 1)) | 0; // Integer division.... This computes the spaces in between the words in the current line
-      let remainder = extra_space % Math.max(1, line.length - 1); // If we don't have an even number of extra spaces computed, we need to compute the remainder and distribute the spaces starting from left.
-
-      // Add the spaces between the words in the current line
-      for (let j = 0; j < Math.max(1, line.length - 1); j++) {
-        line[j] += " ".repeat(spaces);
-        if (remainder) {
-          line[j] += " ";
-          remainder -= 1;
-        }
-      }
-      // We convert the current line to string then push to our results array
-      res.push(line.join(""));
-      // Reset these vars before processing the next line
-      line = [];
-      length = 0;
-    }
-    // push the words to the current line for processing... without spaces.
-    line.push(words[i]);
-    length += words[i].length;
-    i += 1;
+class Record {
+  constructor(words, maxWidth, expected) {
+    this.words = words;
+    this.maxWidth = maxWidth;
+    this.expected = expected;
   }
-  // Handling last line
-  // The last line need to be left justified... convert it to string by adding spaces between the words
-  // Also, we need to add trailing spaces
-  let last_line = line.join(" ");
-  let trail_space = maxWidth - last_line.length;
-  res.push(last_line + " ".repeat(trail_space));
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {string[]} words
+   * @param {number} maxWidth
+   * @return {string[]}
+   */
+  fullJustify(words, maxWidth) {
+    let res = []; // This will hold our results
+    let line = []; // This is the current line of the justified words we are currently processing
+    let length = 0; // This is the length of the words of the current line we're processing without spaces
+    let i = 0; // This is our index to each words in the string array
+
+    // We want to loop through each words in the string array
+    while (i < words.length) {
+      // Check if the length of the current line we're processing, the length of the current word we're processing
+      // and the length of incoming word we're about to process will fit on the max width for each line
+      // If so, we need to process the spaces between words
+      if (length + line.length + words.at(i).length > maxWidth) {
+        // Line Complete
+        // Calculate the extra spaces we need
+        let extra_space = maxWidth - length; // Compute the space remaining after we added the current word on the the current line
+        let spaces = (extra_space / Math.max(1, line.length - 1)) | 0; // Integer division.... This computes the spaces in between the words in the current line
+        let remainder = extra_space % Math.max(1, line.length - 1); // If we don't have an even number of extra spaces computed, we need to compute the remainder and distribute the spaces starting from left.
+
+        // Add the spaces between the words in the current line
+        for (let j = 0; j < Math.max(1, line.length - 1); j++) {
+          line[j] += " ".repeat(spaces);
+          if (remainder) {
+            line[j] += " ";
+            remainder -= 1;
+          }
+        }
+        // We convert the current line to string then push to our results array
+        res.push(line.join(""));
+        // Reset these vars before processing the next line
+        line = [];
+        length = 0;
+      }
+      // push the words to the current line for processing... without spaces.
+      line.push(words[i]);
+      length += words[i].length;
+      i += 1;
+    }
+    // Handling last line
+    // The last line need to be left justified... convert it to string by adding spaces between the words
+    // Also, we need to add trailing spaces
+    let last_line = line.join(" ");
+    let trail_space = maxWidth - last_line.length;
+    res.push(last_line + " ".repeat(trail_space));
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.fullJustify([...record.words], record.maxWidth);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: words = ${JSON.stringify(record.words)}, maxWidth = ${record.maxWidth}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new Record(
+    ["This", "is", "an", "example", "of", "text", "justification."],
+    16,
+    ["This    is    an", "example  of text", "justification.  "]
+  ),
+  new Record(
+    ["What", "must", "be", "acknowledgment", "shall", "be"],
+    16,
+    ["What   must   be", "acknowledgment  ", "shall be        "]
+  ),
+  new Record(
+    ["Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to", "a", "computer.", "Art", "is", "everything", "else", "we", "do"],
+    20,
+    ["Science  is  what we", "understand      well", "enough to explain to", "a  computer.  Art is", "everything  else  we", "do                  "]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

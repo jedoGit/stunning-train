@@ -22,28 +22,64 @@
 // TC: O(n+m), we are comparing two concatenated strings
 // SC: O(n+m), we are comparing two concatenated strings
 
-/**
- * @param {string} str1
- * @param {string} str2
- * @return {string}
- */
-function gcd(a, b) {
-  if (b === 0) {
-    return a;
-  }
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  return gcd(b, a % b);
+class GcdOfStringsRecord {
+  constructor(str1, str2, expected) {
+    this.str1 = str1;
+    this.str2 = str2;
+    this.expected = expected;
+  }
 }
 
-var gcdOfStrings = function (str1, str2) {
-  // Compare the concatenation of the two strings
-  if (str1 + str2 !== str2 + str1) {
-    return "";
+class Solution {
+  gcd(a, b) {
+    if (b === 0) {
+      return a;
+    }
+
+    return this.gcd(b, a % b);
   }
 
-  // We need to compute the GCD of two lengths
-  let gcdLength = gcd(str1.length, str2.length);
+  /**
+   * @param {string} str1
+   * @param {string} str2
+   * @return {string}
+   */
+  gcdOfStrings(str1, str2) {
+    // Compare the concatenation of the two strings
+    if (str1 + str2 !== str2 + str1) {
+      return "";
+    }
 
-  // The GCD of Strings can be computed as
-  return str1.slice(0, gcdLength);
-};
+    // We need to compute the GCD of two lengths
+    const gcdLength = this.gcd(str1.length, str2.length);
+
+    // The GCD of Strings can be computed as
+    return str1.slice(0, gcdLength);
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.gcdOfStrings(record.str1, record.str2);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: str1 = ${record.str1}, str2 = ${record.str2}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new GcdOfStringsRecord("ABCABC", "ABC", "ABC"),
+  new GcdOfStringsRecord("ABABAB", "ABAB", "AB"),
+  new GcdOfStringsRecord("LEET", "CODE", ""),
+  new GcdOfStringsRecord("AAAAAA", "AAA", "AAA"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

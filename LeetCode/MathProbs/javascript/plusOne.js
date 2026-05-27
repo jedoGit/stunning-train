@@ -37,16 +37,56 @@
  * @param {number[]} digits
  * @return {number[]}
  */
-var plusOne = function (digits) {
-  for (let i = digits.length - 1; i >= 0; i--) {
-    if (digits[i] + 1 !== 10) {
-      digits[i] += 1;
-      return digits;
-    }
-    digits[i] = 0;
-    if (i === 0) {
-      digits.unshift(1);
-      return digits;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class PlusOneRecord {
+  constructor(digits, expected) {
+    this.digits = digits;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {number[]} digits
+   * @return {number[]}
+   */
+  plusOne(digits) {
+    for (let i = digits.length - 1; i >= 0; i--) {
+      if (digits[i] + 1 !== 10) {
+        digits[i] += 1;
+        return digits;
+      }
+      digits[i] = 0;
+      if (i === 0) {
+        digits.unshift(1);
+        return digits;
+      }
     }
   }
-};
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const digits = [...record.digits];
+  const result = solution.plusOne(digits);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`input: digits: ${JSON.stringify(record.digits)}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+  console.log(`result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new PlusOneRecord([1, 2, 3], [1, 2, 4]),
+  new PlusOneRecord([4, 3, 2, 1], [4, 3, 2, 2]),
+  new PlusOneRecord([9], [1, 0]),
+  new PlusOneRecord([9, 9, 9], [1, 0, 0, 0]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

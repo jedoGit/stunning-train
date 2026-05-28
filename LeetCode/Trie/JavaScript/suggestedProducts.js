@@ -30,48 +30,96 @@
 // TC: O(nlogn + n*w + m), we sort the input array, we iterate to each string in the input array and for each string in the input array, iterate each chars, finally, we iterate to each chars in the search word
 // SC: O(1) , in place processing
 
-/**
- * @param {string[]} products
- * @param {string} searchWord
- * @return {string[][]}
- */
-var suggestedProducts = function (products, searchWord) {
-  let res = [];
-  // We need to sort the array first
-  products.sort();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Using 2 pointers
-  let l = 0;
-  let r = products.length - 1;
-
-  // We'll loop through each chars of our search word and find the first 3 results from our products array
-  for (let i = 0; i < searchWord.length; i++) {
-    let c = searchWord[i];
-
-    // For our left and right pointers, we check:
-    // 1. Left and right pointer did not cross each other
-    // 2. The string pointed by the pointers, it's length should be at least equal or more than the length of the search word
-    // 3.
-    while (l <= r && (products[l].length <= i || products[l][i] != c)) {
-      l += 1;
-    }
-    while (l <= r && (products[r].length <= i || products[r][i] != c)) {
-      r -= 1;
-    }
-
-    // We add an empty array to our results array
-    res.push([]);
-
-    // We calculate how many elements between the left and right pointer
-    // We'll use this to decide how many to store in the results array
-    let remain = r - l + 1;
-
-    // Here based on the elements between the left and right pointer, we only want max of 3 elements added to our results array
-    for (let j = 0; j < Math.min(3, remain); j++) {
-      // Here, res.at(-1) just means starting from the end of the array, give me the last element
-      res.at(-1).push(products[l + j]);
-    }
+class SuggestedProductsRecord {
+  constructor(products, searchWord, expected) {
+    this.products = products;
+    this.searchWord = searchWord;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {string[]} products
+   * @param {string} searchWord
+   * @return {string[][]}
+   */
+  suggestedProducts(products, searchWord) {
+    let res = [];
+    // We need to sort the array first
+    products.sort();
+
+    // Using 2 pointers
+    let l = 0;
+    let r = products.length - 1;
+
+    // We'll loop through each chars of our search word and find the first 3 results from our products array
+    for (let i = 0; i < searchWord.length; i++) {
+      let c = searchWord[i];
+
+      // For our left and right pointers, we check:
+      // 1. Left and right pointer did not cross each other
+      // 2. The string pointed by the pointers, it's length should be at least equal or more than the length of the search word
+      // 3.
+      while (l <= r && (products[l].length <= i || products[l][i] != c)) {
+        l += 1;
+      }
+      while (l <= r && (products[r].length <= i || products[r][i] != c)) {
+        r -= 1;
+      }
+
+      // We add an empty array to our results array
+      res.push([]);
+
+      // We calculate how many elements between the left and right pointer
+      // We'll use this to decide how many to store in the results array
+      let remain = r - l + 1;
+
+      // Here based on the elements between the left and right pointer, we only want max of 3 elements added to our results array
+      for (let j = 0; j < Math.min(3, remain); j++) {
+        // Here, res.at(-1) just means starting from the end of the array, give me the last element
+        res.at(-1).push(products[l + j]);
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.suggestedProducts([...record.products], record.searchWord);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: products = ${JSON.stringify(record.products)}, searchWord = "${record.searchWord}"`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SuggestedProductsRecord(
+    ["mobile", "mouse", "moneypot", "monitor", "mousepad"],
+    "mouse",
+    [
+      ["mobile", "moneypot", "monitor"],
+      ["mobile", "moneypot", "monitor"],
+      ["mouse", "mousepad"],
+      ["mouse", "mousepad"],
+      ["mouse", "mousepad"],
+    ],
+  ),
+  new SuggestedProductsRecord(
+    ["havana"],
+    "havana",
+    [["havana"], ["havana"], ["havana"], ["havana"], ["havana"], ["havana"]],
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------------------------------------");
+});

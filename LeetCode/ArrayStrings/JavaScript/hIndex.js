@@ -22,36 +22,69 @@
 // TC: O(n)
 // SC: O(n)
 
-/**
- * @param {number[]} citations
- * @return {number}
- */
-var hIndex = function (citations) {
-  let n = citations.length;
-  // This variable represents bins of citation counts.
-  // We will use this to keep track how many papers have citations
-  let paper_counts = new Array(n + 1).fill(0);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // console.log(paper_counts)
-
-  // Here let's count how many times each citations show up
-  // The last index captures count that is greater than or equal to n
-  for (let c of citations) {
-    paper_counts[Math.min(n, c)] = paper_counts[Math.min(n, c)] + 1;
+class HIndexRecord {
+  constructor(citations, expected) {
+    this.citations = citations;
+    this.expected = expected;
   }
+}
 
-  // console.log(paper_counts)
+class Solution {
+  /**
+   * @param {number[]} citations
+   * @return {number}
+   */
+  hIndex(citations) {
+    let n = citations.length;
+    // This variable represents bins of citation counts.
+    // We will use this to keep track how many papers have citations
+    let paper_counts = new Array(n + 1).fill(0);
 
-  // This is the h index calculation part
-  let h = n;
-  let papers = paper_counts[n];
+    // console.log(paper_counts)
 
-  // Here, starting at the end of the paper_count array, and h equal to the size of the input array
-  // We decrement h and find the paper count where paper has been cited h times
-  while (papers < h) {
-    h -= 1;
-    papers += paper_counts[h];
+    // Here let's count how many times each citations show up
+    // The last index captures count that is greater than or equal to n
+    for (let c of citations) {
+      paper_counts[Math.min(n, c)] = paper_counts[Math.min(n, c)] + 1;
+    }
+
+    // console.log(paper_counts)
+
+    // This is the h index calculation part
+    let h = n;
+    let papers = paper_counts[n];
+
+    // Here, starting at the end of the paper_count array, and h equal to the size of the input array
+    // We decrement h and find the paper count where paper has been cited h times
+    while (papers < h) {
+      h -= 1;
+      papers += paper_counts[h];
+    }
+
+    return h;
   }
+}
 
-  return h;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.hIndex(record.citations);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`input: citations: ${JSON.stringify(record.citations)}`);
+  console.log(`expected: ${record.expected}`);
+  console.log(`result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new HIndexRecord([3, 0, 6, 1, 5], 3),
+  new HIndexRecord([1, 3, 1], 1),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

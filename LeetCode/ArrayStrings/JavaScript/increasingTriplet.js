@@ -26,77 +26,82 @@
 // TC: O(n), we have 1 loop
 // SC: O(1), we're not creating memory
 
-/**
- * @param {number[]} nums
- * @return {boolean}
- */
-var increasingTriplet = function (nums) {
-  // starting with the first element, check if the succeeding elements are larger
-  // than the prior one.
-
-  // let's set the values of the previous vars to the max number
-  // we will update it later
-  let prev1 = Math.Infinity;
-  let prev2 = Math.Infinity;
-
-  // Let's loop through the nums array
-  for (let i = 0; i < nums.length; i++) {
-    // lets first check if the current nums[i] is
-    // greater than the prev2 and prev1
-    if (nums[i] > prev2 && prev2 > prev1) {
-      return true;
-    }
-
-    // let's update the values of the prev1 and prev2 variables
-    if (nums[i] > prev1) {
-      // if nums[i] is greater than the prev1 variable
-      // we want to update the prev2 variable
-      prev2 = nums[i];
-    } else {
-      // this means nums[i] is less than prev1
-      prev1 = nums[i];
-    }
-  }
-
-  return false;
+const Result = {
+  PASS: "\x1b[92mPASS\x1b[0m",
+  FAIL: "\x1b[91mFAIL\x1b[0m",
 };
 
-// TC: O(n), we have 1 loop
-// SC: O(1), we're not creating memory
+class IncreasingTripletRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
 
 /**
- * @param {number[]} nums
- * @return {boolean}
+ * TC: O(n), we have 1 loop
+ * SC: O(1), we're not creating memory
  */
-var increasingTriplet = function (nums) {
-  // starting with the first element, check if the succeeding elements are larger
-  // than the prior one.
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {boolean}
+   */
+  increasingTriplet(nums) {
+    // starting with the first element, check if the succeeding elements are larger
+    // than the prior one.
 
-  // let's set the values of the previous vars to the max number
-  // we will update it later
-  let prev1 = Number.MAX_SAFE_INTEGER;
-  let prev2 = Number.MAX_SAFE_INTEGER;
+    // let's set the values of the previous vars to the max number
+    // we will update it later
+    let prev1 = Number.MAX_SAFE_INTEGER;
+    let prev2 = Number.MAX_SAFE_INTEGER;
 
-  // prev1 < prev2 < num[i]
+    // prev1 < prev2 < num[i]
 
-  // Let's loop through the nums array
-  for (let num of nums) {
-    // Update prev1
-    if (num < prev1) {
-      prev1 = num;
+    // Let's loop through the nums array
+    for (let num of nums) {
+      // Update prev1
+      if (num < prev1) {
+        prev1 = num;
+      }
+
+      // Update prev2
+      if (num > prev1) {
+        prev2 = Math.min(num, prev2);
+      }
+
+      // Since we've already compared num to prev1 and prev2, if num is greater than prev2
+      // we have an increasing triplet
+      if (num > prev2) {
+        return true;
+      }
     }
 
-    // Update prev2
-    if (num > prev1) {
-      prev2 = Math.min(num, prev2);
-    }
-
-    // Since we've already compared num to prev1 and prev2, if num is greater than prev2
-    // we have an increasing triplet
-    if (num > prev2) {
-      return true;
-    }
+    return false;
   }
+}
 
-  return false;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.increasingTriplet(record.nums);
+  const pass = result === record.expected;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new IncreasingTripletRecord([1, 2, 3, 4, 5], true),
+  new IncreasingTripletRecord([5, 4, 3, 2, 1], false),
+  new IncreasingTripletRecord([2, 1, 5, 0, 4, 6], true),
+  new IncreasingTripletRecord([20, 100, 10, 12, 5, 13], true),
+  new IncreasingTripletRecord([1, 1, 1, 1], false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(30));
+});

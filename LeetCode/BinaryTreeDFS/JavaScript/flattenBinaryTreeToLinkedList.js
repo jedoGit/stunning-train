@@ -32,37 +32,126 @@
  *     this.right = (right===undefined ? null : right)
  * }
  */
-/**
- * @param {TreeNode} root
- * @return {void} Do not return anything, modify root in-place instead.
- */
-var flatten = function (root) {
-  if (!root) return root;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Using a helper function
-  function DFS(root) {
+class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+class Record {
+  constructor(root, expected) {
+    this.root = root;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {TreeNode} root
+   * @return {void} Do not return anything, modify root in-place instead.
+   */
+  flatten(root) {
     if (!root) return root;
 
-    // The order is necessary. We need to DFS on the left child first. Then DFS on the right child
-    let leftTail = DFS(root.left);
-    let rightTail = DFS(root.right);
+    // Using a helper function
+    function DFS(root) {
+      if (!root) return root;
 
-    // Each time we DFS, we check for the left child
-    // We need to connect the right child of the root, to the left tail
-    // Then, assight the left child to the right child
-    // Lastly, set left child to null
-    if (root.left) {
-      leftTail.right = root.right;
-      root.right = root.left;
-      root.left = null;
+      // The order is necessary. We need to DFS on the left child first. Then DFS on the right child
+      let leftTail = DFS(root.left);
+      let rightTail = DFS(root.right);
+
+      // Each time we DFS, we check for the left child
+      // We need to connect the right child of the root, to the left tail
+      // Then, assight the left child to the right child
+      // Lastly, set left child to null
+      if (root.left) {
+        leftTail.right = root.right;
+        root.right = root.left;
+        root.left = null;
+      }
+
+      // Use boolean and it needs to be in this order. JS process OR statements left to right
+      let last = rightTail || leftTail || root;
+
+      return last;
     }
 
-    // Use boolean and it needs to be in this order. JS process OR statements left to right
-    let last = rightTail || leftTail || root;
+    // Call the DFS helper function and provide the root
+    DFS(root);
+  }
+}
 
-    return last;
+const buildTree = (values) => {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index += 1;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index += 1;
   }
 
-  // Call the DFS helper function and provide the root
-  DFS(root);
+  return root;
 };
+
+const serializeFlattenedTree = (root) => {
+  const values = [];
+  let node = root;
+
+  while (node) {
+    values.push(node.val);
+
+    if (node.left) {
+      values.push("LEFT_CHILD_NOT_NULL");
+      break;
+    }
+
+    node = node.right;
+  }
+
+  return values;
+};
+
+const testSolution = (record) => {
+  const solution = new Solution();
+  const root = buildTree(record.root);
+
+  solution.flatten(root);
+  const result = serializeFlattenedTree(root);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: root = ${JSON.stringify(record.root)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+};
+
+const records = [
+  new Record([1, 2, 5, 3, 4, null, 6], [1, 2, 3, 4, 5, 6]),
+  new Record([], []),
+  new Record([0], [0]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

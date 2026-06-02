@@ -1,9 +1,14 @@
-const Result = Object.freeze({
-  PASS: "\x1b[92mPASS\x1b[0m",
-  FAIL: "\x1b[91mFAIL\x1b[0m",
-});
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-class PowerXn {
+class Record {
+  constructor(x, n, expected) {
+    this.x = x;
+    this.n = n;
+    this.expected = expected;
+  }
+}
+
+class Solution {
   /**
    * @param {number} x
    * @param {number} n
@@ -27,35 +32,30 @@ class PowerXn {
 
     return pow;
   }
-
-  /**
-   * Static method to test the solution
-   * @param {Object} record
-   */
-  static testSolution(record) {
-    console.log(`input:\tx: ${record.x.toFixed(5)}`);
-    console.log(`\tn: ${record.n}`);
-    console.log(`expected: ${record.expected.toFixed(5)}`);
-
-    const solver = new PowerXn();
-    const res = solver.myPow(record.x, record.n);
-
-    console.log(`result: ${res.toFixed(5)}`);
-    console.log(
-      res.toFixed(5) === record.expected.toFixed(5) ? Result.PASS : Result.FAIL,
-    );
-  }
 }
 
-// Main Execution
+function testSolution(record) {
+  console.log(`input:\tx: ${record.x.toFixed(5)}`);
+  console.log(`\tn: ${record.n}`);
+  console.log(`expected: ${record.expected.toFixed(5)}`);
+
+  const solution = new Solution();
+  const result = solution.myPow(record.x, record.n);
+
+  console.log(`result: ${result.toFixed(5)}`);
+  console.log(
+    result.toFixed(5) === record.expected.toFixed(5) ? Result.PASS : Result.FAIL,
+  );
+}
+
 const records = [
-  { x: 2.0, n: 10, expected: 1024.0 },
-  { x: 2.1, n: 3, expected: 9.261 },
-  { x: 2.0, n: -2, expected: 0.25 },
+  new Record(2.0, 10, 1024.0),
+  new Record(2.1, 3, 9.261),
+  new Record(2.0, -2, 0.25),
 ];
 
 records.forEach((record, i) => {
   console.log(`# Test case ${i + 1}`);
-  PowerXn.testSolution(record);
+  testSolution(record);
   console.log("-".repeat(50));
 });

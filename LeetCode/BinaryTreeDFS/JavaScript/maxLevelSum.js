@@ -24,61 +24,120 @@
 // TC: O(n*m) we're looping through each level of the tree and in each level, we're looping through all the nodes.
 // SC: O(n*m) we're looping through each level of the tree and in each level, we're looping through all the nodes. Each time we process a node, we add it to the queue
 
-/**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
- */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-var maxLevelSum = function (root) {
-  if (!root) return 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We'll use a map to store the levels and sum of node values for that level
-  let result = new Map();
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-  // We'll create a helper function to recurse through the levels of nodes
-  function dfs(node, level) {
-    // This is our base case, once we visited all the children, we return
-    if (!node) return;
+class Record {
+  constructor(root, expected) {
+    this.root = root;
+    this.expected = expected;
+  }
+}
 
-    // First, we need to check if the level we received already exists in our results map
-    // If not, we add it to the results map
-    if (result.has(level)) {
-      // Let's update the value for this key
-      // This is to sum all the values of the nodes at this level
-      let curSum = result.get(level) + node.val;
-      result.set(level, curSum);
-    } else {
-      result.set(level, node.val);
+class Solution {
+  /**
+   * @param {TreeNode} root
+   * @return {number}
+   */
+  maxLevelSum(root) {
+    if (!root) return 0;
+
+    // We'll use a map to store the levels and sum of node values for that level
+    let result = new Map();
+
+    // We'll create a helper function to recurse through the levels of nodes
+    function dfs(node, level) {
+      // This is our base case, once we visited all the children, we return
+      if (!node) return;
+
+      // First, we need to check if the level we received already exists in our results map
+      // If not, we add it to the results map
+      if (result.has(level)) {
+        // Let's update the value for this key
+        // This is to sum all the values of the nodes at this level
+        let curSum = result.get(level) + node.val;
+        result.set(level, curSum);
+      } else {
+        result.set(level, node.val);
+      }
+
+      // Then let's visit all of the children and incrementing the level
+      dfs(node.left, level + 1);
+      dfs(node.right, level + 1);
     }
 
-    // Then let's visit all of the children and incrementing the level
-    dfs(node.left, level + 1);
-    dfs(node.right, level + 1);
-  }
+    // Let's pass the root to our helper function and set the level to 1
+    dfs(root, 1);
 
-  // Let's pass the root to our helper function and set the level to 1
-  dfs(root, 1);
+    // console.log(result)
 
-  // console.log(result)
+    // We compeleted our dfs, so, let's check the max sum from our results map
+    // and return the lowest level we found it
+    let maxVal = -Infinity;
+    let minLevel = 0;
 
-  // We compeleted our dfs, so, let's check the max sum from our results map
-  // and return the lowest level we found it
-  let maxVal = -Infinity;
-  let minLevel = 0;
-
-  for (let [key, val] of result) {
-    if (val > maxVal) {
-      maxVal = val;
-      minLevel = key;
+    for (let [key, val] of result) {
+      if (val > maxVal) {
+        maxVal = val;
+        minLevel = key;
+      }
     }
+
+    return minLevel;
+  }
+}
+
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  return minLevel;
-};
+  return root;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxLevelSum(record.root);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: ${JSON.stringify(record.root)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new Record(createTree([1, 7, 0, 7, -8, null, null]), 2),
+  new Record(createTree([989, null, 10250, 98693, -89388, null, null, null, -32127]), 2),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

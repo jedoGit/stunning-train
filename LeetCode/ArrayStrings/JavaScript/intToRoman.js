@@ -62,35 +62,70 @@
  * @param {number} num
  * @return {string}
  */
-var intToRoman = function (num) {
-  const roman2Int = [
-    ["I", 1],
-    ["IV", 4],
-    ["V", 5],
-    ["IX", 9],
-    ["X", 10],
-    ["XL", 40],
-    ["L", 50],
-    ["XC", 90],
-    ["C", 100],
-    ["CD", 400],
-    ["D", 500],
-    ["CM", 900],
-    ["M", 1000],
-  ];
-  let res = "";
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let i = roman2Int.length - 1; i > -1; i--) {
-    const [sym, val] = roman2Int[i];
-
-    // JS integer division: (X/Y) | 0
-    // Check if the integer division is not zero
-    if ((num / val) | 0) {
-      let count = (num / val) | 0; // Get how many times we need to repeat the roman numeral, for example, 3000 = 3000/1000 = 3 => MMM
-      res += sym.repeat(count); // Concatenate in the result string and repeat the roman numerals
-      num = num % val; // update the num input to the next digit
-    }
+class Record {
+  constructor(num, expected) {
+    this.num = num;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  intToRoman(num) {
+    const roman2Int = [
+      ["I", 1],
+      ["IV", 4],
+      ["V", 5],
+      ["IX", 9],
+      ["X", 10],
+      ["XL", 40],
+      ["L", 50],
+      ["XC", 90],
+      ["C", 100],
+      ["CD", 400],
+      ["D", 500],
+      ["CM", 900],
+      ["M", 1000],
+    ];
+    let res = "";
+
+    for (let i = roman2Int.length - 1; i > -1; i--) {
+      const [sym, val] = roman2Int[i];
+
+      // JS integer division: (X/Y) | 0
+      // Check if the integer division is not zero
+      if ((num / val) | 0) {
+        let count = (num / val) | 0; // Get how many times we need to repeat the roman numeral, for example, 3000 = 3000/1000 = 3 => MMM
+        res += sym.repeat(count); // Concatenate in the result string and repeat the roman numerals
+        num = num % val; // update the num input to the next digit
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.intToRoman(record.num);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: num = ${record.num}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new Record(3749, "MMMDCCXLIX"),
+  new Record(58, "LVIII"),
+  new Record(1994, "MCMXCIV"),
+  new Record(3999, "MMMCMXCIX"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

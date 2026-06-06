@@ -36,29 +36,64 @@
  * @param {number[]} nums
  * @return {number}
  */
-var findMin = function (nums) {
-  // [0,1,2,4,5,6,7]
-  // [1,2,4,5,6,7,0]
-  // [2,4,5,6,7,0,1]
-  // [4,5,6,7,0,1,2]
-  // [5,6,7,0,1,2,4]
-  // [6,7,0,1,2,4,5]
-  // [7,0,1,2,4,5,6]
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let l = 0;
-  let r = nums.length - 1;
-
-  while (l < r) {
-    let m = Math.floor((r + l) / 2);
-    if (nums[m] > nums[r]) {
-      l = m + 1;
-    } else {
-      r = m;
-    }
+class FindMinRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return nums[l];
-};
+class Solution {
+  findMin(nums) {
+    // [0,1,2,4,5,6,7]
+    // [1,2,4,5,6,7,0]
+    // [2,4,5,6,7,0,1]
+    // [4,5,6,7,0,1,2]
+    // [5,6,7,0,1,2,4]
+    // [6,7,0,1,2,4,5]
+    // [7,0,1,2,4,5,6]
+
+    let l = 0;
+    let r = nums.length - 1;
+
+    while (l < r) {
+      let m = Math.floor((r + l) / 2);
+      if (nums[m] > nums[r]) {
+        l = m + 1;
+      } else {
+        r = m;
+      }
+    }
+
+    return nums[l];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findMin([...record.nums]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new FindMinRecord([3, 4, 5, 1, 2], 1),
+  new FindMinRecord([4, 5, 6, 7, 0, 1, 2], 0),
+  new FindMinRecord([11, 13, 15, 17], 11),
+  new FindMinRecord([1], 1),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});
 
 // var findMin = function(nums) {
 //     let left = 0, right = nums.length - 1;

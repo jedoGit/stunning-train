@@ -55,3 +55,75 @@ class Graph {
     return this;
   }
 }
+
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class GraphRecord {
+  constructor(operations, expected) {
+    this.operations = operations;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  runGraphOperations(operations) {
+    const graph = new Graph();
+
+    operations.forEach((operation) => {
+      const [method, ...args] = operation;
+      graph[method](...args);
+    });
+
+    return graph.adjacencyList;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.runGraphOperations(record.operations);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: operations = ${JSON.stringify(record.operations)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new GraphRecord(
+    [
+      ["addVertex", "A"],
+      ["addVertex", "B"],
+      ["addEdge", "A", "B"],
+    ],
+    { A: ["B"], B: ["A"] }
+  ),
+  new GraphRecord(
+    [
+      ["addVertex", "A"],
+      ["addVertex", "B"],
+      ["addVertex", "C"],
+      ["addEdge", "A", "B"],
+      ["addEdge", "A", "C"],
+      ["removeEdge", "A", "B"],
+    ],
+    { A: ["C"], B: [], C: ["A"] }
+  ),
+  new GraphRecord(
+    [
+      ["addVertex", "A"],
+      ["addVertex", "B"],
+      ["addVertex", "C"],
+      ["addEdge", "A", "B"],
+      ["addEdge", "A", "C"],
+      ["removeVertex", "A"],
+    ],
+    { B: [], C: [] }
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

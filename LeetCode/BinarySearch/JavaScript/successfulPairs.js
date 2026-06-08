@@ -40,42 +40,82 @@
  * @param {number} success
  * @return {number[]}
  */
-var successfulPairs = function (spells, potions, success) {
-  let n = potions.length;
-  let res = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We need to sort the potions
-  potions.sort((a, b) => a - b);
+class SuccessfulPairsRecord {
+  constructor(spells, potions, success, expected) {
+    this.spells = spells;
+    this.potions = potions;
+    this.success = success;
+    this.expected = expected;
+  }
+}
 
-  // We need to iterate through the spell and multiply it to each elements in the potion
-  // We need to perform binary search to find the value less than the success in our array
+class Solution {
+  successfulPairs(spells, potions, success) {
+    let n = potions.length;
+    let res = [];
 
-  for (const spell of spells) {
-    let l = 0;
-    let r = n - 1;
+    // We need to sort the potions
+    potions.sort((a, b) => a - b);
 
-    // We loop through and move our l and r pointers until l and r is equal
-    // If l and r is equal, we break the loop.
-    while (l <= r) {
-      let m = Math.floor((l + r) / 2);
+    // We need to iterate through the spell and multiply it to each elements in the potion
+    // We need to perform binary search to find the value less than the success in our array
 
-      // Perform binary search
-      if (potions[m] * spell < success) {
-        // The computed value is less than what we're looking for
-        // Move the left pointer to m+1
-        l = m + 1;
-      } else {
-        // The computed value we're looking for is greater than the success.
-        // So let's move the right pointer to m-1
-        r = m - 1;
+    for (const spell of spells) {
+      let l = 0;
+      let r = n - 1;
+
+      // We loop through and move our l and r pointers until l and r is equal
+      // If l and r is equal, we break the loop.
+      while (l <= r) {
+        let m = Math.floor((l + r) / 2);
+
+        // Perform binary search
+        if (potions[m] * spell < success) {
+          // The computed value is less than what we're looking for
+          // Move the left pointer to m+1
+          l = m + 1;
+        } else {
+          // The computed value we're looking for is greater than the success.
+          // So let's move the right pointer to m-1
+          r = m - 1;
+        }
       }
+
+      // At this point, we broke out of the while loop. We need to compute how many indices that satisfy the criteria
+      // We compute it as number of elements in the potions array minus the index pointed by the left pointer, which is the
+      // starting index in potions array that has value success or greater
+      res.push(n - l);
     }
 
-    // At this point, we broke out of the while loop. We need to compute how many indices that satisfy the criteria
-    // We compute it as number of elements in the potions array minus the index pointed by the left pointer, which is the
-    // starting index in potions array that has value success or greater
-    res.push(n - l);
+    return res;
   }
+}
 
-  return res;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.successfulPairs([...record.spells], [...record.potions], record.success);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(
+    `Input: spells = ${JSON.stringify(record.spells)}, potions = ${JSON.stringify(record.potions)}, success = ${
+      record.success
+    }`,
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new SuccessfulPairsRecord([5, 1, 3], [1, 2, 3, 4, 5], 7, [4, 0, 3]),
+  new SuccessfulPairsRecord([3, 1, 2], [8, 5, 8], 16, [2, 0, 2]),
+  new SuccessfulPairsRecord([1, 2, 3], [1, 1, 1], 1, [3, 3, 3]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

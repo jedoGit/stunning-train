@@ -24,35 +24,96 @@
  * @param {number[][]} intervals
  * @return {number[][]}
  */
-var merge = function (intervals) {
-  // We need to sort the intervals in ascending order based on index zero of the intervals
-  // Index zero is the starting point and index 1 is the ending point
-  // [[start0, end0],[start1, end1],[start2, end2]...]
-  intervals.sort((a, b) => a[0] - b[0]);
-  // console.log(intervals)
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let output = [intervals[0]]; // Initialize the output array with the first element in the sorted intervals array
-
-  // We want to start at index 1 of the intervals array..
-  // JS array slice method return all values of the array starting at index 1.
-  // We're using array deconstruction here. Intervals array is an array of arrays
-  for (let [start, end] of intervals.slice(1)) {
-    // console.log(start, end)
-    // our last end is what we put in our output. output[output.length-1][1]
-    const lastEnd = output[output.length - 1][1];
-
-    // Check if the current start value is less than to the previous end value
-    // This means that this interval is overlapping with the previous interval.
-    // If it's less than the prevEnd, it IS overlapping.
-    // If overlapping, we need to merge this interval. To merge interval, look at the
-    // last end value and the current end value and use the max and save the new
-    // interval in our output
-    if (start <= lastEnd) {
-      output[output.length - 1][1] = Math.max(lastEnd, end);
-    } else {
-      output.push([start, end]);
-    }
+class MergeIntervalsRecord {
+  constructor(intervals, expected) {
+    this.intervals = intervals;
+    this.expected = expected;
   }
+}
 
-  return output;
-};
+class Solution {
+  merge(intervals) {
+    // We need to sort the intervals in ascending order based on index zero of the intervals
+    // Index zero is the starting point and index 1 is the ending point
+    // [[start0, end0],[start1, end1],[start2, end2]...]
+    intervals.sort((a, b) => a[0] - b[0]);
+    // console.log(intervals)
+
+    let output = [intervals[0]]; // Initialize the output array with the first element in the sorted intervals array
+
+    // We want to start at index 1 of the intervals array..
+    // JS array slice method return all values of the array starting at index 1.
+    // We're using array deconstruction here. Intervals array is an array of arrays
+    for (let [start, end] of intervals.slice(1)) {
+      // console.log(start, end)
+      // our last end is what we put in our output. output[output.length-1][1]
+      const lastEnd = output[output.length - 1][1];
+
+      // Check if the current start value is less than to the previous end value
+      // This means that this interval is overlapping with the previous interval.
+      // If it's less than the prevEnd, it IS overlapping.
+      // If overlapping, we need to merge this interval. To merge interval, look at the
+      // last end value and the current end value and use the max and save the new
+      // interval in our output
+      if (start <= lastEnd) {
+        output[output.length - 1][1] = Math.max(lastEnd, end);
+      } else {
+        output.push([start, end]);
+      }
+    }
+
+    return output;
+  }
+}
+
+const cloneIntervals = (intervals) => intervals.map((interval) => [...interval]);
+
+function testSolution(record) {
+  const solution = new Solution();
+  const input = cloneIntervals(record.intervals);
+  const result = solution.merge(input);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: ${JSON.stringify(record.intervals)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MergeIntervalsRecord(
+    [
+      [1, 3],
+      [2, 6],
+      [8, 10],
+      [15, 18],
+    ],
+    [
+      [1, 6],
+      [8, 10],
+      [15, 18],
+    ]
+  ),
+  new MergeIntervalsRecord(
+    [
+      [1, 4],
+      [4, 5],
+    ],
+    [[1, 5]]
+  ),
+  new MergeIntervalsRecord(
+    [
+      [1, 4],
+      [0, 4],
+    ],
+    [[0, 4]]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

@@ -25,26 +25,60 @@
 // TC: O(logn) because at each iteration, your search items are reduced by n/2
 // SC: O(1) in place processing
 
-/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
- */
-var searchInsert = function (nums, target) {
-  let l = 0;
-  let r = nums.length;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (l < r) {
-    let m = l + Math.floor((r - l) / 2);
-
-    if (target > nums[m]) {
-      l = m + 1;
-    } else {
-      r = m;
-    }
+class Record {
+  constructor(nums, target, expected) {
+    this.nums = nums;
+    this.target = target;
+    this.expected = expected;
   }
+}
 
-  // console.log(l,r)
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @param {number} target
+   * @return {number}
+   */
+  searchInsert(nums, target) {
+    let l = 0;
+    let r = nums.length;
 
-  return r;
-};
+    while (l < r) {
+      let m = l + Math.floor((r - l) / 2);
+
+      if (target > nums[m]) {
+        l = m + 1;
+      } else {
+        r = m;
+      }
+    }
+
+    return r;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.searchInsert(record.nums, record.target);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}, target = ${record.target}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new Record([1, 3, 5, 6], 5, 2),
+  new Record([1, 3, 5, 6], 2, 1),
+  new Record([1, 3, 5, 6], 7, 4),
+  new Record([1, 3, 5, 6], 0, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

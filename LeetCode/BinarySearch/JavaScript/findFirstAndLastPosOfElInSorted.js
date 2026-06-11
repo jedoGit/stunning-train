@@ -32,31 +32,67 @@
  * @param {number} target
  * @return {number[]}
  */
-var searchRange = function (nums, target) {
-  let l = 0;
-  let r = nums.length - 1;
-  let res = [-1, -1];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Using binary search
-  while (l <= r) {
-    let m = l + Math.floor((r - l) / 2);
-
-    // Check if target is less than mid
-    // if so, move r pointer to m-1
-    // if target is greater than mid, move l pointer to m+1
-    // else, target is equal to mid... from there, just move l pointer to the right until it's equal to target or move r pointer to left.
-    if (target < nums[m]) {
-      r = m - 1;
-    } else if (target > nums[m]) {
-      l = m + 1;
-    } else {
-      while (nums[l] !== target) l++;
-      while (nums[r] !== target) r--;
-
-      res = [l, r];
-      break;
-    }
+class SearchRangeRecord {
+  constructor(nums, target, expected) {
+    this.nums = nums;
+    this.target = target;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  searchRange(nums, target) {
+    let l = 0;
+    let r = nums.length - 1;
+    let res = [-1, -1];
+
+    // Using binary search
+    while (l <= r) {
+      let m = l + Math.floor((r - l) / 2);
+
+      // Check if target is less than mid
+      // if so, move r pointer to m-1
+      // if target is greater than mid, move l pointer to m+1
+      // else, target is equal to mid... from there, just move l pointer to the right until it's equal to target or move r pointer to left.
+      if (target < nums[m]) {
+        r = m - 1;
+      } else if (target > nums[m]) {
+        l = m + 1;
+      } else {
+        while (nums[l] !== target) l++;
+        while (nums[r] !== target) r--;
+
+        res = [l, r];
+        break;
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.searchRange([...record.nums], record.target);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}, target = ${record.target}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new SearchRangeRecord([5, 7, 7, 8, 8, 10], 8, [3, 4]),
+  new SearchRangeRecord([5, 7, 7, 8, 8, 10], 6, [-1, -1]),
+  new SearchRangeRecord([], 0, [-1, -1]),
+  new SearchRangeRecord([1], 1, [0, 0]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

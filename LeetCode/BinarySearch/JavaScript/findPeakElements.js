@@ -30,35 +30,69 @@
  * @param {number[]} nums
  * @return {number}
  */
-var findPeakElement = function (nums) {
-  const n = nums.length;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // For this problem, we only want to find a peak element.
-  // It does not matter where it is in the array.
-  // We'll do a binary seach and pick the mid point to start searching.
-  // Check if the value in the middle is greater than to it's right
-  // If so, you move your right pointer to the point to the middle
-  // Else, you move your left pointer to move to the right element of the middle pointer
-
-  // Let's do a binary search
-  let l = 0;
-  let r = n - 1;
-
-  // We stop when l is equal or greater than r
-  while (l < r) {
-    let m = Math.floor((l + r) / 2);
-
-    // If the number in the middle is greater than to its right,
-    // we move the right pointer to point the middle
-    if (nums[m] > nums[m + 1]) {
-      r = m;
-    } else {
-      // This is the case when the middle value is lesser than to its right value
-      // In this case, we move the left pointer to point to the right of the middle value
-      l = m + 1;
-    }
+class PeakElementRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  // We return the left pointer
-  return l;
-};
+class Solution {
+  findPeakElement(nums) {
+    const n = nums.length;
+
+    // For this problem, we only want to find a peak element.
+    // It does not matter where it is in the array.
+    // We'll do a binary seach and pick the mid point to start searching.
+    // Check if the value in the middle is greater than to it's right
+    // If so, you move your right pointer to the point to the middle
+    // Else, you move your left pointer to move to the right element of the middle pointer
+
+    // Let's do a binary search
+    let l = 0;
+    let r = n - 1;
+
+    // We stop when l is equal or greater than r
+    while (l < r) {
+      let m = Math.floor((l + r) / 2);
+
+      // If the number in the middle is greater than to its right,
+      // we move the right pointer to point the middle
+      if (nums[m] > nums[m + 1]) {
+        r = m;
+      } else {
+        // This is the case when the middle value is lesser than to its right value
+        // In this case, we move the left pointer to point to the right of the middle value
+        l = m + 1;
+      }
+    }
+
+    // We return the left pointer
+    return l;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findPeakElement([...record.nums]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new PeakElementRecord([1, 2, 3, 1], 2),
+  new PeakElementRecord([1, 2, 1, 3, 5, 6, 4], 5),
+  new PeakElementRecord([1], 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

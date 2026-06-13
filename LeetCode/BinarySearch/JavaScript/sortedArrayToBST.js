@@ -33,15 +33,81 @@
  * @param {number[]} nums
  * @return {TreeNode}
  */
-var sortedArrayToBST = function (nums, l = 0, r = nums.length - 1) {
-  if (l > r) return null;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let mid = Math.floor((r + l) / 2);
-  // console.log(mid)
-  let root = new TreeNode(nums[mid]);
+class SortedArrayToBSTRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
 
-  root.left = sortedArrayToBST(nums, l, mid - 1);
-  root.right = sortedArrayToBST(nums, mid + 1, r);
+class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left;
+    this.right = right;
+  }
+}
 
-  return root;
-};
+class Solution {
+  sortedArrayToBST(nums, l = 0, r = nums.length - 1) {
+    if (l > r) return null;
+
+    const mid = Math.floor((r + l) / 2);
+    const root = new TreeNode(nums[mid]);
+
+    root.left = this.sortedArrayToBST(nums, l, mid - 1);
+    root.right = this.sortedArrayToBST(nums, mid + 1, r);
+
+    return root;
+  }
+}
+
+function serializeTree(root) {
+  if (!root) return [];
+
+  const result = [];
+  const queue = [root];
+
+  while (queue.length) {
+    const node = queue.shift();
+
+    if (!node) {
+      result.push(null);
+      continue;
+    }
+
+    result.push(node.val);
+    queue.push(node.left, node.right);
+  }
+
+  while (result[result.length - 1] === null) {
+    result.pop();
+  }
+
+  return result;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = serializeTree(solution.sortedArrayToBST([...record.nums]));
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new SortedArrayToBSTRecord([-10, -3, 0, 5, 9], [0, -10, 5, null, -3, null, 9]),
+  new SortedArrayToBSTRecord([1, 3], [1, null, 3]),
+  new SortedArrayToBSTRecord([1], [1]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

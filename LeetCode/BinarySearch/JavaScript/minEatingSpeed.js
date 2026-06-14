@@ -33,43 +33,78 @@
  * @param {number} h
  * @return {number}
  */
-var minEatingSpeed = function (piles, h) {
-  // To find k, k is in a set [1...max(piles[i])] that satisfy this condition:
-  // sum(piles[i]/k) <= h
-  // We use binary search to find k from the set [1...max(piles[i])]
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We're not looking the index, we're searching for the value from the set [1...max(piles[i])]
-  let l = 1;
-  let r = Math.max(...piles); // in JS, this is the syntax to find the max value of an array
-  let minK = r; // let's initialize this to max(piles[i])... since technically, this is the max k can be
-
-  while (l <= r) {
-    // Use bin search to test values of k
-    k = Math.floor((l + r) / 2);
-
-    let eatingHrs = 0;
-    // We need to test this value of k if it results in sum(piles[i]/k) <= h
-    // We need to find the min value of k
-    for (let pile of piles) {
-      eatingHrs += Math.ceil(pile / k);
-    }
-
-    // We check if this value of k results in sum(piles[i]/k) <= h?
-    // We ate at a rate where we finished all the piles within h hours
-    // This means we ate fast and we need to slow down
-    // We update our minK and move our right pointer to the left side of k
-    if (eatingHrs <= h) {
-      minK = Math.min(minK, k);
-      r = k - 1;
-    } else {
-      // This is case when we ate slow. We did not finish eating all the piles within h hours.
-      // So we need to eat faster... we'll move our left pointer to the right of k
-      l = k + 1;
-    }
+class MinEatingSpeedRecord {
+  constructor(piles, h, expected) {
+    this.piles = piles;
+    this.h = h;
+    this.expected = expected;
   }
+}
 
-  // At this point, we tried all possible values of k using bin search and we're done
-  // Let's return the result
+class Solution {
+  minEatingSpeed(piles, h) {
+    // To find k, k is in a set [1...max(piles[i])] that satisfy this condition:
+    // sum(piles[i]/k) <= h
+    // We use binary search to find k from the set [1...max(piles[i])]
 
-  return minK;
-};
+    // We're not looking the index, we're searching for the value from the set [1...max(piles[i])]
+    let l = 1;
+    let r = Math.max(...piles); // in JS, this is the syntax to find the max value of an array
+    let minK = r; // let's initialize this to max(piles[i])... since technically, this is the max k can be
+
+    while (l <= r) {
+      // Use bin search to test values of k
+      const k = Math.floor((l + r) / 2);
+
+      let eatingHrs = 0;
+      // We need to test this value of k if it results in sum(piles[i]/k) <= h
+      // We need to find the min value of k
+      for (let pile of piles) {
+        eatingHrs += Math.ceil(pile / k);
+      }
+
+      // We check if this value of k results in sum(piles[i]/k) <= h?
+      // We ate at a rate where we finished all the piles within h hours
+      // This means we ate fast and we need to slow down
+      // We update our minK and move our right pointer to the left side of k
+      if (eatingHrs <= h) {
+        minK = Math.min(minK, k);
+        r = k - 1;
+      } else {
+        // This is case when we ate slow. We did not finish eating all the piles within h hours.
+        // So we need to eat faster... we'll move our left pointer to the right of k
+        l = k + 1;
+      }
+    }
+
+    // At this point, we tried all possible values of k using bin search and we're done
+    // Let's return the result
+
+    return minK;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minEatingSpeed([...record.piles], record.h);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: piles = ${JSON.stringify(record.piles)}, h = ${record.h}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new MinEatingSpeedRecord([3, 6, 7, 11], 8, 4),
+  new MinEatingSpeedRecord([30, 11, 23, 4, 20], 5, 30),
+  new MinEatingSpeedRecord([30, 11, 23, 4, 20], 6, 23),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

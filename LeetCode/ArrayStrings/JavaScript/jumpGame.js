@@ -21,30 +21,65 @@
 // TC: O(n) loop through all the elements
 // SC: O(1) in place processing
 
-/**
- * @param {number[]} nums
- * @return {boolean}
- */
-var canJump = function (nums) {
-  // What we want to do here is starting at the last element, we want to check
-  // if the starting from that element plus the value on that element, are we able to
-  // jump to the end? We want to set a pointer to point to the last index of nums.
-  // We compare and update this value of the condition is true. We keep doing this
-  // until we cover all the elements.
-  // Then we check if we got all the way to zero index, which means there's a path from
-  // index zero to the last index.
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let n = nums.length;
-  // Initially, our goal is the last index of the array.
-  let goal = n - 1;
-
-  for (let i = n - 1; i > -1; i--) {
-    // check if index i plus the element in index i >= goal.
-    // If so, we have a new goal post to check.
-    if (i + nums[i] >= goal) {
-      goal = i;
-    }
+class JumpGameRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return goal === 0 ? true : false;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {boolean}
+   */
+  canJump(nums) {
+    // What we want to do here is starting at the last element, we want to check
+    // if the starting from that element plus the value on that element, are we able to
+    // jump to the end? We want to set a pointer to point to the last index of nums.
+    // We compare and update this value of the condition is true. We keep doing this
+    // until we cover all the elements.
+    // Then we check if we got all the way to zero index, which means there's a path from
+    // index zero to the last index.
+
+    let n = nums.length;
+    // Initially, our goal is the last index of the array.
+    let goal = n - 1;
+
+    for (let i = n - 1; i > -1; i--) {
+      // check if index i plus the element in index i >= goal.
+      // If so, we have a new goal post to check.
+      if (i + nums[i] >= goal) {
+        goal = i;
+      }
+    }
+
+    return goal === 0 ? true : false;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.canJump(record.nums);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new JumpGameRecord([2, 3, 1, 1, 4], true),
+  new JumpGameRecord([3, 2, 1, 0, 4], false),
+  new JumpGameRecord([0], true),
+  new JumpGameRecord([2, 0, 0], true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

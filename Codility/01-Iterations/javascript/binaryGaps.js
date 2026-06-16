@@ -20,60 +20,68 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
-function solution(N) {
-  // Implement your solution here
-  // First thing to do is convert the input integer to binary
-  //   const binStr = N.toString(2); // This is a to string method of a number in JS
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let num2Conv = N;
-  let binStr = "";
-  while (num2Conv) {
-    binStr = binStr + (num2Conv & 1);
-    num2Conv >>= 1;
+class BinaryGapsRecord {
+  constructor(N, expected) {
+    this.N = N;
+    this.expected = expected;
   }
-
-  // reverse the binStr
-  let l = 0;
-  let r = binStr.length - 1;
-
-  while (l < r) {
-    [binStr[l], binStr[r]] = [binStr[r], binStr[l]];
-    // let temp =  binStr[l]
-    // binStr[l] = binStr[r]
-    // binStr[r] = temp
-    l += 1;
-    r -= 1;
-  }
-
-  // console.log(binStr)
-
-  // We need a variable to track the longest binary gap
-  let longestGap = 0;
-  let currentGap = 0;
-
-  // 010001001
-  // 1000
-  // 0, 1, 01
-
-  for (let i = 1; i < binStr.length; i += 1) {
-    // Lets find a c == 0, then check if previous element is 1, then we start counting the zeroes
-    // If we find a c == 1, we stop counting and update our longestGap = max(currentGap, longestGap)
-    // If we didn't find a 1 and we find the end of the string array, we do nothing
-    if (binStr[i] === "0" && binStr[i - 1] === "1") {
-      while (binStr[i] === "0" && i < binStr.length) {
-        // console.log(i)
-        currentGap += 1;
-        i += 1;
-      }
-
-      if (binStr[i] === "1") {
-        longestGap = Math.max(currentGap, longestGap);
-        currentGap = 0;
-        // console.log("longestGap: ", longestGap, i)
-      }
-    }
-    // After we exit, our i value is pointing the either the end of the string or to the next 1
-  }
-
-  return longestGap;
 }
+
+class Solution {
+  solution(N) {
+    // First thing to do is convert the input integer to binary.
+    const binStr = N.toString(2);
+
+    // We need a variable to track the longest binary gap.
+    let longestGap = 0;
+    let currentGap = 0;
+
+    for (let i = 1; i < binStr.length; i += 1) {
+      // Lets find a c == 0, then check if previous element is 1, then we start counting the zeroes.
+      // If we find a c == 1, we stop counting and update our longestGap = max(currentGap, longestGap).
+      // If we didn't find a 1 and we find the end of the string array, we do nothing.
+      if (binStr[i] === "0" && binStr[i - 1] === "1") {
+        while (binStr[i] === "0" && i < binStr.length) {
+          currentGap += 1;
+          i += 1;
+        }
+
+        if (binStr[i] === "1") {
+          longestGap = Math.max(currentGap, longestGap);
+          currentGap = 0;
+        }
+      }
+      // After we exit, our i value is pointing the either the end of the string or to the next 1.
+    }
+
+    return longestGap;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.solution(record.N);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: N = ${record.N}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new BinaryGapsRecord(1041, 5),
+  new BinaryGapsRecord(32, 0),
+  new BinaryGapsRecord(9, 2),
+  new BinaryGapsRecord(529, 4),
+  new BinaryGapsRecord(20, 1),
+  new BinaryGapsRecord(15, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

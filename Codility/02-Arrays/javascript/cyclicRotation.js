@@ -41,34 +41,73 @@
 // TC: O(n), visit all of element of A
 // SC: O(n), create an array of size n
 
-function solution(A, K) {
-  // Implement your solution here
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = [];
-
-  // Get the length of A
-  const aLen = A.length;
-
-  // Compute the newK... if K is divisible by A.length, there's no rotation.
-  let newK = K % aLen;
-
-  // console.log("newK: " + newK)
-
-  if (newK === 0) {
-    return A;
+class CyclicRotationRecord {
+  constructor(A, K, expected) {
+    this.A = A;
+    this.K = K;
+    this.expected = expected;
   }
-
-  // Process the k elements from the end of array and add it to the results
-  for (let i = aLen - newK; i < aLen; i += 1) {
-    res.push(A[i]);
-  }
-
-  // Process the k elements from the beginning of the array and push it to the results array
-  for (let i = 0; i < aLen - newK; i += 1) {
-    res.push(A[i]);
-  }
-
-  // console.log( res)
-
-  return res;
 }
+
+class Solution {
+  solution(A, K) {
+    let res = [];
+
+    // Get the length of A
+    const aLen = A.length;
+
+    // Compute the newK... if K is divisible by A.length, there's no rotation.
+    let newK = K % aLen;
+
+    // console.log("newK: " + newK)
+
+    if (newK === 0) {
+      return A;
+    }
+
+    // Process the k elements from the end of array and add it to the results
+    for (let i = aLen - newK; i < aLen; i += 1) {
+      res.push(A[i]);
+    }
+
+    // Process the k elements from the beginning of the array and push it to the results array
+    for (let i = 0; i < aLen - newK; i += 1) {
+      res.push(A[i]);
+    }
+
+    // console.log( res)
+
+    return res;
+  }
+}
+
+function arraysEqual(left, right) {
+  return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.solution(record.A, record.K);
+  const status = arraysEqual(result, record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: A = ${JSON.stringify(record.A)}, K = ${record.K}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new CyclicRotationRecord([3, 8, 9, 7, 6], 3, [9, 7, 6, 3, 8]),
+  new CyclicRotationRecord([0, 0, 0], 1, [0, 0, 0]),
+  new CyclicRotationRecord([1, 2, 3, 4], 4, [1, 2, 3, 4]),
+  new CyclicRotationRecord([], 3, []),
+  new CyclicRotationRecord([1], 7, [1]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

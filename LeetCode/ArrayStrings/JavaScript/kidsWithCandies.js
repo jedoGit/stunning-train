@@ -34,31 +34,69 @@
 // TC: O(n) because you'll need to run two loop, first, to find the max then the second to compare each element with max
 // SC: O(1) because we're not creating memory for LUT 
 
-/**
- * @param {number[]} candies
- * @param {number} extraCandies
- * @return {boolean[]}
- */
-var kidsWithCandies = function (candies, extraCandies) {
-  // Find the max from the array
-  let maxCandies = Math.max(...candies);
-  let retVal = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // for ( let i = 0 ; i < candies.length ; i++ ) {
-  //     if(candies[i] > maxCandies ) {
-  //         maxCandies = candies[i]
-  //     }
-  // }
-
-  for (let j = 0; j < candies.length; j++) {
-    let numCandies = candies[j] + extraCandies;
-
-    if (numCandies < maxCandies) {
-      retVal[j] = false;
-    } else {
-      retVal[j] = true;
-    }
+class KidsWithCandiesRecord {
+  constructor(candies, extraCandies, expected) {
+    this.candies = candies;
+    this.extraCandies = extraCandies;
+    this.expected = expected;
   }
+}
 
-  return retVal;
-};
+class Solution {
+  /**
+   * @param {number[]} candies
+   * @param {number} extraCandies
+   * @return {boolean[]}
+   */
+  kidsWithCandies(candies, extraCandies) {
+    // Find the max from the array
+    let maxCandies = Math.max(...candies);
+    let retVal = [];
+
+    // for ( let i = 0 ; i < candies.length ; i++ ) {
+    //     if(candies[i] > maxCandies ) {
+    //         maxCandies = candies[i]
+    //     }
+    // }
+
+    for (let j = 0; j < candies.length; j++) {
+      let numCandies = candies[j] + extraCandies;
+
+      if (numCandies < maxCandies) {
+        retVal[j] = false;
+      } else {
+        retVal[j] = true;
+      }
+    }
+
+    return retVal;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.kidsWithCandies([...record.candies], record.extraCandies);
+  const status =
+    JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(
+    `Input: candies = ${JSON.stringify(record.candies)}, extraCandies = ${record.extraCandies}`,
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new KidsWithCandiesRecord([2, 3, 5, 1, 3], 3, [true, true, true, false, true]),
+  new KidsWithCandiesRecord([4, 2, 1, 1, 2], 1, [true, false, false, false, false]),
+  new KidsWithCandiesRecord([12, 1, 12], 10, [true, false, true]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(30));
+});

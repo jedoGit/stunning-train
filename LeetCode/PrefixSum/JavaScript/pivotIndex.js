@@ -43,21 +43,56 @@
  * @param {number[]} nums
  * @return {number}
  */
-var pivotIndex = function (nums) {
-  // Init value of prefix sum
-  let ps = [];
-  ps[0] = nums[0];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // calculate the prefix sum
-  for (let n = 1; n < nums.length; n++) {
-    ps[n] = ps[n - 1] + nums[n];
+class PivotIndexRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  // Now, lets check for the pivot index
-  for (let n = 0; n < nums.length; n++) {
-    if (ps[n] - nums[n] === ps[nums.length - 1] - ps[n]) {
-      return n;
+class Solution {
+  pivotIndex(nums) {
+    // Init value of prefix sum
+    let ps = [];
+    ps[0] = nums[0];
+
+    // calculate the prefix sum
+    for (let n = 1; n < nums.length; n++) {
+      ps[n] = ps[n - 1] + nums[n];
     }
+
+    // Now, lets check for the pivot index
+    for (let n = 0; n < nums.length; n++) {
+      if (ps[n] - nums[n] === ps[nums.length - 1] - ps[n]) {
+        return n;
+      }
+    }
+    return -1;
   }
-  return -1;
-};
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.pivotIndex([...record.nums]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new PivotIndexRecord([1, 7, 3, 6, 5, 6], 3),
+  new PivotIndexRecord([1, 2, 3], -1),
+  new PivotIndexRecord([2, 1, -1], 0),
+  new PivotIndexRecord([-1, -1, 0, 1, 1, 0], 5),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

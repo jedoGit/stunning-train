@@ -35,99 +35,97 @@
  * @param {number} k
  * @return {void} Do not return anything, modify nums in-place instead.
  */
-var rotate1 = function (nums, k) {
-  k = k % nums.length;
-  let n = nums.length;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let l = 0;
-  let r = n - 1;
-
-  // Reverse the whole array using array deconstruction
-  // Swap the elements pointed by the l and r pointers starting from the outer elements moving to the middle elements
-  while (l < r) {
-    [nums[l], nums[r]] = [nums[r], nums[l]];
-    l++;
-    r--;
+class Record {
+  constructor(nums, k, expected) {
+    this.nums = nums;
+    this.k = k;
+    this.expected = expected;
   }
+}
 
-  // Then, we reverse the first k elements of the array
-  l = 0;
-  r = k - 1;
-  while (l < r) {
-    [nums[l], nums[r]] = [nums[r], nums[l]];
-    l++;
-    r--;
-  }
+class Solution {
+  rotate1(nums, k) {
+    k = k % nums.length;
+    let n = nums.length;
 
-  // Lastly, we reverse the remaining elements after the first k elements
-  l = k;
-  r = n - 1;
-  while (l < r) {
-    [nums[l], nums[r]] = [nums[r], nums[l]];
-    l++;
-    r--;
-  }
-};
+    let l = 0;
+    let r = n - 1;
 
-// TC: O(n) looping through all the elements of nums
-// SC: O(n) we're creating a new array from nums
-
-/**
- * @param {number[]} nums
- * @param {number} k
- * @return {void} Do not return anything, modify nums in-place instead.
- */
-var rotate2 = function (nums, k) {
-  let arr = [];
-  let n = nums.length;
-  k = k % n;
-
-  if (n >= k) {
-    // Push the elements starting from n-k index, push it to the new array.
-    for (let i = n - k; i < n; i++) {
-      arr.push(nums[i]);
-    }
-    // Then push the first k elements to the new array
-    for (let j = 0; j < n - k; j++) {
-      arr.push(nums[j]);
+    // Reverse the whole array using array deconstruction
+    // Swap the elements pointed by the l and r pointers starting from the outer elements moving to the middle elements
+    while (l < r) {
+      [nums[l], nums[r]] = [nums[r], nums[l]];
+      l++;
+      r--;
     }
 
-    // Here, we overwrite the values of the new array to the original array
-    // For JS, we use splice method to delete the elements 0 to n and replace with
-    // elements of the new array using the rest operator
-    // We can also, set the length of the original array to 0 and push the elements of the new array using the rest operator
-    nums.splice(0, n, ...arr);
-    // nums.length = 0
-    // nums.push(...arr)
-  }
-};
+    // Then, we reverse the first k elements of the array
+    l = 0;
+    r = k - 1;
+    while (l < r) {
+      [nums[l], nums[r]] = [nums[r], nums[l]];
+      l++;
+      r--;
+    }
 
-/**
- * @param {number[]} nums
- * @param {number} k
- * @param {number[]} expected
- * @return {void} Do not return anything, modify nums in-place instead.
- */
-let testSolution = (nums, k, expected) => {
-  console.log("Input: nums: [" + nums + "], k: " + k);
-  console.log("Expected: [" + expected + "]");
-  rotate2(nums, k);
+    // Lastly, we reverse the remaining elements after the first k elements
+    l = k;
+    r = n - 1;
+    while (l < r) {
+      [nums[l], nums[r]] = [nums[r], nums[l]];
+      l++;
+      r--;
+    }
+  }
+
+  // TC: O(n) looping through all the elements of nums
+  // SC: O(n) we're creating a new array from nums
+  rotate2(nums, k) {
+    let arr = [];
+    let n = nums.length;
+    k = k % n;
+
+    if (n >= k) {
+      // Push the elements starting from n-k index, push it to the new array.
+      for (let i = n - k; i < n; i++) {
+        arr.push(nums[i]);
+      }
+      // Then push the first k elements to the new array
+      for (let j = 0; j < n - k; j++) {
+        arr.push(nums[j]);
+      }
+
+      // Here, we overwrite the values of the new array to the original array
+      // For JS, we use splice method to delete the elements 0 to n and replace with
+      // elements of the new array using the rest operator
+      // We can also, set the length of the original array to 0 and push the elements of the new array using the rest operator
+      nums.splice(0, n, ...arr);
+      // nums.length = 0
+      // nums.push(...arr)
+    }
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const nums = [...record.nums];
+
+  console.log("Input: nums: [" + record.nums + "], k: " + record.k);
+  console.log("Expected: [" + record.expected + "]");
+  solution.rotate2(nums, record.k);
   console.log("Result: [" + nums + "]");
+  console.log(JSON.stringify(nums) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL);
   console.log("-".repeat(50));
-};
+}
 
-let input = {
-  nums: [1, 2, 3, 4, 5, 6, 7],
-  k: 3,
-  expected: [5, 6, 7, 1, 2, 3, 4],
-};
+const records = [
+  new Record([1, 2, 3, 4, 5, 6, 7], 3, [5, 6, 7, 1, 2, 3, 4]),
+  new Record([-1, -100, 3, 99], 2, [3, 99, -1, -100]),
+];
 
-testSolution(input["nums"], input["k"], input["expected"]);
-
-input = {
-  nums: [-1, -100, 3, 99],
-  k: 2,
-  expected: [3, 99, -1, -100],
-};
-
-testSolution(input["nums"], input["k"], input["expected"]);
+records.forEach((record, index) => {
+  console.log("# Test case " + (index + 1));
+  testSolution(record);
+});

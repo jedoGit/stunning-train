@@ -49,66 +49,130 @@
  * @param {character[][]} board
  * @return {boolean}
  */
-var isValidSudoku = function (board) {
-  // Using hash map to check if there are duplicates in each rows, columns and cells
-  let cols = new Map();
-  let rows = new Map();
-  let squares = new Map();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let's go through each rows and cols, it's a 9x9 matrix
-  // A cell is a 3x3 matrix
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      // Let's compute which cell the current row and col belong to
-      // It works out by using integer division by 3 and we can address each cell
-      // For example, r = 0 and c = 0 is cell (0,0); r = 8 and c = 8 is cell (2,2)
-      // r = 7, c = 3 is cell (2, 1)
-      let r_ = (r / 3) | 0; // Integer division
-      let c_ = (c / 3) | 0; // Integer division
-      let rcPair = r_ + "," + c_; // We need to write the pair as strings to the hashmap
-
-      // console.log(rcPair)
-
-      // If board[r][c] is a dot, it means it's empty, so we continue
-      if (board[r][c] === ".") {
-        continue;
-      }
-
-      // Here we create the key and value is initialized as an empty set.
-      if (!cols.has(c)) {
-        cols.set(c, new Set());
-      }
-      if (!rows.has(r)) {
-        rows.set(r, new Set());
-      }
-      if (!squares.has(rcPair)) {
-        squares.set(rcPair, new Set());
-      }
-
-      // console.log(cols)
-      // console.log(rows)
-      // console.log(squares)
-
-      // We get the value for each keys and check if the current r,c pair has duplicates
-      // If so, we return false
-      if (
-        rows.get(r).has(board[r][c]) ||
-        cols.get(c).has(board[r][c]) ||
-        squares.get(rcPair).has(board[r][c])
-      ) {
-        return false;
-      }
-
-      // Now we add each non "." values to our sets, this is to see if we have duplicates
-      cols.get(c).add(board[r][c]);
-      rows.get(r).add(board[r][c]);
-      squares.get(rcPair).add(board[r][c]);
-
-      // console.log(cols)
-      // console.log(rows)
-      // console.log(squares)
-    }
+class ValidSudokuRecord {
+  constructor(board, expected) {
+    this.board = board;
+    this.expected = expected;
   }
+}
 
-  return true;
-};
+class Solution {
+  /**
+   * @param {character[][]} board
+   * @return {boolean}
+   */
+  isValidSudoku(board) {
+    // Using hash map to check if there are duplicates in each rows, columns and cells
+    let cols = new Map();
+    let rows = new Map();
+    let squares = new Map();
+
+    // Let's go through each rows and cols, it's a 9x9 matrix
+    // A cell is a 3x3 matrix
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        // Let's compute which cell the current row and col belong to
+        // It works out by using integer division by 3 and we can address each cell
+        // For example, r = 0 and c = 0 is cell (0,0); r = 8 and c = 8 is cell (2,2)
+        // r = 7, c = 3 is cell (2, 1)
+        let r_ = (r / 3) | 0; // Integer division
+        let c_ = (c / 3) | 0; // Integer division
+        let rcPair = r_ + "," + c_; // We need to write the pair as strings to the hashmap
+
+        // console.log(rcPair)
+
+        // If board[r][c] is a dot, it means it's empty, so we continue
+        if (board[r][c] === ".") {
+          continue;
+        }
+
+        // Here we create the key and value is initialized as an empty set.
+        if (!cols.has(c)) {
+          cols.set(c, new Set());
+        }
+        if (!rows.has(r)) {
+          rows.set(r, new Set());
+        }
+        if (!squares.has(rcPair)) {
+          squares.set(rcPair, new Set());
+        }
+
+        // console.log(cols)
+        // console.log(rows)
+        // console.log(squares)
+
+        // We get the value for each keys and check if the current r,c pair has duplicates
+        // If so, we return false
+        if (
+          rows.get(r).has(board[r][c]) ||
+          cols.get(c).has(board[r][c]) ||
+          squares.get(rcPair).has(board[r][c])
+        ) {
+          return false;
+        }
+
+        // Now we add each non "." values to our sets, this is to see if we have duplicates
+        cols.get(c).add(board[r][c]);
+        rows.get(r).add(board[r][c]);
+        squares.get(rcPair).add(board[r][c]);
+
+        // console.log(cols)
+        // console.log(rows)
+        // console.log(squares)
+      }
+    }
+
+    return true;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const board = record.board.map((row) => [...row]);
+  const result = solution.isValidSudoku(board);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`input: board: ${JSON.stringify(record.board)}`);
+  console.log(`expected: ${record.expected}`);
+  console.log(`result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new ValidSudokuRecord(
+    [
+      ["5", "3", ".", ".", "7", ".", ".", ".", "."],
+      ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+      [".", "9", "8", ".", ".", ".", ".", "6", "."],
+      ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+      ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+      ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+      [".", "6", ".", ".", ".", ".", "2", "8", "."],
+      [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+      [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+    ],
+    true
+  ),
+  new ValidSudokuRecord(
+    [
+      ["8", "3", ".", ".", "7", ".", ".", ".", "."],
+      ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+      [".", "9", "8", ".", ".", ".", ".", "6", "."],
+      ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+      ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+      ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+      [".", "6", ".", ".", ".", ".", "2", "8", "."],
+      [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+      [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+    ],
+    false
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

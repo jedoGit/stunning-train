@@ -45,41 +45,68 @@
  * @param {number} n
  * @return {number}
  */
-var guessNumber = function (n) {
-  function findNum(start, end) {
-    const mid = Math.floor((start + end) / 2);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-    if (guess(mid) === 0) return mid;
-    if (guess(mid) === -1) return findNum(start, mid - 1);
-    if (guess(mid) === 1) return findNum(mid + 1, end);
+class GuessNumberRecord {
+  constructor(n, pick, expected) {
+    this.n = n;
+    this.pick = pick;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  constructor(pick) {
+    this.pick = pick;
   }
 
-  return findNum(1, n);
-};
+  guess(num) {
+    if (num > this.pick) return -1;
+    if (num < this.pick) return 1;
+    return 0;
+  }
 
-// TC: O(log n) is the worst for binary search
-// SC: O(1) in place processing
+  guessNumber(n) {
+    let l = 1;
+    let r = n;
 
-/**
- * @param {number} n
- * @return {number}
- */
-var guessNumber = function (n) {
-  let l = 1;
-  let r = n;
+    while (l <= r) {
+      const mid = Math.floor((l + r) / 2);
 
-  while (l <= r) {
-    const mid = Math.floor((l + r) / 2);
-
-    const result = guess(mid);
-    if (result === -1) {
-      r = mid - 1;
-    } else if (result === 1) {
-      l = mid + 1;
-    } else {
-      return mid;
+      const result = this.guess(mid);
+      if (result === -1) {
+        r = mid - 1;
+      } else if (result === 1) {
+        l = mid + 1;
+      } else {
+        return mid;
+      }
     }
-  }
 
-  return -1;
-};
+    return -1;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution(record.pick);
+  const result = solution.guessNumber(record.n);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: n = ${record.n}, pick = ${record.pick}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new GuessNumberRecord(10, 6, 6),
+  new GuessNumberRecord(1, 1, 1),
+  new GuessNumberRecord(2, 1, 1),
+  new GuessNumberRecord(2, 2, 2),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

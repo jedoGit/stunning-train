@@ -26,7 +26,7 @@
 
 const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-class Record {
+class AddStringsRecord {
   constructor(num1, num2, expected) {
     this.num1 = num1;
     this.num2 = num2;
@@ -74,10 +74,10 @@ function testSolution(record) {
 }
 
 const records = [
-  new Record("11", "123", "134"),
-  new Record("456", "77", "533"),
-  new Record("0", "0", "0"),
-  new Record("999", "1", "1000"),
+  new AddStringsRecord("11", "123", "134"),
+  new AddStringsRecord("456", "77", "533"),
+  new AddStringsRecord("0", "0", "0"),
+  new AddStringsRecord("999", "1", "1000"),
 ];
 
 records.forEach((record, index) => {

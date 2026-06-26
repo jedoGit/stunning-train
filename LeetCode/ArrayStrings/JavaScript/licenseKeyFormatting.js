@@ -25,22 +25,58 @@
 // TC: O(n), all the string methods used will result in O(n)
 // SC: O(1)
 
-/**
- * @param {string} s
- * @param {number} k
- * @return {string}
- */
-var licenseKeyFormatting = function (s, k) {
-  let res = "";
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  s = s.replaceAll("-", "").toUpperCase();
-
-  let count = 1;
-  for (let i = s.length - 1; i > -1; i -= 1) {
-    res += s[i];
-    if (i !== 0 && count % k === 0) res += "-";
-    count += 1;
+class LicenseKeyFormattingRecord {
+  constructor(s, k, expected) {
+    this.s = s;
+    this.k = k;
+    this.expected = expected;
   }
+}
 
-  return res.split("").reverse().join("");
-};
+class Solution {
+  /**
+   * @param {string} s
+   * @param {number} k
+   * @return {string}
+   */
+  licenseKeyFormatting(s, k) {
+    let res = "";
+
+    s = s.replaceAll("-", "").toUpperCase();
+
+    let count = 1;
+    for (let i = s.length - 1; i > -1; i -= 1) {
+      res += s[i];
+      if (i !== 0 && count % k === 0) res += "-";
+      count += 1;
+    }
+
+    return res.split("").reverse().join("");
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.licenseKeyFormatting(record.s, record.k);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: s = ${record.s}, k = ${record.k}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new LicenseKeyFormattingRecord("5F3Z-2e-9-w", 4, "5F3Z-2E9W"),
+  new LicenseKeyFormattingRecord("2-5g-3-J", 2, "2-5G-3J"),
+  new LicenseKeyFormattingRecord("---", 3, ""),
+  new LicenseKeyFormattingRecord("a-a-a-a-", 1, "A-A-A-A"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

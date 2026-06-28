@@ -31,48 +31,109 @@
  * @param {number[][]} matrix
  * @return {void} Do not return anything, modify matrix in-place instead.
  */
-var setZeroes = function (matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  let rowZero = false;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Determine which rows/cols need to be zeroed
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      // If we see a zero, we mark that row and col for zeroing out
-      if (matrix[r][c] === 0) {
-        // Mark the whole column
-        matrix[0][c] = 0;
-        // Mark the whole row
-        if (r > 0) {
-          matrix[r][0] = 0;
-        } else {
-          rowZero = true;
+class SetMatrixZeroesRecord {
+  constructor(matrix, expected) {
+    this.matrix = matrix;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {number[][]} matrix
+   * @return {void} Do not return anything, modify matrix in-place instead.
+   */
+  setZeroes(matrix) {
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+    let rowZero = false;
+
+    // Determine which rows/cols need to be zeroed
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        // If we see a zero, we mark that row and col for zeroing out
+        if (matrix[r][c] === 0) {
+          // Mark the whole column
+          matrix[0][c] = 0;
+          // Mark the whole row
+          if (r > 0) {
+            matrix[r][0] = 0;
+          } else {
+            rowZero = true;
+          }
         }
       }
     }
-  }
 
-  // Start zeroing out the elements
-  for (let r = 1; r < rows; r++) {
-    for (let c = 1; c < cols; c++) {
-      // If the row and col are marked for zeroing out, zero them out
-      if (matrix[0][c] === 0 || matrix[r][0] === 0) {
-        matrix[r][c] = 0;
+    // Start zeroing out the elements
+    for (let r = 1; r < rows; r++) {
+      for (let c = 1; c < cols; c++) {
+        // If the row and col are marked for zeroing out, zero them out
+        if (matrix[0][c] === 0 || matrix[r][0] === 0) {
+          matrix[r][c] = 0;
+        }
+      }
+    }
+
+    // This is for the edge case cell(0,0) for the row
+    if (matrix[0][0] === 0) {
+      for (let r = 0; r < rows; r++) {
+        matrix[r][0] = 0;
+      }
+    }
+    // Edge case for cell(0,0) for the col
+    if (rowZero) {
+      for (let c = 0; c < cols; c++) {
+        matrix[0][c] = 0;
       }
     }
   }
+}
 
-  // This is for the edge case cell(0,0) for the row
-  if (matrix[0][0] === 0) {
-    for (let r = 0; r < rows; r++) {
-      matrix[r][0] = 0;
-    }
-  }
-  // Edge case for cell(0,0) for the col
-  if (rowZero) {
-    for (let c = 0; c < cols; c++) {
-      matrix[0][c] = 0;
-    }
-  }
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const matrix = record.matrix.map((row) => [...row]);
+
+  solution.setZeroes(matrix);
+  const status = JSON.stringify(matrix) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`input: matrix: ${JSON.stringify(record.matrix)}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+  console.log(`result: ${JSON.stringify(matrix)}`);
+  console.log(status);
+}
+
+const records = [
+  new SetMatrixZeroesRecord(
+    [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+    ],
+    [
+      [1, 0, 1],
+      [0, 0, 0],
+      [1, 0, 1],
+    ]
+  ),
+  new SetMatrixZeroesRecord(
+    [
+      [0, 1, 2, 0],
+      [3, 4, 5, 2],
+      [1, 3, 1, 5],
+    ],
+    [
+      [0, 0, 0, 0],
+      [0, 4, 5, 0],
+      [0, 3, 1, 0],
+    ]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

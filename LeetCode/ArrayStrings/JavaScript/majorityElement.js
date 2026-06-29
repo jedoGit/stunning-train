@@ -20,55 +20,59 @@
 // Follow-up: Could you solve the problem in linear time and in O(1) space?
 
 // TC: O(n), we're looping through all elements of nums
-// SC: O(n), we're looping through all elements of nums and creating a hashmap entry
-
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var majorityElement = function (nums) {
-  // Using Hashmap
-  let count = {};
-  let res = 0;
-  let maxCount = 0;
-
-  // Basically, we want to use a hashmap to count the occurence of each elements
-  // in nums. Then, we look at which k/v pair in our hashmap has the max count.
-  for (let n of nums) {
-    if (!count[n]) {
-      count[n] = 0;
-    }
-
-    count[n] = 1 + count[n];
-
-    if (count[n] > maxCount) {
-      res = n;
-    }
-
-    maxCount = Math.max(count[n], maxCount);
-  }
-
-  return res;
-};
-
-// TC: O(n), we're looping through all elements of nums
 // SC: O(1), in place processing
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var majorityElement = function (nums) {
-  // Search Boyer-Moore Algorithm
-  let res = 0;
-  let count = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let n of nums) {
-    if (count === 0) {
-      res = n;
+class MajorityElementRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {number}
+   */
+  majorityElement(nums) {
+    // Search Boyer-Moore Algorithm
+    let res = 0;
+    let count = 0;
+
+    for (let n of nums) {
+      if (count === 0) {
+        res = n;
+      }
+
+      count += n === res ? 1 : -1;
     }
 
-    count += n === res ? 1 : -1;
+    return res;
   }
-  return res;
-};
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.majorityElement([...record.nums]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new MajorityElementRecord([3, 2, 3], 3),
+  new MajorityElementRecord([2, 2, 1, 1, 1, 2, 2], 2),
+  new MajorityElementRecord([1], 1),
+  new MajorityElementRecord([6, 5, 5], 5),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

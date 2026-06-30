@@ -30,27 +30,62 @@
 // TC: O(1) We're not dealing with an array input
 // SC: O(n) for the queue we maintain
 
-var RecentCounter = function () {
-  this.myQueue = [];
-};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {number} t
- * @return {number}
- */
-RecentCounter.prototype.ping = function (t) {
-  // We add to the queue
-  this.myQueue.push(t);
-
-  // then, we check that the value at the tail of the queue satisfy the condition
-  let curT = t || null;
-
-  // we use while loop to keep removing the tail of the queue until it satisfy the condition
-  while (this.myQueue[0] < curT - 3000) {
-    // remove the tail of the queue
-    this.myQueue.shift();
+class RecentCounterRecord {
+  constructor(pings, expected) {
+    this.pings = pings;
+    this.expected = expected;
   }
-  // At this point, we return lenght of the queue
+}
 
-  return this.myQueue.length;
-};
+class Solution {
+  constructor() {
+    this.myQueue = [];
+  }
+
+  /**
+   * @param {number} t
+   * @return {number}
+   */
+  ping(t) {
+    // We add to the queue
+    this.myQueue.push(t);
+
+    // then, we check that the value at the tail of the queue satisfy the condition
+    let curT = t || null;
+
+    // we use while loop to keep removing the tail of the queue until it satisfy the condition
+    while (this.myQueue[0] < curT - 3000) {
+      // remove the tail of the queue
+      this.myQueue.shift();
+    }
+    // At this point, we return lenght of the queue
+
+    return this.myQueue.length;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = record.pings.map((time) => solution.ping(time));
+  const status =
+    JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: pings = ${JSON.stringify(record.pings)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new RecentCounterRecord([1, 100, 3001, 3002], [1, 2, 3, 3]),
+  new RecentCounterRecord([1, 3001, 3002, 6002], [1, 2, 2, 2]),
+  new RecentCounterRecord([100, 3100, 6200, 9300], [1, 2, 1, 1]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

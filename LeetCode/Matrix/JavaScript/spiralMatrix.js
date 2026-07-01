@@ -23,42 +23,94 @@
  * @param {number[][]} matrix
  * @return {number[]}
  */
-var spiralOrder = function (matrix) {
-  let res = [];
-  let left = 0;
-  let right = matrix[0].length;
-  let top = 0;
-  let bottom = matrix.length;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (left < right && top < bottom) {
-    // Get every i in the top row
-    for (let i = left; i < right; i++) {
-      res.push(matrix[top][i]);
-    }
-    top += 1;
-
-    // Get every i in the right col
-    for (let i = top; i < bottom; i++) {
-      res.push(matrix[i][right - 1]);
-    }
-    right -= 1;
-
-    if (!(left < right && top < bottom)) {
-      break;
-    }
-
-    // Get every i in the bottom row
-    for (let i = right - 1; i > left - 1; i--) {
-      res.push(matrix[bottom - 1][i]);
-    }
-    bottom -= 1;
-
-    // Get every i in the left col
-    for (let i = bottom - 1; i > top - 1; i--) {
-      res.push(matrix[i][left]);
-    }
-    left += 1;
+class SpiralMatrixRecord {
+  constructor(matrix, expected) {
+    this.matrix = matrix;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {number[][]} matrix
+   * @return {number[]}
+   */
+  spiralOrder(matrix) {
+    let res = [];
+    let left = 0;
+    let right = matrix[0].length;
+    let top = 0;
+    let bottom = matrix.length;
+
+    while (left < right && top < bottom) {
+      // Get every i in the top row
+      for (let i = left; i < right; i++) {
+        res.push(matrix[top][i]);
+      }
+      top += 1;
+
+      // Get every i in the right col
+      for (let i = top; i < bottom; i++) {
+        res.push(matrix[i][right - 1]);
+      }
+      right -= 1;
+
+      if (!(left < right && top < bottom)) {
+        break;
+      }
+
+      // Get every i in the bottom row
+      for (let i = right - 1; i > left - 1; i--) {
+        res.push(matrix[bottom - 1][i]);
+      }
+      bottom -= 1;
+
+      // Get every i in the left col
+      for (let i = bottom - 1; i > top - 1; i--) {
+        res.push(matrix[i][left]);
+      }
+      left += 1;
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const matrix = record.matrix.map((row) => [...row]);
+  const result = solution.spiralOrder(matrix);
+  const status = JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`input: matrix: ${JSON.stringify(record.matrix)}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+  console.log(`result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new SpiralMatrixRecord(
+    [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ],
+    [1, 2, 3, 6, 9, 8, 7, 4, 5]
+  ),
+  new SpiralMatrixRecord(
+    [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+      [9, 10, 11, 12],
+    ],
+    [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

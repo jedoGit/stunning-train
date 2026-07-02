@@ -34,50 +34,90 @@
  * @param {string} text2
  * @return {number}
  */
-var longestCommonSubsequence = function (text1, text2) {
-  // The intuition for this 2-D DP is to setup an nxm grid where n and m are the length of the text input.
-  // To perform bottoms up solution, we need to add a column of zeros to the rightmost side and a row of zeros
-  // to the bottom of the grid.
-  // Starting at arr[n-1][m-1] position, we perform this algorithm:
-  // If text1[n-1] === text2[m-1], we calculate arr[n-1][m-1] = 1 + arr[n][m]
-  //            basically 1 + the cell diagonal to the current cell
-  // If text1[n-1] !== text2[m-1], we calculate arr[n-1][m-1] = max(arr[n][m-1], arr[n-1][m])
-  //            basically, the max of the cell to the bottom and right of the current cell
-  // The longest subsequence value will be in dp[0][0]
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // text1 = abcde , text2 = ace
-  //          a   c   e
-  //          0   1   2   3
-  //          -------------
-  //   a  0 | 3   2   1   0
-  //   b  1 | 2   2   1   0
-  //   c  2 | 2   2   1   0
-  //   d  3 | 1   1   1   0
-  //   e  4 | 1   1   1   0
-  //      5 | 0   0   0   0
+class LongestCommonSubsequenceRecord {
+  constructor(text1, text2, expected) {
+    this.text1 = text1;
+    this.text2 = text2;
+    this.expected = expected;
+  }
+}
 
-  let n = text1.length;
-  let m = text2.length;
+class Solution {
+  /**
+   * @param {string} text1
+   * @param {string} text2
+   * @return {number}
+   */
+  longestCommonSubsequence(text1, text2) {
+    // The intuition for this 2-D DP is to setup an nxm grid where n and m are the length of the text input.
+    // To perform bottoms up solution, we need to add a column of zeros to the rightmost side and a row of zeros
+    // to the bottom of the grid.
+    // Starting at arr[n-1][m-1] position, we perform this algorithm:
+    // If text1[n-1] === text2[m-1], we calculate arr[n-1][m-1] = 1 + arr[n][m]
+    //            basically 1 + the cell diagonal to the current cell
+    // If text1[n-1] !== text2[m-1], we calculate arr[n-1][m-1] = max(arr[n][m-1], arr[n-1][m])
+    //            basically, the max of the cell to the bottom and right of the current cell
+    // The longest subsequence value will be in dp[0][0]
 
-  // Create a grid with extra row and column and fill with zeros
-  let dp = new Array(n + 1).fill().map(() => new Array(m + 1).fill(0));
+    // text1 = abcde , text2 = ace
+    //          a   c   e
+    //          0   1   2   3
+    //          -------------
+    //   a  0 | 3   2   1   0
+    //   b  1 | 2   2   1   0
+    //   c  2 | 2   2   1   0
+    //   d  3 | 1   1   1   0
+    //   e  4 | 1   1   1   0
+    //      5 | 0   0   0   0
 
-  // Perform the algorithm:
-  // If text1[n-1] === text2[m-1], we calculate arr[n-1][m-1] = 1 + arr[n][m]
-  //            basically 1 + the cell diagonal to the current cell
-  // If text1[n-1] !== text2[m-1], we calculate arr[n-1][m-1] = max(arr[n][m-1], arr[n-1][m])
-  //            basically, the max of the cell to the bottom and right of the current cell
-  for (let i = n - 1; i > -1; --i) {
-    for (let j = m - 1; j > -1; --j) {
-      if (text1[i] === text2[j]) {
-        dp[i][j] = 1 + dp[i + 1][j + 1];
-      }
-      if (text1[i] !== text2[j]) {
-        dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+    let n = text1.length;
+    let m = text2.length;
+
+    // Create a grid with extra row and column and fill with zeros
+    let dp = new Array(n + 1).fill().map(() => new Array(m + 1).fill(0));
+
+    // Perform the algorithm:
+    // If text1[n-1] === text2[m-1], we calculate arr[n-1][m-1] = 1 + arr[n][m]
+    //            basically 1 + the cell diagonal to the current cell
+    // If text1[n-1] !== text2[m-1], we calculate arr[n-1][m-1] = max(arr[n][m-1], arr[n-1][m])
+    //            basically, the max of the cell to the bottom and right of the current cell
+    for (let i = n - 1; i > -1; --i) {
+      for (let j = m - 1; j > -1; --j) {
+        if (text1[i] === text2[j]) {
+          dp[i][j] = 1 + dp[i + 1][j + 1];
+        }
+        if (text1[i] !== text2[j]) {
+          dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+        }
       }
     }
-  }
 
-  // The longest subsequence value will be in dp[0][0]
-  return dp[0][0];
-};
+    // The longest subsequence value will be in dp[0][0]
+    return dp[0][0];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.longestCommonSubsequence(record.text1, record.text2);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`input: text1: ${JSON.stringify(record.text1)}, text2: ${JSON.stringify(record.text2)}`);
+  console.log(`expected: ${record.expected}`);
+  console.log(`result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new LongestCommonSubsequenceRecord("abcde", "ace", 3),
+  new LongestCommonSubsequenceRecord("abc", "abc", 3),
+  new LongestCommonSubsequenceRecord("abc", "def", 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

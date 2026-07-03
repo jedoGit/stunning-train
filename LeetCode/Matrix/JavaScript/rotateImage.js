@@ -20,31 +20,93 @@
 // TC: O(m*n) We have to visit each elements of the matrix to perform transpose and reverse
 // SC: O(1) in place processing
 
-/**
- * @param {number[][]} matrix
- * @return {void} Do not return anything, modify matrix in-place instead.
- */
-var rotate = function (matrix) {
-  let m = matrix[0].length; // number of cols
-  let n = matrix.length; // number of rows
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // First, transpose the matrix, rows become columns and columns become rows
-  // Using array destructuring
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < i; j++) {
-      [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
-    }
+class Record {
+  constructor(matrix, expected) {
+    this.matrix = matrix;
+    this.expected = expected;
   }
+}
 
-  // console.log(matrix)
+class Solution {
+  /**
+   * @param {number[][]} matrix
+   * @return {void} Do not return anything, modify matrix in-place instead.
+   */
+  rotate(matrix) {
+    let m = matrix[0].length; // number of cols
+    let n = matrix.length; // number of rows
 
-  // Next, reverse the element on each row by using two pointers
-  // We can use array destructuring for each row
-  for (let i = 0; i < n; i++) {
-    for (let l = 0, r = m - 1; l < r; l++, r--) {
-      [matrix[i][l], matrix[i][r]] = [matrix[i][r], matrix[i][l]];
+    // First, transpose the matrix, rows become columns and columns become rows
+    // Using array destructuring
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < i; j++) {
+        [matrix[i][j], matrix[j][i]] = [matrix[j][i], matrix[i][j]];
+      }
     }
-  }
 
-  // console.log(matrix)
+    // console.log(matrix)
+
+    // Next, reverse the element on each row by using two pointers
+    // We can use array destructuring for each row
+    for (let i = 0; i < n; i++) {
+      for (let l = 0, r = m - 1; l < r; l++, r--) {
+        [matrix[i][l], matrix[i][r]] = [matrix[i][r], matrix[i][l]];
+      }
+    }
+
+    // console.log(matrix)
+  }
+}
+
+const cloneMatrix = (matrix) => matrix.map((row) => [...row]);
+
+const testSolution = (record) => {
+  const solution = new Solution();
+  const matrix = cloneMatrix(record.matrix);
+
+  solution.rotate(matrix);
+
+  const passed = JSON.stringify(matrix) === JSON.stringify(record.expected);
+
+  console.log(`Input: ${JSON.stringify(record.matrix)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(matrix)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
 };
+
+const records = [
+  new Record(
+    [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ],
+    [
+      [7, 4, 1],
+      [8, 5, 2],
+      [9, 6, 3],
+    ]
+  ),
+  new Record(
+    [
+      [5, 1, 9, 11],
+      [2, 4, 8, 10],
+      [13, 3, 6, 7],
+      [15, 14, 12, 16],
+    ],
+    [
+      [15, 13, 2, 5],
+      [14, 3, 4, 1],
+      [12, 6, 8, 9],
+      [16, 7, 10, 11],
+    ]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

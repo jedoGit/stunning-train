@@ -28,44 +28,85 @@
 // TC: O(n), we're looping through each elements of the input array
 // SC: O(n), because we're storing the results to an array
 
-/**
- * @param {number[][]} intervals
- * @param {number[]} newInterval
- * @return {number[][]}
- */
-var insert = function (intervals, newInterval) {
-  let res = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let i = 0; i < intervals.length; i++) {
-    // If the new interval does not overlap with the first interval in the interval array,
-    // it means it will not overlap with the rest of the intervals in the array.
-    // So we add it to our results
-    // Check the end of the newInterval if it's less than the start of the current Interval
-    // If so, add the newInterval to the results array and return an array with the results array first followed by the rest of the intervals
-    if (newInterval[1] < intervals[i][0]) {
-      res.push([...newInterval]);
-      // console.log(res)
-      // console.log([...res, ...intervals.slice(i)])
-      return [...res, ...intervals.slice(i)];
-    } else if (newInterval[0] > intervals[i][1]) {
-      // check if the start of the new interval is greater than the end of the current interval
-      res.push([...intervals[i]]); // add the current interval to the results array
-      // console.log(res)
-    } else {
-      // this is an overlapping interval
-      // We need to merge the new interval with the current interval
-      // The new interval will be, take the min of the start values, and the max of the end values
-      newInterval = [
-        Math.min(newInterval[0], intervals[i][0]),
-        Math.max(newInterval[1], intervals[i][1]),
-      ];
-      // console.log(newInterval)
-    }
+class Record {
+  constructor(intervals, newInterval, expected) {
+    this.intervals = intervals;
+    this.newInterval = newInterval;
+    this.expected = expected;
   }
+}
 
-  // So we go to the end of the intervals array and there's nothing to compare the newInterval array with, so, we need to push it to our results array and return the result
-  res.push([...newInterval]);
+class Solution {
+  /**
+   * @param {number[][]} intervals
+   * @param {number[]} newInterval
+   * @return {number[][]}
+   */
+  insert(intervals, newInterval) {
+    let res = [];
 
-  // console.log(res)
-  return res;
-};
+    for (let i = 0; i < intervals.length; i++) {
+      // If the new interval does not overlap with the first interval in the interval array,
+      // it means it will not overlap with the rest of the intervals in the array.
+      // So we add it to our results
+      // Check the end of the newInterval if it's less than the start of the current Interval
+      // If so, add the newInterval to the results array and return an array with the results array first followed by the rest of the intervals
+      if (newInterval[1] < intervals[i][0]) {
+        res.push([...newInterval]);
+        // console.log(res)
+        // console.log([...res, ...intervals.slice(i)])
+        return [...res, ...intervals.slice(i)];
+      } else if (newInterval[0] > intervals[i][1]) {
+        // check if the start of the new interval is greater than the end of the current interval
+        res.push([...intervals[i]]); // add the current interval to the results array
+        // console.log(res)
+      } else {
+        // this is an overlapping interval
+        // We need to merge the new interval with the current interval
+        // The new interval will be, take the min of the start values, and the max of the end values
+        newInterval = [
+          Math.min(newInterval[0], intervals[i][0]),
+          Math.max(newInterval[1], intervals[i][1]),
+        ];
+        // console.log(newInterval)
+      }
+    }
+
+    // So we go to the end of the intervals array and there's nothing to compare the newInterval array with, so, we need to push it to our results array and return the result
+    res.push([...newInterval]);
+
+    // console.log(res)
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const intervals = record.intervals.map((interval) => [...interval]);
+  const newInterval = [...record.newInterval];
+  const result = solution.insert(intervals, newInterval);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: intervals = ${JSON.stringify(record.intervals)}, newInterval = ${JSON.stringify(record.newInterval)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new Record([[1, 3], [6, 9]], [2, 5], [[1, 5], [6, 9]]),
+  new Record(
+    [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]],
+    [4, 8],
+    [[1, 2], [3, 10], [12, 16]]
+  ),
+  new Record([], [5, 7], [[5, 7]]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

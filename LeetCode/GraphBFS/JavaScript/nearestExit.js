@@ -40,57 +40,108 @@
 // 0 <= entrancecol < n
 // entrance will always be an empty cell.
 
-/**
- * @param {character[][]} maze
- * @param {number[]} entrance
- * @return {number}
- */
-var nearestExit = function (maze, entrance) {
-  const m = maze.length;
-  const n = maze[0].length;
-  // isValid = is inside the maze && not a wall
-  const isValid = (x, y) =>
-    x >= 0 && x < m && y >= 0 && y < n && maze[x][y] === ".";
-  // isExit = it's at the edge && not a wall
-  const isExit = (x, y) =>
-    (x === 0 || x === m - 1 || y === 0 || y === n - 1) && maze[x][y] === ".";
-  // directions
-  const dir = [
-    [0, 1],
-    [1, 0],
-    [0, -1],
-    [-1, 0],
-  ];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // save visited blocks on 2d Array
-  const visited = Array.from({ length: m }, () => Array(n).fill(false));
-  // inizialize
-  visited[entrance[0]][entrance[1]] = true;
+class NearestExitRecord {
+  constructor(maze, entrance, expected) {
+    this.maze = maze;
+    this.entrance = entrance;
+    this.expected = expected;
+  }
+}
 
-  // BFS
-  let queue = [entrance];
-  let step = 0;
+class Solution {
+  /**
+   * @param {character[][]} maze
+   * @param {number[]} entrance
+   * @return {number}
+   */
+  nearestExit(maze, entrance) {
+    const m = maze.length;
+    const n = maze[0].length;
+    // isValid = is inside the maze && not a wall
+    const isValid = (x, y) =>
+      x >= 0 && x < m && y >= 0 && y < n && maze[x][y] === ".";
+    // isExit = it's at the edge && not a wall
+    const isExit = (x, y) =>
+      (x === 0 || x === m - 1 || y === 0 || y === n - 1) && maze[x][y] === ".";
+    // directions
+    const dir = [
+      [0, 1],
+      [1, 0],
+      [0, -1],
+      [-1, 0],
+    ];
 
-  while (queue.length) {
-    let len = queue.length;
-    step++;
-    for (let i = 0; i < len; i++) {
-      let [x, y] = queue.shift();
+    // save visited blocks on 2d Array
+    const visited = Array.from({ length: m }, () => Array(n).fill(false));
+    // inizialize
+    visited[entrance[0]][entrance[1]] = true;
 
-      for (let [dx, dy] of dir) {
-        let newX = x + dx;
-        let newY = y + dy;
-        if (isValid(newX, newY) && !visited[newX][newY]) {
-          if (isExit(newX, newY)) {
-            return step;
+    // BFS
+    let queue = [entrance];
+    let step = 0;
+
+    while (queue.length) {
+      let len = queue.length;
+      step++;
+      for (let i = 0; i < len; i++) {
+        let [x, y] = queue.shift();
+
+        for (let [dx, dy] of dir) {
+          let newX = x + dx;
+          let newY = y + dy;
+          if (isValid(newX, newY) && !visited[newX][newY]) {
+            if (isExit(newX, newY)) {
+              return step;
+            }
+
+            queue.push([newX, newY]);
+            visited[newX][newY] = true;
           }
-
-          queue.push([newX, newY]);
-          visited[newX][newY] = true;
         }
       }
     }
-  }
 
-  return -1;
-};
+    return -1;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.nearestExit(record.maze, record.entrance);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: maze = ${JSON.stringify(record.maze)}, entrance = ${JSON.stringify(record.entrance)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new NearestExitRecord(
+    [
+      ["+", "+", ".", "+"],
+      [".", ".", ".", "+"],
+      ["+", "+", "+", "."],
+    ],
+    [1, 2],
+    1
+  ),
+  new NearestExitRecord(
+    [
+      ["+", "+", "+"],
+      [".", ".", "."],
+      ["+", "+", "+"],
+    ],
+    [1, 0],
+    2
+  ),
+  new NearestExitRecord([[".", "+"]], [0, 0], -1),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------------------------------------");
+});

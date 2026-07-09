@@ -25,21 +25,59 @@
  * @param {number} n
  * @return {number}
  */
-var numTilings = function (n) {
-  // This is not straigth forward and intuitive. You'll need to draw out the dominoes and trominoes to see the pattern.
-  // After seeing the patter, you'll need to create an equation to solve using DP.
-  // The formula to solve is dp[n] = (2*dp[n-1] + dp[n-3])%MOD
-  // You have the values for the first 3 solution which is dp=[0,1,2,5]
-  const MOD = 10 ** 9 + 7;
-  let dp = {};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  dp[1] = 1;
-  dp[2] = 2;
-  dp[3] = 5;
-
-  for (let i = 4; i <= n; i++) {
-    dp[i] = (2 * dp[i - 1] + dp[i - 3]) % MOD;
+class NumTilingRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  return dp[n];
-};
+class Solution {
+  /**
+   * @param {number} n
+   * @return {number}
+   */
+  numTilings(n) {
+    // This is not straigth forward and intuitive. You'll need to draw out the dominoes and trominoes to see the pattern.
+    // After seeing the patter, you'll need to create an equation to solve using DP.
+    // The formula to solve is dp[n] = (2*dp[n-1] + dp[n-3])%MOD
+    // You have the values for the first 3 solution which is dp=[0,1,2,5]
+    const MOD = 10 ** 9 + 7;
+    let dp = {};
+
+    dp[1] = 1;
+    dp[2] = 2;
+    dp[3] = 5;
+
+    for (let i = 4; i <= n; i++) {
+      dp[i] = (2 * dp[i - 1] + dp[i - 3]) % MOD;
+    }
+
+    return dp[n];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.numTilings(record.n);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: ${record.n}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new NumTilingRecord(1, 1),
+  new NumTilingRecord(3, 5),
+  new NumTilingRecord(4, 11),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

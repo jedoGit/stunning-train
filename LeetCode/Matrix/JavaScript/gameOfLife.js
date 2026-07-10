@@ -38,7 +38,7 @@
 
 const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-class Record {
+class GameOfLifeRecord {
   constructor(board, expected) {
     this.board = board;
     this.expected = expected;
@@ -149,7 +149,7 @@ const testSolution = (record) => {
 };
 
 const records = [
-  new Record(
+  new GameOfLifeRecord(
     [
       [0, 1, 0],
       [0, 0, 1],
@@ -163,7 +163,7 @@ const records = [
       [0, 1, 0],
     ]
   ),
-  new Record(
+  new GameOfLifeRecord(
     [
       [1, 1],
       [1, 0],

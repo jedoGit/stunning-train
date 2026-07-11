@@ -28,20 +28,58 @@
  * @param {number} n
  * @return {number}
  */
-var tribonacci = function (n) {
-  let t = [0, 1, 1];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  if (n < 3) {
-    return t[n];
+class TribonacciRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  // We use array deconstruction
-  // In javascript, the RHS is always executed first then assigned to the LHS
-  // For each iteration perform this:
-  // [ t0,  t1, t2 ] = [ t1, t2, sum(t0, t1, t2) ]
-  for (let i = 3; i < n + 1; i++) {
-    [t[0], t[1], t[2]] = [t[1], t[2], t[0] + t[1] + t[2]];
+class Solution {
+  /**
+   * @param {number} n
+   * @return {number}
+   */
+  tribonacci(n) {
+    let t = [0, 1, 1];
+
+    if (n < 3) {
+      return t[n];
+    }
+
+    // We use array deconstruction
+    // In javascript, the RHS is always executed first then assigned to the LHS
+    // For each iteration perform this:
+    // [ t0,  t1, t2 ] = [ t1, t2, sum(t0, t1, t2) ]
+    for (let i = 3; i < n + 1; i++) {
+      [t[0], t[1], t[2]] = [t[1], t[2], t[0] + t[1] + t[2]];
+    }
+
+    return t[2];
   }
+}
 
-  return t[2];
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.tribonacci(record.n);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: ${record.n}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new TribonacciRecord(4, 4),
+  new TribonacciRecord(25, 1389537),
+  new TribonacciRecord(0, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(50));
+});

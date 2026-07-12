@@ -30,20 +30,55 @@
  * @param {number[]} nums
  * @return {number}
  */
-var maxSubarraySumCircular = function (nums) {
-  let globmax = nums[0];
-  let globmin = nums[0];
-  let curmax = 0;
-  let curmin = 0;
-  let total = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let n of nums) {
-    curmax = Math.max(curmax + n, n);
-    curmin = Math.min(curmin + n, n);
-    total += n;
-    globmax = Math.max(globmax, curmax);
-    globmin = Math.min(globmin, curmin);
+class MaxSubarraySumCircularRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return globmax > 0 ? Math.max(globmax, total - globmin) : globmax;
-};
+class Solution {
+  maxSubarraySumCircular(nums) {
+    let globmax = nums[0];
+    let globmin = nums[0];
+    let curmax = 0;
+    let curmin = 0;
+    let total = 0;
+
+    for (let n of nums) {
+      curmax = Math.max(curmax + n, n);
+      curmin = Math.min(curmin + n, n);
+      total += n;
+      globmax = Math.max(globmax, curmax);
+      globmin = Math.min(globmin, curmin);
+    }
+
+    return globmax > 0 ? Math.max(globmax, total - globmin) : globmax;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxSubarraySumCircular([...record.nums]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new MaxSubarraySumCircularRecord([1, -2, 3, -2], 3),
+  new MaxSubarraySumCircularRecord([5, -3, 5], 10),
+  new MaxSubarraySumCircularRecord([-3, -2, -3], -2),
+  new MaxSubarraySumCircularRecord([3, -1, 2, -1], 4),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

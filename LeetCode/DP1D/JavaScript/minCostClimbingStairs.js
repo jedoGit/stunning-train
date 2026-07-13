@@ -36,22 +36,55 @@
  * @param {number[]} cost
  * @return {number}
  */
-var minCostClimbingStairs = function (cost) {
-  // Append a 0 cost value on the end of the cost array. This represents the top floor
-  cost.push(0);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  const m = cost.length;
-
-  // From here, we now have a cost array with size m=n+1. Since, we can do 1 or 2 steps, we'll compute the min
-  // cost from the m-3 index and update the value on that index. Hence: cost[m-3] = min( cost[m-3] + cost[m-2], cost[m-3] + cost[m-1] )
-  // To help visualize, need to draw a decision tree. From index zero, you can hop 1 or two steps. Each step will incur a cost.
-
-  let i = m - 3;
-
-  while (i > -1) {
-    cost[i] += Math.min(cost[i + 1], cost[i + 2]);
-    i--;
+class MinCostClimbingStairsRecord {
+  constructor(cost, expected) {
+    this.cost = cost;
+    this.expected = expected;
   }
+}
 
-  return Math.min(cost[0], cost[1]);
-};
+class Solution {
+  minCostClimbingStairs(cost) {
+    // Append a 0 cost value on the end of the cost array. This represents the top floor
+    cost.push(0);
+
+    const m = cost.length;
+
+    // From here, we now have a cost array with size m=n+1. Since, we can do 1 or 2 steps, we'll compute the min
+    // cost from the m-3 index and update the value on that index. Hence: cost[m-3] = min( cost[m-3] + cost[m-2], cost[m-3] + cost[m-1] )
+    // To help visualize, need to draw a decision tree. From index zero, you can hop 1 or two steps. Each step will incur a cost.
+
+    let i = m - 3;
+
+    while (i > -1) {
+      cost[i] += Math.min(cost[i + 1], cost[i + 2]);
+      i--;
+    }
+
+    return Math.min(cost[0], cost[1]);
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minCostClimbingStairs([...record.cost]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: cost = ${JSON.stringify(record.cost)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new MinCostClimbingStairsRecord([10, 15, 20], 15),
+  new MinCostClimbingStairsRecord([1, 100, 1, 1, 1, 100, 1, 1, 100, 1], 6),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

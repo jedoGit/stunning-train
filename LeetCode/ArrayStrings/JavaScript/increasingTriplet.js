@@ -26,10 +26,7 @@
 // TC: O(n), we have 1 loop
 // SC: O(1), we're not creating memory
 
-const Result = {
-  PASS: "\x1b[92mPASS\x1b[0m",
-  FAIL: "\x1b[91mFAIL\x1b[0m",
-};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
 class IncreasingTripletRecord {
   constructor(nums, expected) {

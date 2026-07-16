@@ -31,21 +31,56 @@
 // TC: O(n) loop through prices
 // SC: O(1) In place processing
 
-/**
- * @param {number[]} prices
- * @return {number}
- */
-var maxProfit = function (prices) {
-  let profit = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We start at index 1 because we want to compare today's prices from the past
-  for (let i = 1; i < prices.length; i++) {
-    // check if today's prices is larger than yesterdays.
-    // If so, we compute our profit
-    if (prices[i] > prices[i - 1]) {
-      profit = profit + (prices[i] - prices[i - 1]);
-    }
+class MaxProfitIIRecord {
+  constructor(prices, expected) {
+    this.prices = prices;
+    this.expected = expected;
   }
+}
 
-  return profit;
-};
+class Solution {
+  /**
+   * @param {number[]} prices
+   * @return {number}
+   */
+  maxProfit(prices) {
+    let profit = 0;
+
+    // We start at index 1 because we want to compare today's prices from the past
+    for (let i = 1; i < prices.length; i++) {
+      // check if today's prices is larger than yesterdays.
+      // If so, we compute our profit
+      if (prices[i] > prices[i - 1]) {
+        profit = profit + (prices[i] - prices[i - 1]);
+      }
+    }
+
+    return profit;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxProfit([...record.prices]);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: prices = ${JSON.stringify(record.prices)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new MaxProfitIIRecord([7, 1, 5, 3, 6, 4], 7),
+  new MaxProfitIIRecord([1, 2, 3, 4, 5], 4),
+  new MaxProfitIIRecord([7, 6, 4, 3, 1], 0),
+  new MaxProfitIIRecord([1], 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

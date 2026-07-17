@@ -37,68 +37,85 @@
 // TC: O(m+n)
 // SC: O(1)
 
-/**
- * @param {number[]} nums1
- * @param {number} m
- * @param {number[]} nums2
- * @param {number} n
- * @return {void} Do not return anything, modify nums1 in-place instead.
- */
-var merge = function (nums1, m, nums2, n) {
-  // We need to merge all elements of nums2 to nums1. nums1 array need to be sorted in ascending order.
-  // Solve using O(m+n) in TC. We can't use sorting because sorting is O(nlogn). We can use 2 pointers
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let i = m - 1; // initially points at the m-1 element in nums1
-  let j = n - 1; // initially points at the n-1 element of nums2
-  let k = m + n - 1; // initially points at the end of nums1
+class MergeSortedArrayRecord {
+  constructor(nums1, m, nums2, n, expected) {
+    this.nums1 = nums1;
+    this.m = m;
+    this.nums2 = nums2;
+    this.n = n;
+    this.expected = expected;
+  }
+}
 
-  // Compare the elements of nums1 and nums2 starting at the end,
-  // if nums1[i] > nums2[j], we move nums1[i] to nums1[k]
-  // if nums1[i] < nums2[j], we move nums2[j] to nums1[k]
-  // then decrement i,j,k. Stop when i and j becomes -1
-  while (i > -1 && j > -1) {
-    if (nums1[i] > nums2[j]) {
+class Solution {
+  /**
+   * @param {number[]} nums1
+   * @param {number} m
+   * @param {number[]} nums2
+   * @param {number} n
+   * @return {void} Do not return anything, modify nums1 in-place instead.
+   */
+  merge(nums1, m, nums2, n) {
+    let i = m - 1;
+    let j = n - 1;
+    let k = m + n - 1;
+
+    while (i > -1 && j > -1) {
+      if (nums1[i] > nums2[j]) {
+        nums1[k] = nums1[i];
+        i--;
+      } else {
+        nums1[k] = nums2[j];
+        j--;
+      }
+      k--;
+    }
+
+    while (i > -1) {
       nums1[k] = nums1[i];
+      k--;
       i--;
-    } else {
+    }
+
+    while (j > -1) {
       nums1[k] = nums2[j];
+      k--;
       j--;
     }
-    k--;
   }
 
-  // Insert the left overs of nums1 array
-  // This is the case when nums2 is smaller in length than nums1
-  while (i > -1) {
-    nums1[k] = nums1[i];
-    k--;
-    i--;
+  // TC: O(nlogn) because we have to sort the merged array
+  // SC: O(nlogn) because we have to sort the merged array
+  mergeUsingSort(nums1, m, nums2, n) {
+    nums1.splice(m, n, ...nums2);
+    nums1.sort((a, b) => a - b);
   }
+}
 
-  // Handle the case when nums1 has a length of 0 elements and nums2 has elements > 0.
-  // We need to move all of nums2 to nums1.
-  while (j > -1) {
-    nums1[k] = nums2[j];
-    k--;
-    j--;
-  }
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const nums1 = [...record.nums1];
+  const nums2 = [...record.nums2];
 
-// TC: O(nlogn) because we have to sort the merged array
-// SC: O(nlogn) because we have to sort the merged array
+  solution.merge(nums1, record.m, nums2, record.n);
 
-/**
- * @param {number[]} nums1
- * @param {number} m
- * @param {number[]} nums2
- * @param {number} n
- * @return {void} Do not return anything, modify nums1 in-place instead.
- */
-var merge = function (nums1, m, nums2, n) {
-  // We need to merge all elements of nums2 to nums1. nums1 array need to be sorted in ascending order.
-  // Solve using JS methods:
-  // Splice, starting at index m, delete n elements, then insert the elements of nums2 using the rest operator
-  // Then sort in ascending order
-  nums1.splice(m, n, ...nums2);
-  nums1.sort((a, b) => a - b);
-};
+  console.log(`Input: nums1 = [${record.nums1}], m = ${record.m}, nums2 = [${record.nums2}], n = ${record.n}`);
+  console.log(`Expected: [${record.expected}]`);
+  console.log(`Result: [${nums1}]`);
+  console.log(JSON.stringify(nums1) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MergeSortedArrayRecord([1, 2, 3, 0, 0, 0], 3, [2, 5, 6], 3, [1, 2, 2, 3, 5, 6]),
+  new MergeSortedArrayRecord([1], 1, [], 0, [1]),
+  new MergeSortedArrayRecord([0], 0, [1], 1, [1]),
+  new MergeSortedArrayRecord([2, 0], 1, [1], 1, [1, 2]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

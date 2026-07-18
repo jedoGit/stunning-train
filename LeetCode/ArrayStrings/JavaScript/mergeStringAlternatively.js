@@ -36,65 +36,61 @@
 // TC: O(n) because we'll have to loop through the 2 strings
 // SC: O(n) because we have to create a new string with length of the 2 input string
 
-/**
- * @param {string} word1
- * @param {string} word2
- * @return {string}
- */
-var mergeAlternately = function(word1, word2) {
-    // we'll use an array to push each chars
-    let mergedStr = []
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-    // loop through the strings and stop if either one of the string is null
-    for (var i = 0 ; i < word1.length && i < word2.length ; i++ ) {
-        // we push word1 first then word2
-        mergedStr.push(word1[i])
-        mergedStr.push(word2[i])
+class MergeStringAlternativelyRecord {
+    constructor(word1, word2, expected) {
+        this.word1 = word1;
+        this.word2 = word2;
+        this.expected = expected;
     }
+}
 
-    // we exited the for-loop because one of the string is null
-    // so we continue to push the rest of the chars in that string
-    if(word1.length > 0){
-        mergedStr.push(word1.slice(i, word1.length))
-        // for (let j=i ; j < word1.length ; j++) {
-        //     mergedStr.push(word1[j])
-        // }
+class Solution {
+    /**
+     * @param {string} word1
+     * @param {string} word2
+     * @return {string}
+     */
+    mergeAlternately(word1, word2) {
+        let mergedStr = new String();
+
+        for (var i = 0 ; i < word1.length && i < word2.length ; i++ ) {
+            mergedStr = mergedStr + word1.at(i);
+            mergedStr = mergedStr + word2.at(i);
+        }
+
+        if(word1.length > 0){
+            mergedStr = mergedStr + word1.slice(i, word1.length);
+        }
+
+        if(word2.length > 0){
+            mergedStr = mergedStr + word2.slice(i, word2.length);
+        }
+
+        return mergedStr;
     }
+}
 
-    if(word2.length > 0){
-        mergedStr.push(word2.slice(i, word2.length))
-        // for (let j=i ; j < word2.length ; j++) {
-        //     mergedStr.push(word2[j])
-        // }
-    }
+function testSolution(record) {
+    const solution = new Solution();
+    const result = solution.mergeAlternately(record.word1, record.word2);
+    const pass = result === record.expected;
 
-    // we have to remove the commas that we've added when we converted the array to string
-    return mergedStr.toString().split(",").join("")
-};
+    console.log(`Input: word1 = ${record.word1}, word2 = ${record.word2}`);
+    console.log(`Expected: ${record.expected}`);
+    console.log(`Result: ${result}`);
+    console.log(pass ? Result.PASS : Result.FAIL);
+}
 
+const records = [
+    new MergeStringAlternativelyRecord("abc", "pqr", "apbqcr"),
+    new MergeStringAlternativelyRecord("ab", "pqrs", "apbqrs"),
+    new MergeStringAlternativelyRecord("abcd", "pq", "apbqcd"),
+];
 
-// Another solution using string methods
-
-/**
- * @param {string} word1
- * @param {string} word2
- * @return {string}
- */
-var mergeAlternately = function(word1, word2) {
-    let mergedStr = new String()
-
-    for (var i = 0 ; i < word1.length && i < word2.length ; i++ ) {
-        mergedStr = mergedStr + word1.at(i)
-        mergedStr = mergedStr + word2.at(i)
-    }
-
-    if(word1.length > 0){
-        mergedStr = mergedStr + word1.slice(i, word1.length)
-    }
-
-    if(word2.length > 0){
-        mergedStr = mergedStr + word2.slice(i, word2.length)
-    }
-
-    return mergedStr
-};
+records.forEach((record, index) => {
+    console.log(`# Test case ${index + 1}`);
+    testSolution(record);
+    console.log("-".repeat(30));
+});

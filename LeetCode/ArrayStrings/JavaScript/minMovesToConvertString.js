@@ -31,22 +31,57 @@
 // TC: O(n), worst case is when everythings an O
 // SC: O(1)
 
-/**
- * @param {string} s
- * @return {number}
- */
-var minimumMoves = function (s) {
-  let i = 0;
-  let minMoves = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (i < s.length) {
-    if (s[i] === "X") {
-      minMoves += 1;
-      i += 3;
-    } else {
-      i += 1;
+class MinimumMovesToConvertStringRecord {
+    constructor(s, expected) {
+        this.s = s;
+        this.expected = expected;
     }
-  }
+}
 
-  return minMoves;
-};
+class Solution {
+    /**
+     * @param {string} s
+     * @return {number}
+     */
+    minimumMoves(s) {
+        let i = 0;
+        let minMoves = 0;
+
+        while (i < s.length) {
+            if (s[i] === "X") {
+                minMoves += 1;
+                i += 3;
+            } else {
+                i += 1;
+            }
+        }
+
+        return minMoves;
+    }
+}
+
+function testSolution(record) {
+    const solution = new Solution();
+    const result = solution.minimumMoves(record.s);
+    const pass = result === record.expected;
+
+    console.log(`Input: s = ${record.s}`);
+    console.log(`Expected: ${record.expected}`);
+    console.log(`Result: ${result}`);
+    console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+    new MinimumMovesToConvertStringRecord("XXX", 1),
+    new MinimumMovesToConvertStringRecord("XXOX", 2),
+    new MinimumMovesToConvertStringRecord("OOOO", 0),
+    new MinimumMovesToConvertStringRecord("OXOX", 1),
+];
+
+records.forEach((record, index) => {
+    console.log(`# Test case ${index + 1}`);
+    testSolution(record);
+    console.log("-".repeat(30));
+});

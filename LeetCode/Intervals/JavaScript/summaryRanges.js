@@ -41,31 +41,67 @@
  * @param {number[]} nums
  * @return {string[]}
  */
-var summaryRanges = function (nums) {
-  let res = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Lets loop through each elements of nums
-  let i = 0;
-  while (i < nums.length) {
-    // We'll use a variable to signify the start of our range
-    const start = nums[i];
+class SummaryRangesRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
 
-    // What we'll do here in increment i until it's not nums[i] + 1 === nums[i+1]
-    while (i < nums.length - 1 && nums[i] + 1 === nums[i + 1]) {
+class Solution {
+  summaryRanges(nums) {
+    let res = [];
+
+    // Lets loop through each elements of nums
+    let i = 0;
+    while (i < nums.length) {
+      // We'll use a variable to signify the start of our range
+      const start = nums[i];
+
+      // What we'll do here in increment i until it's not nums[i] + 1 === nums[i+1]
+      while (i < nums.length - 1 && nums[i] + 1 === nums[i + 1]) {
+        i++;
+      }
+
+      // At this point, we found the end of the range and we know the index of the end of the range.
+      // Let's add it to the results array as string
+      if (start !== nums[i]) {
+        res.push(start.toString() + "->" + nums[i].toString());
+      } else {
+        res.push(start.toString());
+      }
+
+      // Increment i to the next element so we can start the search again.
       i++;
     }
 
-    // At this point, we found the end of the range and we know the index of the end of the range.
-    // Let's add it to the results array as string
-    if (start !== nums[i]) {
-      res.push(start.toString() + "->" + nums[i].toString());
-    } else {
-      res.push(start.toString());
-    }
-
-    // Increment i to the next element so we can start the search again.
-    i++;
+    return res;
   }
+}
 
-  return res;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const nums = [...record.nums];
+  const result = solution.summaryRanges(nums);
+  const passed = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(passed ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SummaryRangesRecord([0, 1, 2, 4, 5, 7], ["0->2", "4->5", "7"]),
+  new SummaryRangesRecord([0, 2, 3, 4, 6, 8, 9], ["0", "2->4", "6", "8->9"]),
+  new SummaryRangesRecord([], []),
+  new SummaryRangesRecord([-1], ["-1"]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

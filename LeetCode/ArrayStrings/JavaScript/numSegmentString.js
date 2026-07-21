@@ -21,38 +21,66 @@
 // TC: O(n)
 // SC: O((n/2) - 1) we used an array to store the segments such as "a a a a a a".
 
-/**
- * @param {string} s
- * @return {number}
- */
-var countSegments = function (s) {
-  if (s.length < 1) return 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let p = 0;
-  let curVal = "";
-  let res = [];
+class CountSegmentsRecord {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
+  }
+}
 
-  // console.log(s.length)
-  while (p <= s.length) {
-    // console.log(p, s.at(p))
-    if (s.at(p) !== " " && p < s.length) {
-      curVal += s.at(p);
-      // console.log(p, curVal)
-    } else if (
-      (curVal.length > 0 && s.at(p) === " ") ||
-      (curVal.length > 0 && p === s.length)
-    ) {
-      // console.log(p, curVal.length, curVal[0])
-      res.push(curVal);
-      curVal = "";
+class Solution {
+  /**
+   * @param {string} s
+   * @return {number}
+   */
+  countSegments(s) {
+    if (s.length < 1) return 0;
+
+    let p = 0;
+    let curVal = "";
+    let res = [];
+
+    while (p <= s.length) {
+      if (s.at(p) !== " " && p < s.length) {
+        curVal += s.at(p);
+      } else if (
+        (curVal.length > 0 && s.at(p) === " ") ||
+        (curVal.length > 0 && p === s.length)
+      ) {
+        res.push(curVal);
+        curVal = "";
+      }
+
+      p += 1;
     }
 
-    p += 1;
+    return res.length;
   }
+}
 
-  // console.log(res)
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.countSegments(record.s);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
 
-  return res.length;
+  console.log(`Input: s = ${JSON.stringify(record.s)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
 
-  // return s.split(" ").filter(x => x !== "").length
-};
+const records = [
+  new CountSegmentsRecord("Hello, my name is John", 5),
+  new CountSegmentsRecord("Hello", 1),
+  new CountSegmentsRecord("", 0),
+  new CountSegmentsRecord("                ", 0),
+  new CountSegmentsRecord("Of all the gin joints in all the towns in all the world,   ", 13),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("-".repeat(30));
+});

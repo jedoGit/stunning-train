@@ -31,41 +31,75 @@
  * @param {string} s
  * @return {boolean}
  */
-var isPalindrome = function (s) {
-  // JS has no method to check for alpha numeric... This functions checks if
-  // 0-9, A-Z and a-z
-  function isAlphaNumeric(str) {
-    return /^[A-Za-z0-9]+$/gi.test(str);
-    // return !(!(str.charCodeAt(0) > 47 && str.charCodeAt(0) < 58) &&
-    //         !(str.charCodeAt(0) > 96 && str.charCodeAt(0) < 123) &&
-    //         !(str.charCodeAt(0) > 64 && str.charCodeAt(0) < 91))
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class Record {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
   }
+}
 
-  // Using two pointers starting at both ends of the array
-  let l = 0;
-  let r = s.length - 1;
-
-  // We stop when l crosses r
-  while (l < r) {
-    // We keep moving l pointer if the char in non-alphanumeric
-    while (l < r && !isAlphaNumeric(s.at(l))) {
-      l += 1;
+class Solution {
+  isPalindrome(s) {
+    // JS has no method to check for alpha numeric... This functions checks if
+    // 0-9, A-Z and a-z
+    function isAlphaNumeric(str) {
+      return /^[A-Za-z0-9]+$/gi.test(str);
+      // return !(!(str.charCodeAt(0) > 47 && str.charCodeAt(0) < 58) &&
+      //         !(str.charCodeAt(0) > 96 && str.charCodeAt(0) < 123) &&
+      //         !(str.charCodeAt(0) > 64 && str.charCodeAt(0) < 91))
     }
-    // Same with the r pointer...
-    while (r > l && !isAlphaNumeric(s.at(r))) {
+
+    // Using two pointers starting at both ends of the array
+    let l = 0;
+    let r = s.length - 1;
+
+    // We stop when l crosses r
+    while (l < r) {
+      // We keep moving l pointer if the char in non-alphanumeric
+      while (l < r && !isAlphaNumeric(s.at(l))) {
+        l += 1;
+      }
+      // Same with the r pointer...
+      while (r > l && !isAlphaNumeric(s.at(r))) {
+        r -= 1;
+      }
+
+      // console.log(s.at(l).toLowerCase(), s.at(r).toLowerCase())
+      // We check if the lowercase of what's pointed by l and r is the same
+      if (s.at(l).toLowerCase() !== s.at(r).toLowerCase()) {
+        return false;
+      }
+
+      // we move l and r
+      l += 1;
       r -= 1;
     }
 
-    // console.log(s.at(l).toLowerCase(), s.at(r).toLowerCase())
-    // We check if the lowercase of what's pointed by l and r is the same
-    if (s.at(l).toLowerCase() !== s.at(r).toLowerCase()) {
-      return false;
-    }
-
-    // we move l and r
-    l += 1;
-    r -= 1;
+    return true;
   }
+}
 
-  return true;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.isPalindrome(record.s);
+  const status = result === record.expected ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: ${record.s}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(status);
+}
+
+const records = [
+  new Record("A man, a plan, a canal: Panama", true),
+  new Record("race a car", false),
+  new Record(" ", true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("--------------------");
+});

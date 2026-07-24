@@ -45,27 +45,68 @@
 //TC: O(n) we need to visit each elements of nums
 //SC: O(1) in place processing
 
-/**
- * @param {number[]} nums
- * @param {number} val
- * @return {number}
- */
-var removeElement = function (nums, val) {
-  // We want to visit each elements of nums starting at index 0.
-  // We'll use an index counter to access an index when assigning values to the array.
-  // We'll only assign value to an index if the value is not equal to val.
-  // We return the index counter which is the index of the last element we inserted to the nums array
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let idxCntr = 0;
-
-  for (let num of nums) {
-    // check if num is not equal to val
-    // if not equal, we insert to the nums array at index counter
-    if (num !== val) {
-      nums[idxCntr] = num;
-      idxCntr++;
-    }
+class RemoveElementRecord {
+  constructor(nums, val, expectedNums) {
+    this.nums = nums;
+    this.val = val;
+    this.expectedNums = expectedNums;
   }
+}
 
-  return idxCntr;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @param {number} val
+   * @return {number}
+   */
+  removeElement(nums, val) {
+    // We want to visit each elements of nums starting at index 0.
+    // We'll use an index counter to access an index when assigning values to the array.
+    // We'll only assign value to an index if the value is not equal to val.
+    // We return the index counter which is the index of the last element we inserted to the nums array
+
+    let idxCntr = 0;
+
+    for (let num of nums) {
+      // check if num is not equal to val
+      // if not equal, we insert to the nums array at index counter
+      if (num !== val) {
+        nums[idxCntr] = num;
+        idxCntr++;
+      }
+    }
+
+    return idxCntr;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const nums = [...record.nums];
+  const result = solution.removeElement(nums, record.val);
+  const actualNums = nums.slice(0, result).sort((a, b) => a - b);
+  const expectedNums = [...record.expectedNums].sort((a, b) => a - b);
+  const pass =
+    result === record.expectedNums.length &&
+    JSON.stringify(actualNums) === JSON.stringify(expectedNums);
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}, val = ${record.val}`);
+  console.log(`Expected: k = ${record.expectedNums.length}, nums = ${JSON.stringify(expectedNums)}`);
+  console.log(`Result: k = ${result}, nums = ${JSON.stringify(actualNums)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new RemoveElementRecord([3, 2, 2, 3], 3, [2, 2]),
+  new RemoveElementRecord([0, 1, 2, 2, 3, 0, 4, 2], 2, [0, 1, 3, 0, 4]),
+  new RemoveElementRecord([], 1, []),
+  new RemoveElementRecord([1, 1, 1], 1, []),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

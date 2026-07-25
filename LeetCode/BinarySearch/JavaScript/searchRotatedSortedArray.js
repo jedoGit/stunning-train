@@ -1,6 +1,6 @@
 const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-class Record {
+class SearchRotatedSortedArrayRecord {
   constructor(nums, target, expected) {
     this.nums = nums;
     this.target = target;
@@ -79,7 +79,7 @@ class Solution {
 
 function testSolution(record) {
   const solution = new Solution();
-  const result = solution.search(record.nums, record.target);
+  const result = solution.search([...record.nums], record.target);
   const passed = result === record.expected;
 
   console.log(`Input: nums = ${JSON.stringify(record.nums)}, target = ${record.target}`);
@@ -89,11 +89,11 @@ function testSolution(record) {
 }
 
 const records = [
-  new Record([4, 5, 6, 7, 0, 1, 2], 0, 4),
-  new Record([4, 5, 6, 7, 0, 1, 2], 3, -1),
-  new Record([1], 0, -1),
-  new Record([1], 1, 0),
-  new Record([3, 1], 1, 1),
+  new SearchRotatedSortedArrayRecord([4, 5, 6, 7, 0, 1, 2], 0, 4),
+  new SearchRotatedSortedArrayRecord([4, 5, 6, 7, 0, 1, 2], 3, -1),
+  new SearchRotatedSortedArrayRecord([1], 0, -1),
+  new SearchRotatedSortedArrayRecord([1], 1, 0),
+  new SearchRotatedSortedArrayRecord([3, 1], 1, 1),
 ];
 
 records.forEach((record, index) => {

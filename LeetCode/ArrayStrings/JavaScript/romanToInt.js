@@ -42,23 +42,59 @@
 // TC: O(n) we loop through the input
 // SC: O(1) in place processing... we used a dictionary to store the roman to integer key/val pair but it's a small size dictionary
 
-/**
- * @param {string} s
- * @return {number}
- */
-var romanToInt = function (s) {
-  const roman2Int = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = 0;
-
-  for (let i = 0; i < s.length; i++) {
-    // check if the next element is out of bound first then check if current element is greater or less than
-    if (s[i + 1] && roman2Int[s[i]] < roman2Int[s[i + 1]]) {
-      res -= roman2Int[s[i]];
-    } else {
-      res += roman2Int[s[i]];
-    }
+class RomanToIntRecord {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {string} s
+   * @return {number}
+   */
+  romanToInt(s) {
+    const roman2Int = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+
+    let res = 0;
+
+    for (let i = 0; i < s.length; i++) {
+      // check if the next element is out of bound first then check if current element is greater or less than
+      if (s[i + 1] && roman2Int[s[i]] < roman2Int[s[i + 1]]) {
+        res -= roman2Int[s[i]];
+      } else {
+        res += roman2Int[s[i]];
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.romanToInt(record.s);
+  const pass = result === record.expected;
+
+  console.log(`Input: s = ${JSON.stringify(record.s)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new RomanToIntRecord("III", 3),
+  new RomanToIntRecord("LVIII", 58),
+  new RomanToIntRecord("MCMXCIV", 1994),
+  new RomanToIntRecord("IV", 4),
+  new RomanToIntRecord("IX", 9),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

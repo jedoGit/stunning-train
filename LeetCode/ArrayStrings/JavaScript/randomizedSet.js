@@ -33,74 +33,143 @@
 // TC: insert O(1), delete O(1), getRandom O(1), we're using hashmap to store k/v pairs and lookup time is O(1)
 // SC: insert O(n), delete O(n), getRandom O(1)
 
-var RandomizedSet = function () {
-  this.numMap = {};
-  this.numList = [];
-};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {number} val
- * @return {boolean}
- */
-RandomizedSet.prototype.insert = function (val) {
-  // We want to insert first to the map where the key is the input received
-  // and the value is the index where we'll put it in our numList.
-  // The index where we'll put it in our numList is always the last index.
-  // Return true if we inserted a new val else false
-  if (!(val in this.numMap)) {
-    this.numMap[val] = this.numList.length;
-    this.numList.push(val);
-    // console.log(val, this.numMap[val])
-    return true;
-  } else {
-    return false;
+class RandomizedSetRecord {
+  // expected holds one entry per operation. getRandom is allowed to return any
+  // element currently in the set, so its entry is the list of acceptable values.
+  constructor(operations, args, expected) {
+    this.operations = operations;
+    this.args = args;
+    this.expected = expected;
   }
-};
+}
 
-/**
- * @param {number} val
- * @return {boolean}
- */
-RandomizedSet.prototype.remove = function (val) {
-  // console.log("Before: " + this.numMap[val], val)
-  if (val in this.numMap) {
-    // Get the index
-    const idx = this.numMap[val];
-    // Get the last value from numList
-    const lastVal = this.numList.at(-1);
-    // Copy the last value to the index pointed by the idx
-    this.numList[idx] = lastVal;
-    // Remove the last index of numList
-    this.numList.pop();
-    // Update the index of lastVal in numMap
-    this.numMap[lastVal] = idx;
-    // Do an object property delete of val in numMap
-    delete this.numMap[val];
-    // console.log("After: " + this.numMap[val], val)
-
-    return true;
-  } else {
-    return false;
+class Solution {
+  constructor() {
+    this.numMap = {};
+    this.numList = [];
   }
-};
 
-/**
- * @return {number}
- */
-RandomizedSet.prototype.getRandom = function () {
-  // const min = Math.ceil(0)
-  const max = Math.floor(this.numList.length);
+  /**
+   * @param {number} val
+   * @return {boolean}
+   */
+  insert(val) {
+    // We want to insert first to the map where the key is the input received
+    // and the value is the index where we'll put it in our numList.
+    // The index where we'll put it in our numList is always the last index.
+    // Return true if we inserted a new val else false
+    if (!(val in this.numMap)) {
+      this.numMap[val] = this.numList.length;
+      this.numList.push(val);
+      // console.log(val, this.numMap[val])
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-  // const randIdx = Math.floor(Math.random() * (max - min));
-  const randIdx = Math.floor(Math.random() * max);
+  /**
+   * @param {number} val
+   * @return {boolean}
+   */
+  remove(val) {
+    // console.log("Before: " + this.numMap[val], val)
+    if (val in this.numMap) {
+      // Get the index
+      const idx = this.numMap[val];
+      // Get the last value from numList
+      const lastVal = this.numList.at(-1);
+      // Copy the last value to the index pointed by the idx
+      this.numList[idx] = lastVal;
+      // Remove the last index of numList
+      this.numList.pop();
+      // Update the index of lastVal in numMap
+      this.numMap[lastVal] = idx;
+      // Do an object property delete of val in numMap
+      delete this.numMap[val];
+      // console.log("After: " + this.numMap[val], val)
 
-  return this.numList[randIdx];
-};
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-/**
- * Your RandomizedSet object will be instantiated and called as such:
- * var obj = new RandomizedSet()
- * var param_1 = obj.insert(val)
- * var param_2 = obj.remove(val)
- * var param_3 = obj.getRandom()
- */
+  /**
+   * @return {number}
+   */
+  getRandom() {
+    // const min = Math.ceil(0)
+    const max = Math.floor(this.numList.length);
+
+    // const randIdx = Math.floor(Math.random() * (max - min));
+    const randIdx = Math.floor(Math.random() * max);
+
+    return this.numList[randIdx];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+
+  const results = record.operations.map((operation, i) => {
+    // The first operation is the constructor call, which returns null
+    if (operation === "RandomizedSet") return null;
+
+    return solution[operation](...record.args[i]);
+  });
+
+  const pass = results.every((result, i) => {
+    const expected = record.expected[i];
+
+    return Array.isArray(expected)
+      ? expected.includes(result)
+      : result === expected;
+  });
+
+  console.log(`Input: operations = ${JSON.stringify(record.operations)}`);
+  console.log(`       args = ${JSON.stringify(record.args)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(results)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new RandomizedSetRecord(
+    [
+      "RandomizedSet",
+      "insert",
+      "remove",
+      "insert",
+      "getRandom",
+      "remove",
+      "insert",
+      "getRandom",
+    ],
+    [[], [1], [2], [2], [], [1], [2], []],
+    [null, true, false, true, [1, 2], true, false, [2]]
+  ),
+  new RandomizedSetRecord(
+    ["RandomizedSet", "insert", "insert", "getRandom"],
+    [[], [5], [5], []],
+    [null, true, false, [5]]
+  ),
+  new RandomizedSetRecord(
+    ["RandomizedSet", "remove", "insert", "remove", "insert"],
+    [[], [1], [1], [1], [1]],
+    [null, false, true, true, true]
+  ),
+  new RandomizedSetRecord(
+    ["RandomizedSet", "insert", "insert", "insert", "remove", "getRandom"],
+    [[], [1], [2], [3], [2], []],
+    [null, true, true, true, true, [1, 3]]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

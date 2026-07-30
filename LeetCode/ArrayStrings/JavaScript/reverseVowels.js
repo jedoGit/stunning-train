@@ -26,30 +26,66 @@
 // TC: O(n) we did 2 loops to find the vowels then to reverse the vowels
 // SC: O(1) we created a LUT of vowels
 
-/**
- * @param {string} s
- * @return {string}
- */
-var reverseVowels = function (s) {
-  // This is our LUT of the vowels
-  const vowels = new Set(["a", "e", "i", "o", "u", "A", "E", "I", "O", "U"]);
-  const sArray = s.split("");
-  let revVowels = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Loop through the string array and find the vowels, we add that element to the array
-  for (let i = 0; i < s.length; i++) {
-    if (vowels.has(sArray[i])) {
-      revVowels.push(sArray[i]);
-    }
+class ReverseVowelsRecord {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
   }
+}
 
-  // Then we loop through the array again and replace the vowels
-  for (let j = 0; j < s.length; j++) {
-    if (vowels.has(sArray[j])) {
-      sArray[j] = revVowels.pop();
+class Solution {
+  /**
+   * @param {string} s
+   * @return {string}
+   */
+  reverseVowels(s) {
+    // This is our LUT of the vowels
+    const vowels = new Set(["a", "e", "i", "o", "u", "A", "E", "I", "O", "U"]);
+    const sArray = s.split("");
+    let revVowels = [];
+
+    // Loop through the string array and find the vowels, we add that element to the array
+    for (let i = 0; i < s.length; i++) {
+      if (vowels.has(sArray[i])) {
+        revVowels.push(sArray[i]);
+      }
     }
-  }
 
-  // we have to call the join method to convert the string array to an string
-  return sArray.join("");
-};
+    // Then we loop through the array again and replace the vowels
+    for (let j = 0; j < s.length; j++) {
+      if (vowels.has(sArray[j])) {
+        sArray[j] = revVowels.pop();
+      }
+    }
+
+    // we have to call the join method to convert the string array to an string
+    return sArray.join("");
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.reverseVowels(record.s);
+  const pass = result === record.expected;
+
+  console.log(`Input: s = ${JSON.stringify(record.s)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new ReverseVowelsRecord("IceCreAm", "AceCreIm"),
+  new ReverseVowelsRecord("leetcode", "leotcede"),
+  new ReverseVowelsRecord("aA", "Aa"),
+  new ReverseVowelsRecord("bcdfg", "bcdfg"),
+  new ReverseVowelsRecord("hello", "holle"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

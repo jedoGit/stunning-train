@@ -29,54 +29,87 @@
 
 // Follow-up: If the string data type is mutable in your language, can you solve it in-place with O(1) extra space?
 
-// TC: O(n), we're doing in place swap
-// SC: O(1), we're doing in place swap
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {string} s
- * @return {string}
- */
-var reverseWords = function (s) {
-  // Take in the input string and split it with space as delimeter
-  let sArray = s.split(/\s+/);
+class ReverseWordsRecord {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
+  }
+}
 
-  // Now we do some swapping by using two pointers to start at both ends and moving them to the middle
-  for (let i = 0; i < Math.floor(sArray.length / 2); i++) {
-    let temp = sArray[i];
-    sArray[i] = sArray[sArray.length - 1 - i];
-    sArray[sArray.length - 1 - i] = temp;
+class Solution {
+  // TC: O(n), we're doing in place swap
+  // SC: O(1), we're doing in place swap
+
+  /**
+   * @param {string} s
+   * @return {string}
+   */
+  reverseWords1(s) {
+    // Take in the input string and split it with space as delimeter
+    let sArray = s.split(/\s+/);
+
+    // Now we do some swapping by using two pointers to start at both ends and moving them to the middle
+    for (let i = 0; i < Math.floor(sArray.length / 2); i++) {
+      let temp = sArray[i];
+      sArray[i] = sArray[sArray.length - 1 - i];
+      sArray[sArray.length - 1 - i] = temp;
+    }
+
+    // we want to join all the elements with space in between.
+    // make sure we trim the string
+    return sArray.join(" ").trim();
   }
 
-  // we want to join all the elements with space in between.
-  // make sure we trim the string
-  return sArray.join(" ").trim();
-};
+  // TC: O(n), loop through twice
+  // SC: O(n), save words to stack
 
-// TC: O(n), loop through twice
-// SC: O(n), save words to stack
+  /**
+   * @param {string} s
+   * @return {string}
+   */
+  reverseWords2(s) {
+    // Take in the input string and split it with space as delimeter
+    let sArray = s.trim().split(/\s+/);
 
-/**
- * @param {string} s
- * @return {string}
- */
-var reverseWords = function (s) {
-  // Take in the input string and split it with space as delimeter
-  let sArray = s.trim().split(/\s+/);
+    // we'll use a stack to save the words in the string
+    let stack = [];
+    let revWord = "";
 
-  // we'll use a stack to save the words in the string
-  let stack = [];
-  let revWord = "";
+    // Add the words to the stack
+    for (let word of sArray) {
+      stack.push(word);
+    }
 
-  // Add the words to the stack
-  for (let word of sArray) {
-    stack.push(word);
+    // Now let's construct the reverse word
+    for (let i = 0; i < sArray.length; i++) {
+      revWord = revWord + stack.pop() + " ";
+    }
+
+    // we want to make sure we trim the end of the string
+    return revWord.trimEnd();
   }
+}
 
-  // Now let's construct the reverse word
-  for (let i = 0; i < sArray.length; i++) {
-    revWord = revWord + stack.pop() + " ";
-  }
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.reverseWords2(record.s);
 
-  // we want to make sure we trim the end of the string
-  return revWord.trimEnd();
-};
+  console.log(`Input: s = ${JSON.stringify(record.s)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(result === record.expected ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new ReverseWordsRecord("the sky is blue", "blue is sky the"),
+  new ReverseWordsRecord("  hello world  ", "world hello"),
+  new ReverseWordsRecord("a good   example", "example good a"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

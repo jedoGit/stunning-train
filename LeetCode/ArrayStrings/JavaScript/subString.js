@@ -20,20 +20,61 @@
 // TC: O(n*m) looping through each chars of haystack and using string substring method.
 // SC: O(1) In place processing
 
-/**
- * @param {string} haystack
- * @param {string} needle
- * @return {number}
- */
-var strStr = function (haystack, needle) {
-  if (needle === "") return 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let i = 0; i < haystack.length + 1 - needle.length; i++) {
-    // We need to use substring... this is the string method for array.splice()
-    if (haystack.substring(i, i + needle.length) === needle) {
-      return i;
-    }
+class StrStrRecord {
+  constructor(haystack, needle, expected) {
+    this.haystack = haystack;
+    this.needle = needle;
+    this.expected = expected;
   }
+}
 
-  return -1;
-};
+class Solution {
+  /**
+   * @param {string} haystack
+   * @param {string} needle
+   * @return {number}
+   */
+  strStr(haystack, needle) {
+    if (needle === "") return 0;
+
+    for (let i = 0; i < haystack.length + 1 - needle.length; i++) {
+      // We need to use substring... this is the string method for array.splice()
+      if (haystack.substring(i, i + needle.length) === needle) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.strStr(record.haystack, record.needle);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: haystack = ${JSON.stringify(
+      record.haystack
+    )}, needle = ${JSON.stringify(record.needle)}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new StrStrRecord("sadbutsad", "sad", 0),
+  new StrStrRecord("leetcode", "leeto", -1),
+  new StrStrRecord("hello", "ll", 2),
+  new StrStrRecord("abc", "c", 2),
+  new StrStrRecord("a", "a", 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

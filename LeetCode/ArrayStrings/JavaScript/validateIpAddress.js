@@ -32,136 +32,176 @@
 // TC: O(n) where n is the length of queryIP
 // SC: O(32) due to the set created as LUT for digits and hexDigits. We us an array to store max of 4 digits at every iteration.
 
-/**
- * @param {string} queryIP
- * @return {string}
- */
-var validIPAddress = function (queryIP) {
-  const digits = new Set([
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    ".",
-  ]);
-  const hexDigits = new Set([
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    ":",
-  ]);
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Helper function for IPv4
-  function IPv4Check(ipAddr) {
-    // we can loop through the string and save the current string to a temp variable and stop if we see a dot.
-    // Also, anytime we see a dot, we count the dot.
-    let numDot = 0;
-    let curVal = [];
+class ValidateIpAddressRecord {
+  constructor(queryIP, expected) {
+    this.queryIP = queryIP;
+    this.expected = expected;
+  }
+}
 
-    // We need to add the last ".". At the end, we should only have a total of 4 ".".
-    ipAddr = ipAddr + ".";
+class Solution {
+  /**
+   * @param {string} queryIP
+   * @return {string}
+   */
+  validIPAddress(queryIP) {
+    const digits = new Set([
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      ".",
+    ]);
+    const hexDigits = new Set([
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      ":",
+    ]);
 
-    for (let i = 0; i < ipAddr.length; i += 1) {
-      // Let's check if ipAddr[i] is even a valid digit
-      if (!digits.has(ipAddr[i])) return false;
+    // Helper function for IPv4
+    function IPv4Check(ipAddr) {
+      // we can loop through the string and save the current string to a temp variable and stop if we see a dot.
+      // Also, anytime we see a dot, we count the dot.
+      let numDot = 0;
+      let curVal = [];
 
-      curVal.push(ipAddr[i]);
+      // We need to add the last ".". At the end, we should only have a total of 4 ".".
+      ipAddr = ipAddr + ".";
 
-      // We see a dot, let's validate the curVal
-      // It should not have a 0 in front of it if its length is greater than 1
-      if (ipAddr[i] === ".") {
-        // Let's remove the last element added which is "."
-        curVal.pop();
+      for (let i = 0; i < ipAddr.length; i += 1) {
+        // Let's check if ipAddr[i] is even a valid digit
+        if (!digits.has(ipAddr[i])) return false;
 
-        // Return false if it's just blank, or if the leading digit is 0
-        if (curVal.length === 0 || (curVal.length > 1 && curVal[0] === "0")) {
-          return false;
+        curVal.push(ipAddr[i]);
+
+        // We see a dot, let's validate the curVal
+        // It should not have a 0 in front of it if its length is greater than 1
+        if (ipAddr[i] === ".") {
+          // Let's remove the last element added which is "."
+          curVal.pop();
+
+          // Return false if it's just blank, or if the leading digit is 0
+          if (curVal.length === 0 || (curVal.length > 1 && curVal[0] === "0")) {
+            return false;
+          }
+
+          // Let's join the elements of the array. Make sure to use join("").
+          // Parse Int it and check if the value is greater than 255
+          if (parseInt(curVal.join("")) > 255) {
+            return false;
+          }
+
+          // Let's count the dots we have reset curVal to empty array
+          numDot += 1;
+          curVal = [];
         }
+      }
 
-        // Let's join the elements of the array. Make sure to use join("").
-        // Parse Int it and check if the value is greater than 255
-        if (parseInt(curVal.join("")) > 255) {
-          return false;
+      // Exited the for loop, we should only have 4 dots.
+      if (numDot !== 4) {
+        return false;
+      }
+
+      return true;
+    }
+
+    // Helper function for IPv6
+    function IPv6Check(ipAddr) {
+      let numColon = 0;
+      let curVal = [];
+
+      ipAddr += ":";
+
+      for (let i = 0; i < ipAddr.length; i++) {
+        // check if this is a hex digit or if it's a ":"
+        if (!hexDigits.has(ipAddr[i])) return false;
+
+        // Let's add this hex digit to our curval
+        curVal.push(ipAddr[i]);
+
+        // check if this is a ":", it so, let's check curval
+        if (ipAddr[i] === ":") {
+          // Remove the ":" which was the last element added to curval
+          curVal.pop();
+
+          // let's return false if curval is blank or if it's greater than 4
+          if (curVal.length < 1 || curVal.length > 4) return false;
+
+          // count numColon and reset curVal
+          numColon += 1;
+          curVal = [];
         }
-
-        // Let's count the dots we have reset curVal to empty array
-        numDot += 1;
-        curVal = [];
       }
+
+      // once we exit the for loop, we know we should have exactly 9 ":"
+      if (numColon !== 8) return false;
+
+      return true;
     }
 
-    // Exited the for loop, we should only have 4 dots.
-    if (numDot !== 4) {
-      return false;
+    if (IPv4Check(queryIP)) {
+      return "IPv4";
+    } else if (IPv6Check(queryIP)) {
+      return "IPv6";
+    } else {
+      return "Neither";
     }
-
-    return true;
   }
+}
 
-  // Helper function for IPv6
-  function IPv6Check(ipAddr) {
-    let numColon = 0;
-    let curVal = [];
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.validIPAddress(record.queryIP);
+  const pass = result === record.expected;
 
-    ipAddr += ":";
+  console.log(`Input: queryIP = ${JSON.stringify(record.queryIP)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-    for (let i = 0; i < ipAddr.length; i++) {
-      // check if this is a hex digit or if it's a ":"
-      if (!hexDigits.has(ipAddr[i])) return false;
+const records = [
+  new ValidateIpAddressRecord("172.16.254.1", "IPv4"),
+  new ValidateIpAddressRecord("2001:0db8:85a3:0:0:8A2E:0370:7334", "IPv6"),
+  new ValidateIpAddressRecord("256.256.256.256", "Neither"),
+  new ValidateIpAddressRecord("192.168.01.1", "Neither"),
+  new ValidateIpAddressRecord(
+    "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+    "IPv6"
+  ),
+  new ValidateIpAddressRecord("02001:0db8:85a3:0000:0000:8a2e:0370:7334", "Neither"),
+];
 
-      // Let's add this hex digit to our curval
-      curVal.push(ipAddr[i]);
-
-      // check if this is a ":", it so, let's check curval
-      if (ipAddr[i] === ":") {
-        // Remove the ":" which was the last element added to curval
-        curVal.pop();
-
-        // let's return false if curval is blank or if it's greater than 4
-        if (curVal.length < 1 || curVal.length > 4) return false;
-
-        // count numColon and reset curVal
-        numColon += 1;
-        curVal = [];
-      }
-    }
-
-    // once we exit the for loop, we know we should have exactly 9 ":"
-    if (numColon !== 8) return false;
-
-    return true;
-  }
-
-  if (IPv4Check(queryIP)) {
-    return "IPv4";
-  } else if (IPv6Check(queryIP)) {
-    return "IPv6";
-  } else {
-    return "Neither";
-  }
-};
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

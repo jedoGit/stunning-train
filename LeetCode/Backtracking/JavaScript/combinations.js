@@ -19,40 +19,83 @@
 // 1 <= n <= 20
 // 1 <= k <= n
 
-/**
- * @param {number} n
- * @param {number} k
- * @return {number[][]}
- */
-var combine = function (n, k) {
-  // For example, n = 4, k = 2
-  //                            1                         2                            3
-  //                         2  3  4                    3   4                          4
-  // so, [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]. No reuse: [1,2] and [2,1] is the same combination
-  //
-  // For combination, order does not matter. [1,2] is the same as [2,1]. So, we only add one of them in our result.
-  //
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = [];
-  let comb = [];
-
-  function backtrack(start) {
-    // Check if the combination we have has the correct length k we're looking for
-    if (comb.length === k) {
-      res.push([...comb]);
-      return;
-    }
-
-    // Build the combinations from the set of number n starting from number start.
-    for (let i = start; i <= n; i += 1) {
-      comb.push(i);
-      backtrack(i + 1);
-      comb.pop();
-    }
+class CombinationsRecord {
+  constructor(n, k, expected) {
+    this.n = n;
+    this.k = k;
+    this.expected = expected;
   }
+}
 
-  // Call the backtrack function starting from number 1.
-  backtrack(1);
+class Solution {
+  /**
+   * @param {number} n
+   * @param {number} k
+   * @return {number[][]}
+   */
+  combine(n, k) {
+    // For example, n = 4, k = 2
+    //                            1                         2                            3
+    //                         2  3  4                    3   4                          4
+    // so, [[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]. No reuse: [1,2] and [2,1] is the same combination
+    //
+    // For combination, order does not matter. [1,2] is the same as [2,1]. So, we only add one of them in our result.
+    //
 
-  return res;
-};
+    let res = [];
+    let comb = [];
+
+    function backtrack(start) {
+      // Check if the combination we have has the correct length k we're looking for
+      if (comb.length === k) {
+        res.push([...comb]);
+        return;
+      }
+
+      // Build the combinations from the set of number n starting from number start.
+      for (let i = start; i <= n; i += 1) {
+        comb.push(i);
+        backtrack(i + 1);
+        comb.pop();
+      }
+    }
+
+    // Call the backtrack function starting from number 1.
+    backtrack(1);
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.combine(record.n, record.k);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: n = ${record.n}, k = ${record.k}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CombinationsRecord(4, 2, [
+    [1, 2],
+    [1, 3],
+    [1, 4],
+    [2, 3],
+    [2, 4],
+    [3, 4],
+  ]),
+  new CombinationsRecord(1, 1, [[1]]),
+  new CombinationsRecord(3, 3, [[1, 2, 3]]),
+  new CombinationsRecord(3, 1, [[1], [2], [3]]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

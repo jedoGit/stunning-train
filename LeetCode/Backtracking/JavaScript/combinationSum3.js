@@ -35,40 +35,80 @@
 // TC: O(9!/(k!(9-k)!)), this is the worst case
 // SC: O(n)
 
-/**
- * @param {number} k
- * @param {number} n
- * @return {number[][]}
- */
-var combinationSum3 = function (k, n) {
-  let res = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  function backtrack(index, curVals, findVal) {
-    // Our base case:
-    // 1. If the value we want to find is negative. It needs to be zero.
-    // 2. If the size of curVals array is greater than k. We need to find k values only
-    if (findVal < 0 || curVals.length > k) return;
-
-    // At each recursion, we check if findVal is zero and the size of the curVals array is k,
-    // which means we found the combination of values that will sum up to the value n.
-    if (findVal === 0 && curVals.length === k) {
-      res.push([...curVals]);
-    }
-
-    // We continue with the DFS until we find all the combinations
-    // Each time we DFS, we decrement findVal by i and increment index by 1
-    // Also, we push i to curVals to include it to the next recursion.
-    // After the recursion, we pop the value i to backtrack
-    for (let i = index; i <= 9; i++) {
-      curVals.push(i);
-      backtrack(i + 1, curVals, findVal - i);
-      curVals.pop();
-    }
+class CombinationSum3Record {
+  constructor(k, n, expected) {
+    this.k = k;
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  // Our initial input to the backtrack recursion is 1 for the index, an empty array and the value we want to find
-  backtrack(1, [], n);
+class Solution {
+  /**
+   * @param {number} k
+   * @param {number} n
+   * @return {number[][]}
+   */
+  combinationSum3(k, n) {
+    let res = [];
 
-  // We return res after backtracking completes
-  return res;
-};
+    function backtrack(index, curVals, findVal) {
+      // Our base case:
+      // 1. If the value we want to find is negative. It needs to be zero.
+      // 2. If the size of curVals array is greater than k. We need to find k values only
+      if (findVal < 0 || curVals.length > k) return;
+
+      // At each recursion, we check if findVal is zero and the size of the curVals array is k,
+      // which means we found the combination of values that will sum up to the value n.
+      if (findVal === 0 && curVals.length === k) {
+        res.push([...curVals]);
+      }
+
+      // We continue with the DFS until we find all the combinations
+      // Each time we DFS, we decrement findVal by i and increment index by 1
+      // Also, we push i to curVals to include it to the next recursion.
+      // After the recursion, we pop the value i to backtrack
+      for (let i = index; i <= 9; i++) {
+        curVals.push(i);
+        backtrack(i + 1, curVals, findVal - i);
+        curVals.pop();
+      }
+    }
+
+    // Our initial input to the backtrack recursion is 1 for the index, an empty array and the value we want to find
+    backtrack(1, [], n);
+
+    // We return res after backtracking completes
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.combinationSum3(record.k, record.n);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: k = ${record.k}, n = ${record.n}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CombinationSum3Record(3, 7, [[1, 2, 4]]),
+  new CombinationSum3Record(3, 9, [
+    [1, 2, 6],
+    [1, 3, 5],
+    [2, 3, 4],
+  ]),
+  new CombinationSum3Record(4, 1, []),
+  new CombinationSum3Record(2, 17, [[8, 9]]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

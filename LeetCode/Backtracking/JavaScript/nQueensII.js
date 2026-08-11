@@ -19,45 +19,82 @@
 // TC:
 // SC:
 
-/**
- * @param {number} n
- * @return {number}
- */
-var totalNQueens = function (n) {
-  let col = new Set();
-  let posDiag = new Set();
-  let negDiag = new Set();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = 0;
+class NQueensIIRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
+  }
+}
 
-  // Helper function
-  const backtrack = (r) => {
-    if (r === n) {
-      res += 1;
-      return;
-    }
+class Solution {
+  /**
+   * @param {number} n
+   * @return {number}
+   */
+  totalNQueens(n) {
+    let col = new Set();
+    let posDiag = new Set();
+    let negDiag = new Set();
 
-    for (let c = 0; c < n; c += 1) {
-      if (col.has(c) || posDiag.has(r + c) || negDiag.has(r - c)) {
-        continue;
+    let res = 0;
+
+    // Helper function
+    const backtrack = (r) => {
+      if (r === n) {
+        res += 1;
+        return;
       }
 
-      col.add(c);
-      posDiag.add(r + c);
-      negDiag.add(r - c);
+      for (let c = 0; c < n; c += 1) {
+        if (col.has(c) || posDiag.has(r + c) || negDiag.has(r - c)) {
+          continue;
+        }
 
-      backtrack(r + 1);
+        col.add(c);
+        posDiag.add(r + c);
+        negDiag.add(r - c);
 
-      col.delete(c);
-      posDiag.delete(r + c);
-      negDiag.delete(r - c);
-    }
+        backtrack(r + 1);
 
-    return;
-  };
+        col.delete(c);
+        posDiag.delete(r + c);
+        negDiag.delete(r - c);
+      }
 
-  // Call backtrack
-  backtrack(0);
+      return;
+    };
 
-  return res;
-};
+    // Call backtrack
+    backtrack(0);
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.totalNQueens(record.n);
+  const pass = result === record.expected;
+
+  console.log(`Input: n = ${record.n}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new NQueensIIRecord(4, 2),
+  new NQueensIIRecord(1, 1),
+  new NQueensIIRecord(2, 0),
+  new NQueensIIRecord(3, 0),
+  new NQueensIIRecord(5, 10),
+  new NQueensIIRecord(8, 92),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

@@ -24,87 +24,130 @@
 // TC: O(n)
 // SC: ???
 
-/**
- * @param {string} s
- * @return {string[]}
- */
-var restoreIpAddresses = function (s) {
-  //     012345
-  // s = 101023
-  // s.length = 6
-  // This is how the decision tree would look like. We're going to look at 1 to 3 digits at a time.
-  // For example if we consider index 0 which has a value of 1 as the first integer in our ip address separated by dot,
-  // we can see the the next digit in s is 0. We know that the integers does not start with zero. This means that 0 should be the
-  // second integer in our ip address. Now, we look at the possible 3rd integer in our ip address. Since we've already assigned the first 2 index, we'll
-  // need to check the next 3 indices... starting from index 2 to 4, we can have 3 possible integers, 1 10 102. Now, if we use the integer 1, and perform
-  // the same logic by looking at the next 3 digits in s, we'll eventually hit the end of s. We'll do the same for the rest of the digits in s.
-  // We'll have something like this:
-  //                         1               10           101
-  //                         |           /   |   \         |
-  //                         0          1    10  102       0
-  //                    /    |  \       |    /\   |       / \
-  //                   1    10  102     0   2 23  3       2 23
-  //                   |    /\   |     / \  |             |
-  //                   0   2 23  3     2 23 3             3
-  //                  / \  |           |
-  //                  2 23 3           3
-  //                  |
-  //                  3
-  // By creating a decision tree, we can check if all of the combinations are valid ip address
-  // 1.0.1.0.2.3 INVALID         10.1.0.2.3  INVALID         101.0.2.3   VALID
-  // 1.0.1.0.23  INVALID         10.1.0.23   VALID           101.23      INVALID
-  // 1.0.10.2.3  INVALID         10.10.2.3   VALID
-  // 1.0.10.23   VALID           10.10.23    INVALID
-  //                             10.102.3    INVALID
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // This is a DFS type of a problem and we recurse and checking at each level if we've assembled a valid ip address. If we did, we'll add it to our results array.
-  // For base cases:
-  // - At each level, we add a dot, pass the currentIP address we assembled and the last index we looked at from s.
-  // - We stop looking when we've added 4 dots and the index we received is equal to the length of s. We append our currentIP Address to our results.
-  // - We also stop looking if we added more than 4 dots.
-  //
-  // At each level we only want to consider the remaining chars of s starting from the index we received. We look at i to min(i+3, s.length).
-
-  let res = [];
-  let sLen = s.length;
-
-  // If the size of s has more than 12 digits, it means it's not possible to create a valid ip address.
-  if (sLen > 12) {
-    return res;
+class RestoreIpAddressRecord {
+  constructor(s, expected) {
+    this.s = s;
+    this.expected = expected;
   }
+}
 
-  // The backtracking recursive function
-  function backtracking(idx, numDots, curIpAddr) {
-    // Base cases
-    if (numDots === 4 && idx === sLen) {
-      // Let's push the string curIpAddr to our results array. Exclude the last dot added
-      res.push(curIpAddr.slice(0, -1));
-      return;
+class Solution {
+  /**
+   * @param {string} s
+   * @return {string[]}
+   */
+  restoreIpAddresses(s) {
+    //     012345
+    // s = 101023
+    // s.length = 6
+    // This is how the decision tree would look like. We're going to look at 1 to 3 digits at a time.
+    // For example if we consider index 0 which has a value of 1 as the first integer in our ip address separated by dot,
+    // we can see the the next digit in s is 0. We know that the integers does not start with zero. This means that 0 should be the
+    // second integer in our ip address. Now, we look at the possible 3rd integer in our ip address. Since we've already assigned the first 2 index, we'll
+    // need to check the next 3 indices... starting from index 2 to 4, we can have 3 possible integers, 1 10 102. Now, if we use the integer 1, and perform
+    // the same logic by looking at the next 3 digits in s, we'll eventually hit the end of s. We'll do the same for the rest of the digits in s.
+    // We'll have something like this:
+    //                         1               10           101
+    //                         |           /   |   \         |
+    //                         0          1    10  102       0
+    //                    /    |  \       |    /\   |       / \
+    //                   1    10  102     0   2 23  3       2 23
+    //                   |    /\   |     / \  |             |
+    //                   0   2 23  3     2 23 3             3
+    //                  / \  |           |
+    //                  2 23 3           3
+    //                  |
+    //                  3
+    // By creating a decision tree, we can check if all of the combinations are valid ip address
+    // 1.0.1.0.2.3 INVALID         10.1.0.2.3  INVALID         101.0.2.3   VALID
+    // 1.0.1.0.23  INVALID         10.1.0.23   VALID           101.23      INVALID
+    // 1.0.10.2.3  INVALID         10.10.2.3   VALID
+    // 1.0.10.23   VALID           10.10.23    INVALID
+    //                             10.102.3    INVALID
+
+    // This is a DFS type of a problem and we recurse and checking at each level if we've assembled a valid ip address. If we did, we'll add it to our results array.
+    // For base cases:
+    // - At each level, we add a dot, pass the currentIP address we assembled and the last index we looked at from s.
+    // - We stop looking when we've added 4 dots and the index we received is equal to the length of s. We append our currentIP Address to our results.
+    // - We also stop looking if we added more than 4 dots.
+    //
+    // At each level we only want to consider the remaining chars of s starting from the index we received. We look at i to min(i+3, s.length).
+
+    let res = [];
+    let sLen = s.length;
+
+    // If the size of s has more than 12 digits, it means it's not possible to create a valid ip address.
+    if (sLen > 12) {
+      return res;
     }
 
-    // Let's not waste more time looking if we know it's not a valid IP Address
-    if (numDots > 4) {
-      return;
-    }
+    // The backtracking recursive function
+    function backtracking(idx, numDots, curIpAddr) {
+      // Base cases
+      if (numDots === 4 && idx === sLen) {
+        // Let's push the string curIpAddr to our results array. Exclude the last dot added
+        res.push(curIpAddr.slice(0, -1));
+        return;
+      }
 
-    // We start from the index passed to the function. The check for the next 3 digit. In the case that we have less than 3 digits left, we stop at the end of array.
-    for (let j = idx; j < Math.min(idx + 3, sLen); j += 1) {
-      // Here we only consider the chars in s one at the at. Check it if the integer value is between 0 to 255.
-      // Also, check if the leading digit should not be 0.
-      if (
-        parseInt(s.slice(idx, j + 1)) < 256 &&
-        (idx === j || s[idx] !== "0")
-      ) {
-        // We recurse and pass the next index, increment the numDots, append the new slice of Ip digit we added and don't forget to add the dot.
-        backtracking(j + 1, numDots + 1, curIpAddr + s.slice(idx, j + 1) + ".");
+      // Let's not waste more time looking if we know it's not a valid IP Address
+      if (numDots > 4) {
+        return;
+      }
+
+      // We start from the index passed to the function. The check for the next 3 digit. In the case that we have less than 3 digits left, we stop at the end of array.
+      for (let j = idx; j < Math.min(idx + 3, sLen); j += 1) {
+        // Here we only consider the chars in s one at the at. Check it if the integer value is between 0 to 255.
+        // Also, check if the leading digit should not be 0.
+        if (
+          parseInt(s.slice(idx, j + 1)) < 256 &&
+          (idx === j || s[idx] !== "0")
+        ) {
+          // We recurse and pass the next index, increment the numDots, append the new slice of Ip digit we added and don't forget to add the dot.
+          backtracking(j + 1, numDots + 1, curIpAddr + s.slice(idx, j + 1) + ".");
+        }
       }
     }
+
+    // Call the backtracking recursion
+    backtracking(0, 0, "");
+
+    return res;
   }
+}
 
-  // Call the backtracking recursion
-  backtracking(0, 0, "");
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.restoreIpAddresses(record.s);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
 
-  // console.log(res)
+  console.log(`Input: s = ${JSON.stringify(record.s)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-  return res;
-};
+const records = [
+  new RestoreIpAddressRecord("25525511135", [
+    "255.255.11.135",
+    "255.255.111.35",
+  ]),
+  new RestoreIpAddressRecord("0000", ["0.0.0.0"]),
+  new RestoreIpAddressRecord("101023", [
+    "1.0.10.23",
+    "1.0.102.3",
+    "10.1.0.23",
+    "10.10.2.3",
+    "101.0.2.3",
+  ]),
+  new RestoreIpAddressRecord("1111", ["1.1.1.1"]),
+  new RestoreIpAddressRecord("1111111111111", []),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

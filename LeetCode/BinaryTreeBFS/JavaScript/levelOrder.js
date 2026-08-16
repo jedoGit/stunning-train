@@ -21,40 +21,104 @@
 // # TC: O(n)
 // # SC: O(h), where h is the max num nodes on all levels
 
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
 /**
  * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
  */
-/**
- * @param {TreeNode} root
- * @return {number[][]}
- */
-var levelOrder = function (root) {
-  if (!root) return [];
-  // Using BFS
-  let q = [];
-  let res = [];
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-  q.push(root);
+class LevelOrderRecord {
+  constructor(values, expected) {
+    this.values = values;
+    this.expected = expected;
+  }
+}
 
-  while (q.length) {
-    let qLen = q.length;
+class Solution {
+  /**
+   * @param {TreeNode} root
+   * @return {number[][]}
+   */
+  levelOrder(root) {
+    if (!root) return [];
+    // Using BFS
+    let q = [];
+    let res = [];
 
-    let val = [];
-    for (let i = 0; i < qLen; i += 1) {
-      let node = q.shift();
-      val.push(node.val);
+    q.push(root);
 
-      if (node.left) q.push(node.left);
-      if (node.right) q.push(node.right);
+    while (q.length) {
+      let qLen = q.length;
+
+      let val = [];
+      for (let i = 0; i < qLen; i += 1) {
+        let node = q.shift();
+        val.push(node.val);
+
+        if (node.left) q.push(node.left);
+        if (node.right) q.push(node.right);
+      }
+
+      res.push(val);
     }
 
-    res.push(val);
+    return res;
+  }
+}
+
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  return res;
-};
+  return root;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.levelOrder(createTree(record.values));
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: root = ${JSON.stringify(record.values)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new LevelOrderRecord([3, 9, 20, null, null, 15, 7], [[3], [9, 20], [15, 7]]),
+  new LevelOrderRecord([1], [[1]]),
+  new LevelOrderRecord([], []),
+  new LevelOrderRecord([1, 2, 3, 4, 5, 6, 7], [[1], [2, 3], [4, 5, 6, 7]]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

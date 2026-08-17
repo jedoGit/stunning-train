@@ -24,61 +24,127 @@
 // TC: O(n*m) we're looping through each level of the tree and in each level, we're looping through all the nodes.
 // SC: O(n*m) we're looping through each level of the tree and in each level, we're looping through all the nodes. Each time we process a node, we add it to the queue
 
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
 /**
  * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-var maxLevelSum = function (root) {
-  if (!root) return 0;
-  // We'll use BFS. For each level, we add the children nodes from left to right to the queue and compute the sum of
-  // all the nodes in that level and save it
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-  let q = [];
-  let level = 0;
-  let maxSum = -Infinity;
-  let minLevel = Infinity;
+class MaxLevelSumRecord {
+  constructor(values, expected) {
+    this.values = values;
+    this.expected = expected;
+  }
+}
 
-  // Push the root to the queue so we can process it
-  q.push(root);
+class Solution {
+  /**
+   * @param {TreeNode} root
+   * @return {number}
+   */
+  maxLevelSum(root) {
+    if (!root) return 0;
+    // We'll use BFS. For each level, we add the children nodes from left to right to the queue and compute the sum of
+    // all the nodes in that level and save it
 
-  // We start processing the queue
-  while (q.length) {
-    // Let's capture some temp values we need
-    let curLen = q.length;
-    let curSum = 0;
+    let q = [];
+    let level = 0;
+    let maxSum = -Infinity;
+    let minLevel = Infinity;
 
-    // We increment the level each time we iterate through the loop
-    level = level + 1;
+    // Push the root to the queue so we can process it
+    q.push(root);
 
-    // These are the nodes in the current level that were added to the queue
-    // We'll sum all their values and push their children node to the back of the queue
-    while (curLen) {
-      curNode = q.shift();
-      curSum = curSum + curNode.val;
+    // We start processing the queue
+    while (q.length) {
+      // Let's capture some temp values we need
+      let curLen = q.length;
+      let curSum = 0;
 
-      if (curNode.left) q.push(curNode.left);
-      if (curNode.right) q.push(curNode.right);
+      // We increment the level each time we iterate through the loop
+      level = level + 1;
 
-      // Don't forget to decrement the curLen, we only want to remove the node from the current level in the queue
-      curLen--;
+      // These are the nodes in the current level that were added to the queue
+      // We'll sum all their values and push their children node to the back of the queue
+      while (curLen) {
+        let curNode = q.shift();
+        curSum = curSum + curNode.val;
+
+        if (curNode.left) q.push(curNode.left);
+        if (curNode.right) q.push(curNode.right);
+
+        // Don't forget to decrement the curLen, we only want to remove the node from the current level in the queue
+        curLen--;
+      }
+
+      // The requirement states to return the lowest level that has the maximum sum
+      // So, there might be multiple levels with the same maxSum value... we'll just return
+      // the first level we see with the maximum sum
+      if (curSum > maxSum) {
+        maxSum = curSum;
+        minLevel = level;
+      }
     }
 
-    // The requirement states to return the lowest level that has the maximum sum
-    // So, there might be multiple levels with the same maxSum value... we'll just return
-    // the first level we see with the maximum sum
-    if (curSum > maxSum) {
-      maxSum = curSum;
-      minLevel = level;
+    return minLevel;
+  }
+}
+
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
     }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  return minLevel;
-};
+  return root;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxLevelSum(createTree(record.values));
+  const pass = result === record.expected;
+
+  console.log(`Input: root = ${JSON.stringify(record.values)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxLevelSumRecord([1, 7, 0, 7, -8, null, null], 2),
+  new MaxLevelSumRecord([989, null, 10250, 98693, -89388, null, null, null, -32127], 2),
+  new MaxLevelSumRecord([1], 1),
+  // Ties are broken by the smallest level
+  new MaxLevelSumRecord([2, 1, 1], 1),
+  new MaxLevelSumRecord([], 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

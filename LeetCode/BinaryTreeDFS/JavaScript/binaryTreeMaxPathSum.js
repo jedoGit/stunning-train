@@ -20,46 +20,109 @@
 // The number of nodes in the tree is in the range [1, 3 * 104].
 // -1000 <= Node.val <= 1000
 
-// TC: O(n) we visit all nodes
-// SC: O(h) h is height of the tree
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
 /**
  * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
  */
-/**
- * @param {TreeNode} root
- * @return {number}
- */
-var maxPathSum = function (root) {
-  // Using a global variable and using an array for ease of manipulation
-  let res = [root.val];
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-  // Helper function
-  function dfs(root) {
-    if (!root) {
-      return 0;
+class MaxPathSumRecord {
+  constructor(values, expected) {
+    this.values = values;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  // TC: O(n) we visit all nodes
+  // SC: O(h) h is height of the tree
+  /**
+   * @param {TreeNode} root
+   * @return {number}
+   */
+  maxPathSum(root) {
+    // Using a global variable and using an array for ease of manipulation
+    let res = [root.val];
+
+    // Helper function
+    function dfs(root) {
+      if (!root) {
+        return 0;
+      }
+
+      // DFS to right and left children
+      let leftMax = dfs(root.left);
+      let rightMax = dfs(root.right);
+
+      // DFS could return negative value, if negative, we want to use zero instead and not include the negative value
+      leftMax = Math.max(leftMax, 0);
+      rightMax = Math.max(rightMax, 0);
+
+      // Compute the max path with split to both children
+      res[0] = Math.max(res[0], root.val + leftMax + rightMax);
+
+      return root.val + Math.max(leftMax, rightMax);
     }
 
-    // DFS to right and left children
-    let leftMax = dfs(root.left);
-    let rightMax = dfs(root.right);
+    dfs(root);
 
-    // DFS could return negative value, if negative, we want to use zero instead and not include the negative value
-    leftMax = Math.max(leftMax, 0);
-    rightMax = Math.max(rightMax, 0);
+    return res[0];
+  }
+}
 
-    // Compute the max path with split to both children
-    res[0] = Math.max(res[0], root.val + leftMax + rightMax);
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
 
-    return root.val + Math.max(leftMax, rightMax);
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  dfs(root);
+  return root;
+}
 
-  return res[0];
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxPathSum(createTree(record.values));
+  const pass = result === record.expected;
+
+  console.log(`Input: root = ${JSON.stringify(record.values)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxPathSumRecord([1, 2, 3], 6),
+  new MaxPathSumRecord([-10, 9, 20, null, null, 15, 7], 42),
+  new MaxPathSumRecord([-3], -3),
+  new MaxPathSumRecord([2, -1], 2),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

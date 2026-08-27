@@ -27,39 +27,103 @@
 // -1000 <= Node.val <= 1000
 // -1000 <= targetSum <= 1000
 
-// TC: O(n), we need to visit all of the nodes
-// SC: O(h), height of the stack, worst case is O(n)
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
 /**
  * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
  */
-/**
- * @param {TreeNode} root
- * @param {number} targetSum
- * @return {boolean}
- */
-var hasPathSum = function (root, targetSum) {
-  // User helper function
-  function dfs(node, curSum) {
-    if (!node) return false;
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-    // each time we visite a node, we compute the current sum
-    curSum += node.val;
+class HasPathSumRecord {
+  constructor(values, targetSum, expected) {
+    this.values = values;
+    this.targetSum = targetSum;
+    this.expected = expected;
+  }
+}
 
-    // let's check if this is a leaf node, meaning it's the end of the tree and it has no children
-    // if it is, check if curSum is equal to targetSum
-    if (!node.left && !node.right) {
-      return curSum === targetSum;
+class Solution {
+  // TC: O(n), we need to visit all of the nodes
+  // SC: O(h), height of the stack, worst case is O(n)
+  /**
+   * @param {TreeNode} root
+   * @param {number} targetSum
+   * @return {boolean}
+   */
+  hasPathSum(root, targetSum) {
+    // User helper function
+    function dfs(node, curSum) {
+      if (!node) return false;
+
+      // each time we visite a node, we compute the current sum
+      curSum += node.val;
+
+      // let's check if this is a leaf node, meaning it's the end of the tree and it has no children
+      // if it is, check if curSum is equal to targetSum
+      if (!node.left && !node.right) {
+        return curSum === targetSum;
+      }
+
+      // we just need to dfs on both children of the node, which ever side returns a true, return it.
+      return dfs(node.left, curSum) || dfs(node.right, curSum);
     }
 
-    // we just need to dfs on both children of the node, which ever side returns a true, return it.
-    return dfs(node.left, curSum) || dfs(node.right, curSum);
+    return dfs(root, 0);
+  }
+}
+
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  return dfs(root, 0);
-};
+  return root;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.hasPathSum(createTree(record.values), record.targetSum);
+  const pass = result === record.expected;
+
+  console.log(`Input: root = ${JSON.stringify(record.values)}, targetSum = ${record.targetSum}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new HasPathSumRecord([5, 4, 8, 11, null, 13, 4, 7, 2, null, null, null, 1], 22, true),
+  new HasPathSumRecord([1, 2, 3], 5, false),
+  new HasPathSumRecord([], 0, false),
+  new HasPathSumRecord([1, 2], 1, false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

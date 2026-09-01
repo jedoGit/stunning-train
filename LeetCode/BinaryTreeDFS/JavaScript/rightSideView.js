@@ -18,44 +18,108 @@
 // The number of nodes in the tree is in the range [0, 100].
 // -100 <= Node.val <= 100
 
-// TC: O(n) We're looping through the levels of the binary tree and inspecting the nodes
-// SC: O(n) While we're looping through the levels of the binary tree, we're adding the nodes to a function call stack
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
 /**
  * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
  */
-/**
- * @param {TreeNode} root
- * @return {number[]}
- */
-var rightSideView = function (root) {
-  // Let's use DFS.
-  // Let's visit each level on the right side of the root.
-  // We'll keep track of each level and add the value of the node at each level.
-  // Then, after we visited all the right nodes, we should have a results array
-  // which are the values of all the right nodes
-  // Then, we'll look to the left of the root but this time, we'll look at both left and right children
+class TreeNode {
+  constructor(val, left, right) {
+    this.val = val === undefined ? 0 : val;
+    this.left = left === undefined ? null : left;
+    this.right = right === undefined ? null : right;
+  }
+}
 
-  let result = [];
+class RightSideViewRecord {
+  constructor(values, expected) {
+    this.values = values;
+    this.expected = expected;
+  }
+}
 
-  function dfs(node, level) {
-    if (!node) return;
+class Solution {
+  // TC: O(n) We're looping through the levels of the binary tree and inspecting the nodes
+  // SC: O(n) While we're looping through the levels of the binary tree, we're adding the nodes to a function call stack
+  /**
+   * @param {TreeNode} root
+   * @return {number[]}
+   */
+  rightSideView(root) {
+    // Let's use DFS.
+    // Let's visit each level on the right side of the root.
+    // We'll keep track of each level and add the value of the node at each level.
+    // Then, after we visited all the right nodes, we should have a results array
+    // which are the values of all the right nodes
+    // Then, we'll look to the left of the root but this time, we'll look at both left and right children
 
-    // Check the result length first if equal to level
-    if (result.length === level) {
-      result.push(node.val);
+    let result = [];
+
+    function dfs(node, level) {
+      if (!node) return;
+
+      // Check the result length first if equal to level
+      if (result.length === level) {
+        result.push(node.val);
+      }
+
+      dfs(node.right, level + 1);
+      dfs(node.left, level + 1);
     }
 
-    dfs(node.right, level + 1);
-    dfs(node.left, level + 1);
+    dfs(root, 0);
+
+    return result;
+  }
+}
+
+function createTree(values) {
+  if (!values.length || values[0] === null) return null;
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null && values[index] !== undefined) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null && values[index] !== undefined) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
-  dfs(root, 0);
+  return root;
+}
 
-  return result;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.rightSideView(createTree(record.values));
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: root = ${JSON.stringify(record.values)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new RightSideViewRecord([1, 2, 3, null, 5, null, 4], [1, 3, 4]),
+  new RightSideViewRecord([1, null, 3], [1, 3]),
+  new RightSideViewRecord([], []),
+  new RightSideViewRecord([1], [1]),
+  new RightSideViewRecord([1, 2, null, 3], [1, 2, 3]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

@@ -29,74 +29,107 @@
 // It is very easy to come up with a solution with a runtime of O(n log n). Can you do it in linear time O(n) and possibly in a single pass?
 // Can you do it without using any built-in function (i.e., like __builtin_popcount in C++)?
 
-// TC: O(n) we're creating an array of size n+1 and we need to fill values to that array
-// SC: O(n) we're creating an array of size n+1 and we need to fill values to that array
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {number} n
- * @return {number[]}
- */
-var countBits = function (n) {
-  // Intuition: This is a DP problem. Example for n = 8
-  // n    Binary   1D DP array
-  // 0    0000     dp[0]               = 0
-  // 1    0001     dp[1] = 1 + dp[n-1] = 1 + 0
-  // 2    0010     dp[2] = 1 + dp[n-2] = 1 + 0
-  // 3    0011     dp[3] = 1 + dp[n-2] = 1 + 1
-  // 4    0100     dp[4] = 1 + dp[n-4] = 1 + 0
-  // 5    0101     dp[5] = 1 + dp[n-4] = 1 + 1
-  // 6    0110     dp[6] = 1 + dp[n-4] = 1 + 1
-  // 7    0111     dp[7] = 1 + dp[n-4] = 1 + 2
-  // 8    1000     dp[8] = 1 + dp[n-8] = 1 + 0
-
-  // Every iteration, there is an offset we need to check. The offset is updated when offset*2 === n? offset=n
-  // The offset will be all the values 2^n, n = [0,1,2,3...] => offset = [1,2,4,8,16,32...]
-  // dp[n] = 1 + dp[n - offset];
-
-  let dp = new Array(n + 1).fill(0);
-  let offset = 1;
-
-  for (let i = 1; i < n + 1; i++) {
-    if (offset * 2 === i) {
-      offset = i;
-    }
-    dp[i] = 1 + dp[i - offset];
+class CountBitsRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
-  return dp;
-};
+}
 
-// TC: O(nlogn) We loop through 0 through n, but at each value of n, we loop through the number of positions where the MSB is located for that n.
-// SC: O(n) because we need to return an array of the count of 1's for each number from 0 to n.
+class Solution {
+  // TC: O(n) we're creating an array of size n+1 and we need to fill values to that array
+  // SC: O(n) we're creating an array of size n+1 and we need to fill values to that array
+  /**
+   * @param {number} n
+   * @return {number[]}
+   */
+  countBits1(n) {
+    // Intuition: This is a DP problem. Example for n = 8
+    // n    Binary   1D DP array
+    // 0    0000     dp[0]               = 0
+    // 1    0001     dp[1] = 1 + dp[n-1] = 1 + 0
+    // 2    0010     dp[2] = 1 + dp[n-2] = 1 + 0
+    // 3    0011     dp[3] = 1 + dp[n-2] = 1 + 1
+    // 4    0100     dp[4] = 1 + dp[n-4] = 1 + 0
+    // 5    0101     dp[5] = 1 + dp[n-4] = 1 + 1
+    // 6    0110     dp[6] = 1 + dp[n-4] = 1 + 1
+    // 7    0111     dp[7] = 1 + dp[n-4] = 1 + 2
+    // 8    1000     dp[8] = 1 + dp[n-8] = 1 + 0
 
-/**
- * @param {number} n
- * @return {number[]}
- */
-var countBits = function (n) {
-  // This is using bit manipulation instead of DP. DP will produce an O(n) for TC and SC
-  let res = new Array(n + 1).fill(0);
+    // Every iteration, there is an offset we need to check. The offset is updated when offset*2 === n? offset=n
+    // The offset will be all the values 2^n, n = [0,1,2,3...] => offset = [1,2,4,8,16,32...]
+    // dp[n] = 1 + dp[n - offset];
 
-  for (let i = 0; i < n + 1; i++) {
-    let temp = i;
-    let exit = false;
+    let dp = new Array(n + 1).fill(0);
+    let offset = 1;
 
-    // We want to check (n>>1 & 0x1). This will tell us how many ones are in the value n.
-    // We want to bit shift right by 1 bit, then bitwise AND by 1 to check the LSB if it's 1.
-    // In JS, we can use (n/2) | 0 to bit shift right by 1 bit.
-
-    while (!exit) {
-      if ((temp & 1) === 1) {
-        res[i] += 1;
+    for (let i = 1; i < n + 1; i++) {
+      if (offset * 2 === i) {
+        offset = i;
       }
-
-      if (temp === 0) {
-        exit = true;
-        break;
-      }
-
-      temp = temp >> 1;
+      dp[i] = 1 + dp[i - offset];
     }
+    return dp;
   }
 
-  return res;
-};
+  // TC: O(nlogn) We loop through 0 through n, but at each value of n, we loop through the number of positions where the MSB is located for that n.
+  // SC: O(n) because we need to return an array of the count of 1's for each number from 0 to n.
+  /**
+   * @param {number} n
+   * @return {number[]}
+   */
+  countBits2(n) {
+    // This is using bit manipulation instead of DP. DP will produce an O(n) for TC and SC
+    let res = new Array(n + 1).fill(0);
+
+    for (let i = 0; i < n + 1; i++) {
+      let temp = i;
+      let exit = false;
+
+      // We want to check (n>>1 & 0x1). This will tell us how many ones are in the value n.
+      // We want to bit shift right by 1 bit, then bitwise AND by 1 to check the LSB if it's 1.
+      // In JS, we can use (n/2) | 0 to bit shift right by 1 bit.
+
+      while (!exit) {
+        if ((temp & 1) === 1) {
+          res[i] += 1;
+        }
+
+        if (temp === 0) {
+          exit = true;
+          break;
+        }
+
+        temp = temp >> 1;
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.countBits2(record.n);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: n = ${record.n}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CountBitsRecord(2, [0, 1, 1]),
+  new CountBitsRecord(5, [0, 1, 1, 2, 1, 2]),
+  new CountBitsRecord(0, [0]),
+  new CountBitsRecord(8, [0, 1, 1, 2, 1, 2, 2, 3, 1]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

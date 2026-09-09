@@ -24,43 +24,81 @@
 // TC: O(max(position of MSB of a and b and c)), it is based on the max position of the MSB on a and b and c. We will do a bit shift and check each bit until we hit the max MSB.
 // SC: O(1) in place processing
 
-/**
- * @param {number} a
- * @param {number} b
- * @param {number} c
- * @return {number}
- */
-var minFlips = function (a, b, c) {
-  let tempA = a;
-  let tempB = b;
-  let tempC = c;
-  let count = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  //  a   b   c    flips
-  //  0   0   0     0
-  //  0   1   0     1
-  //  1   0   0     1
-  //  1   1   0     2
-  //  0   0   1     1
-  //  0   1   1     0
-  //  1   0   1     0
-  //  1   1   1     0
+class MinFlipsRecord {
+  constructor(a, b, c, expected) {
+    this.a = a;
+    this.b = b;
+    this.c = c;
+    this.expected = expected;
+  }
+}
 
-  while (tempC || tempB || tempA) {
-    if (
-      (!(tempC & 1) && !(tempA & 1) && tempB & 1) ||
-      (!(tempC & 1) && tempA & 1 && !(tempB & 1)) ||
-      (tempC & 1 && !(tempA & 1) && !(tempB & 1))
-    ) {
-      count += 1;
-    } else if (!(tempC & 1) && tempA & 1 && tempB & 1) {
-      count += 2;
+class Solution {
+  /**
+   * @param {number} a
+   * @param {number} b
+   * @param {number} c
+   * @return {number}
+   */
+  minFlips(a, b, c) {
+    let tempA = a;
+    let tempB = b;
+    let tempC = c;
+    let count = 0;
+
+    //  a   b   c    flips
+    //  0   0   0     0
+    //  0   1   0     1
+    //  1   0   0     1
+    //  1   1   0     2
+    //  0   0   1     1
+    //  0   1   1     0
+    //  1   0   1     0
+    //  1   1   1     0
+
+    while (tempC || tempB || tempA) {
+      if (
+        (!(tempC & 1) && !(tempA & 1) && tempB & 1) ||
+        (!(tempC & 1) && tempA & 1 && !(tempB & 1)) ||
+        (tempC & 1 && !(tempA & 1) && !(tempB & 1))
+      ) {
+        count += 1;
+      } else if (!(tempC & 1) && tempA & 1 && tempB & 1) {
+        count += 2;
+      }
+
+      tempA = tempA >> 1;
+      tempB = tempB >> 1;
+      tempC = tempC >> 1;
     }
 
-    tempA = tempA >> 1;
-    tempB = tempB >> 1;
-    tempC = tempC >> 1;
+    return count;
   }
+}
 
-  return count;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minFlips(record.a, record.b, record.c);
+  const pass = result === record.expected;
+
+  console.log(`Input: a = ${record.a}, b = ${record.b}, c = ${record.c}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MinFlipsRecord(2, 6, 5, 3),
+  new MinFlipsRecord(4, 2, 7, 1),
+  new MinFlipsRecord(1, 2, 3, 0),
+  new MinFlipsRecord(8, 3, 5, 3),
+  new MinFlipsRecord(1, 1, 1, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

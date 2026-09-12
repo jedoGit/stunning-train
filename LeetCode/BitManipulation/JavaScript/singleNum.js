@@ -24,41 +24,76 @@
 // TC: O(n), we loop through length of nums array
 // SC: O(1), In place processing
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var singleNumber = function (nums) {
-  // If we use Bitwise XOR operator.
-  //   XOR truth table:
-  //       0 1
-  //       ---
-  //   0 | 0 1
-  //   1 | 1 0
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Using bit manipulation
-
-  // nums = [4,1,2,1,2]
-  // 4       0100
-  // 1       0001
-  // 2       0010
-  // 1       0001
-  // 2       0010
-
-  //     4   0100
-  // XOR 1   0001
-  // ans 5   0101
-  // XOR 2   0010
-  // ans 7   0111
-  // XOR 1   0001
-  // ans 6   0110
-  // XOR 2   0010
-  // ans 4   0100
-
-  let ans = 0;
-  for (let num of nums) {
-    ans = ans ^ num;
+class SingleNumberRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return ans;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {number}
+   */
+  singleNumber(nums) {
+    // If we use Bitwise XOR operator.
+    //   XOR truth table:
+    //       0 1
+    //       ---
+    //   0 | 0 1
+    //   1 | 1 0
+
+    // Using bit manipulation
+
+    // nums = [4,1,2,1,2]
+    // 4       0100
+    // 1       0001
+    // 2       0010
+    // 1       0001
+    // 2       0010
+
+    //     4   0100
+    // XOR 1   0001
+    // ans 5   0101
+    // XOR 2   0010
+    // ans 7   0111
+    // XOR 1   0001
+    // ans 6   0110
+    // XOR 2   0010
+    // ans 4   0100
+
+    let ans = 0;
+    for (let num of nums) {
+      ans = ans ^ num;
+    }
+
+    return ans;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.singleNumber([...record.nums]);
+  const pass = result === record.expected;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SingleNumberRecord([2, 2, 1], 1),
+  new SingleNumberRecord([4, 1, 2, 1, 2], 4),
+  new SingleNumberRecord([1], 1),
+  new SingleNumberRecord([-1, -1, -3], -3),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

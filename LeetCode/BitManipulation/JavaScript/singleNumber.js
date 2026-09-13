@@ -17,34 +17,72 @@
 // -231 <= nums[i] <= 231 - 1
 // Each element in nums appears exactly three times except for one element which appears once.
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var singleNumber = function (nums) {
-  let ones = 0;
-  let twos = 0;
+// TC: O(n), we loop through length of nums array
+// SC: O(1), In place processing
 
-  for (let num of nums) {
-    ones = (ones ^ num) & ~twos;
-    twos = (twos ^ num) & ~ones;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-    // console.log(num.toString(2) + " ones: " + ones.toString(2) + " twos: " + twos.toString(2))
+class SingleNumberIIRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {number}
+   */
+  singleNumber(nums) {
+    let ones = 0;
+    let twos = 0;
+
+    for (let num of nums) {
+      ones = (ones ^ num) & ~twos;
+      twos = (twos ^ num) & ~ones;
+
+      // console.log(num.toString(2) + " ones: " + ones.toString(2) + " twos: " + twos.toString(2))
+    }
+
+    return ones;
   }
 
-  return ones;
-};
+  // singleNumber(nums) {
+  //     let map = new Map();
+  //     let ans;
+  //     for(let i=0;i<nums.length;i++){
+  //         map.set(nums[i],(map.get(nums[i])||0)+1);
+  //     }
+  //     map.forEach((val,key)=>{
+  //         if(val==1){
+  //             ans = key;
+  //         }
+  //     })
+  //     return ans;
+  // }
+}
 
-// var singleNumber = function(nums) {
-//     let map = new Map();
-//     let ans;
-//     for(let i=0;i<nums.length;i++){
-//         map.set(nums[i],(map.get(nums[i])||0)+1);
-//     }
-//     map.forEach((val,key)=>{
-//         if(val==1){
-//             ans = key;
-//         }
-//     })
-//     return ans;
-// };
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.singleNumber([...record.nums]);
+  const pass = result === record.expected;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SingleNumberIIRecord([2, 2, 3, 2], 3),
+  new SingleNumberIIRecord([0, 1, 0, 1, 0, 1, 99], 99),
+  new SingleNumberIIRecord([1], 1),
+  new SingleNumberIIRecord([-2, -2, 1, -2], 1),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

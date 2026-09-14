@@ -36,107 +36,155 @@
 // TC: O(h) we're taking the DFS approach and visit nodes per level of the tree
 // SC: O(h) we're taking the DFS approach and visit nodes per level of the tree
 
-/**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
- */
-/**
- * @param {TreeNode} root
- * @param {number} key
- * @return {TreeNode}
- */
-var deleteNode = function (root, key) {
-  if (!root) return root;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  if (key < root.val) {
-    // In this case, the node to delete will be in the left side of the root
-    // recursively go to the left node and find the node to delete
-    // then return the new left node
-    root.left = deleteNode(root.left, key);
-  } else if (key > root.val) {
-    // In this case, the node to delete will be in the right side of the root
-    // recursively to to the right node and find the node to delete
-    // then return the new right node
-    root.right = deleteNode(root.right, key);
-  } else {
-    // This is the case where we found the node to delete
-    // check if this node don't have children, if so, return null.
-    // This will be assigned to the children of the root node which are the
-    // cases above
-    if (!root.left && !root.right) {
-      return null;
-    } else if (!root.left) {
-      return root.right;
-    } else if (!root.right) {
-      return root.left;
+class DeleteNodeRecord {
+  constructor(root, key, expected) {
+    this.root = root;
+    this.key = key;
+    this.expected = expected;
+  }
+}
+
+class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+class Solution {
+  /**
+   * @param {TreeNode} root
+   * @param {number} key
+   * @return {TreeNode}
+   */
+  deleteNode(root, key) {
+    if (!root) return root;
+
+    function removeNode(root, key) {
+      if (!root) return root;
+
+      if (key < root.val) {
+        // In this case, the node to delete will be in the left side of the root
+        // recursively go to the left node and find the node to delete
+        // then return the new left node
+        root.left = removeNode(root.left, key);
+      } else if (key > root.val) {
+        // In this case, the node to delete will be in the right side of the root
+        // recursively to to the right node and find the node to delete
+        // then return the new right node
+        root.right = removeNode(root.right, key);
+      } else {
+        // This is the case where we found the node to delete
+        // check if this node don't have children, if so, return null.
+        // This will be assigned to the children of the root node which are the
+        // cases above
+        if (!root.left && !root.right) return null;
+        if (!root.left) return root.right;
+        if (!root.right) return root.left;
+
+        // This is the case where the node we want to delete have both right and left children
+        // In this case, we can chose either left or right children.
+        // Remember, the characteristic of a BST is the the min value will always be in the left child.
+        // We'll chose the right child here and find the node with the minimum value and copy that to the node
+        // we want to delete
+        root.val = min(root.right);
+        // Then we update the right side of the node we want to delete
+        root.right = removeNode(root.right, root.val);
+      }
+
+      return root;
     }
 
-    // This is the case where the node we want to delete have both right and left children
-    // In this case, we can chose either left or right children.
-    // Remember, the characteristic of a BST is the the min value will always be in the left child.
-    // We'll chose the right child here and find the node with the minimum value and copy that to the node
-    // we want to delete
-
-    let curNode = root.right;
-
-    // let's traverse to the lowest left node
-    while (curNode.left) {
-      curNode = curNode.left;
+    function min(root) {
+      if (!root.left) return root.val;
+      return min(root.left);
     }
 
-    // At this point, we found the lowest left node
-    // we want to update the value of the current root, which is the node we want to delete to the
-    // value of the lowest left node
-    root.val = curNode.val;
-    // Then we update the right side of the node we want to delete
-    root.right = deleteNode(root.right, root.val);
+    return removeNode(root, key);
+  }
+}
+
+function buildTree(values) {
+  if (values.length === 0 || values[0] === null) {
+    return null;
+  }
+
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let index = 1;
+
+  while (queue.length > 0 && index < values.length) {
+    const node = queue.shift();
+
+    if (values[index] !== null) {
+      node.left = new TreeNode(values[index]);
+      queue.push(node.left);
+    }
+    index++;
+
+    if (index < values.length && values[index] !== null) {
+      node.right = new TreeNode(values[index]);
+      queue.push(node.right);
+    }
+    index++;
   }
 
   return root;
-};
+}
 
-/**
- * Definition for a binary tree node.
- * function TreeNode(val, left, right) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.left = (left===undefined ? null : left)
- *     this.right = (right===undefined ? null : right)
- * }
- */
-/**
- * @param {TreeNode} root
- * @param {number} key
- * @return {TreeNode}
- */
-var deleteNode = function (root, key) {
-  if (!root) return root;
-
-  function removeNode(root, key) {
-    if (!root) return root;
-
-    if (key < root.val) {
-      root.left = removeNode(root.left, key);
-    } else if (key > root.val) {
-      root.right = removeNode(root.right, key);
-    } else {
-      if (!root.left && !root.right) return null;
-      if (!root.left) return root.right;
-      if (!root.right) return root.left;
-
-      root.val = min(root.right);
-      root.right = removeNode(root.right, root.val);
-    }
-    return root;
+function serializeTree(root) {
+  if (root === null) {
+    return [];
   }
 
-  return removeNode(root, key);
-};
+  const values = [];
+  const queue = [root];
 
-function min(root) {
-  if (!root.left) return root.val;
-  return min(root.left);
+  while (queue.length > 0) {
+    const node = queue.shift();
+
+    if (node === null) {
+      values.push(null);
+      continue;
+    }
+
+    values.push(node.val);
+    queue.push(node.left);
+    queue.push(node.right);
+  }
+
+  // Drop the trailing nulls so the output matches the LeetCode representation
+  while (values.length > 0 && values[values.length - 1] === null) {
+    values.pop();
+  }
+
+  return values;
 }
+
+function testSolution(record) {
+  console.log(`input:\troot: ${JSON.stringify(record.root)}, key: ${record.key}`);
+  console.log(`expected: ${JSON.stringify(record.expected)}`);
+
+  const solution = new Solution();
+  const result = serializeTree(solution.deleteNode(buildTree(record.root), record.key));
+
+  console.log(`result: ${JSON.stringify(result)}`);
+  console.log(
+    JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL
+  );
+}
+
+const records = [
+  new DeleteNodeRecord([5, 3, 6, 2, 4, null, 7], 3, [5, 4, 6, 2, null, null, 7]),
+  new DeleteNodeRecord([5, 3, 6, 2, 4, null, 7], 0, [5, 3, 6, 2, 4, null, 7]),
+  new DeleteNodeRecord([], 0, []),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

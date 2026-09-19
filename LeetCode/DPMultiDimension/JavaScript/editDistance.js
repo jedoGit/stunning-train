@@ -33,62 +33,88 @@
 // TC: O(n*m) because we'll have to create a grid and visit each grid
 // SC: O(n*m) because we'll have to create a grid and visit each grid
 
-/**
- * @param {string} word1
- * @param {string} word2
- * @return {number}
- */
-var minDistance = function (word1, word2) {
-  let n = word1.length;
-  let m = word2.length;
-  let dp = new Array(n + 1).fill().map(() => new Array(m + 1).fill(Infinity));
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Fill the right most column and bottom row with our base cases
-  // If W1 is empty and W2 is not, it will take W2.length of operations to convert W1 to W2
-  // If W1 is not empty and W2 is empty, it will take W1.length of operations to convert W1 to W2
-  // Fill the rightmost column
-  for (let i = 0; i < n + 1; i++) {
-    dp[i][m] = n - i;
+class EditDistanceRecord {
+  constructor(word1, word2, expected) {
+    this.word1 = word1;
+    this.word2 = word2;
+    this.expected = expected;
   }
-  // Fill the bottom row
-  for (let j = 0; j < m + 1; j++) {
-    dp[n][j] = m - j;
-  }
+}
 
-  // If W1 == W2, there's no operation, just take the value from the lower diagonal [i+1][j+1]
-  // If W1 != W2, first, we'll find the min from the 3 operations and add 1:
-  // Delete:  [i+1][j], a delete is equivalent to moving the i pointer of W1 in terms of operations required
-  // Insert:  [i][j+1], an insert is equivalent to moving the j pointer of W2 in terms of operations required
-  // Replace: [i+1][j+1], a replace is equivalent to doing a delete and insert
+class Solution {
+  /**
+   * @param {string} word1
+   * @param {string} word2
+   * @return {number}
+   */
+  minDistance(word1, word2) {
+    let n = word1.length;
+    let m = word2.length;
+    let dp = new Array(n + 1).fill().map(() => new Array(m + 1).fill(Infinity));
 
-  // We'll do bottoms up approach of 2D DP.
-  for (let i = n - 1; i > -1; i--) {
-    for (let j = m - 1; j > -1; j--) {
-      // Check if W1 and W2 is equal
-      if (word1[i] === word2[j]) {
-        dp[i][j] = dp[i + 1][j + 1];
-      } else {
-        dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j + 1], dp[i + 1][j + 1]);
+    // Fill the right most column and bottom row with our base cases
+    // If W1 is empty and W2 is not, it will take W2.length of operations to convert W1 to W2
+    // If W1 is not empty and W2 is empty, it will take W1.length of operations to convert W1 to W2
+    // Fill the rightmost column
+    for (let i = 0; i < n + 1; i++) {
+      dp[i][m] = n - i;
+    }
+    // Fill the bottom row
+    for (let j = 0; j < m + 1; j++) {
+      dp[n][j] = m - j;
+    }
+
+    // If W1 == W2, there's no operation, just take the value from the lower diagonal [i+1][j+1]
+    // If W1 != W2, first, we'll find the min from the 3 operations and add 1:
+    // Delete:  [i+1][j], a delete is equivalent to moving the i pointer of W1 in terms of operations required
+    // Insert:  [i][j+1], an insert is equivalent to moving the j pointer of W2 in terms of operations required
+    // Replace: [i+1][j+1], a replace is equivalent to doing a delete and insert
+
+    // We'll do bottoms up approach of 2D DP.
+    for (let i = n - 1; i > -1; i--) {
+      for (let j = m - 1; j > -1; j--) {
+        // Check if W1 and W2 is equal
+        if (word1[i] === word2[j]) {
+          dp[i][j] = dp[i + 1][j + 1];
+        } else {
+          dp[i][j] = 1 + Math.min(dp[i + 1][j], dp[i][j + 1], dp[i + 1][j + 1]);
+        }
       }
     }
+
+    // The min value will be saved in dp[0][0]
+    return dp[0][0];
   }
+}
 
-  // The min value will be saved in dp[0][0]
-  return dp[0][0];
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minDistance(record.word1, record.word2);
+  const pass = result === record.expected;
 
-let input1 = { word1: "horse", word2: "ros" };
-let expected1 = 3;
-let result1 = minDistance(input1.word1, input1.word2);
-console.log("Input: word1: " + input1.word1 + ", word2: " + input1.word2);
-console.log("Expected: " + expected1);
-console.log("Result: " + result1);
-console.log("-".repeat(50));
+  console.log(
+    `Input: word1 = ${JSON.stringify(record.word1)}, word2 = ${JSON.stringify(
+      record.word2
+    )}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-let input2 = { word1: "intention", word2: "execution" };
-let expected2 = 5;
-let result2 = minDistance(input2.word1, input2.word2);
-console.log("Input: word1: " + input2.word1 + ", word2: " + input2.word2);
-console.log("Expected: " + expected2);
-console.log("Result: " + result2);
-console.log("-".repeat(50));
+const records = [
+  new EditDistanceRecord("horse", "ros", 3),
+  new EditDistanceRecord("intention", "execution", 5),
+  new EditDistanceRecord("", "", 0),
+  new EditDistanceRecord("", "abc", 3),
+  new EditDistanceRecord("abc", "", 3),
+  new EditDistanceRecord("same", "same", 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

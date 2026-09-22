@@ -13,107 +13,128 @@
 // Input: matrix = [["0"]]
 // Output: 0
 
-/**
- * @param {character[][]} matrix
- * @return {number}
- */
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-var maximalSquare = function (matrix) {
-  let rows = matrix.length;
-  let cols = matrix[0].length;
-  let cache = {}; // map each(r,c) -> maxLength of square
+class MaximalSquareRecord {
+  constructor(matrix, expected) {
+    this.matrix = matrix;
+    this.expected = expected;
+  }
+}
 
-  let helper = (r, c) => {
-    if (r >= rows || c >= cols) {
+class Solution {
+  /**
+   * Top-down memoization: each (r,c) caches the side length of the largest
+   * square whose top-left corner is that cell.
+   * @param {character[][]} matrix
+   * @return {number}
+   */
+  maximalSquare(matrix) {
+    let rows = matrix.length;
+    let cols = matrix[0].length;
+    let cache = {}; // map each(r,c) -> maxLength of square
+
+    let helper = (r, c) => {
+      if (r >= rows || c >= cols) {
+        return 0;
+      }
+
+      if (!(`${r},${c}` in cache)) {
+        let down = helper(r + 1, c);
+        let right = helper(r, c + 1);
+        let diag = helper(r + 1, c + 1);
+
+        cache[`${r},${c}`] = 0;
+        if (matrix[r][c] == "1") {
+          cache[`${r},${c}`] = 1 + Math.min(down, right, diag);
+        }
+      }
+      return cache[`${r},${c}`];
+    };
+
+    helper(0, 0);
+
+    // Find the maxvalue from the array of values
+    let res = [...Object.values(cache)].reduce((a, b) => (a > b ? a : b));
+
+    return Math.pow(res, 2);
+  }
+
+  /**
+   * Bottom-up tabulation: dp[i][j] is the side length of the largest square
+   * whose bottom-right corner is matrix[i-1][j-1], padded with a zero row/col.
+   * @param {character[][]} matrix
+   * @return {number}
+   */
+  maximalSquareDP(matrix) {
+    if (!matrix) {
       return 0;
     }
 
-    if (!(`${r},${c}` in cache)) {
-      let down = helper(r + 1, c);
-      let right = helper(r, c + 1);
-      let diag = helper(r + 1, c + 1);
+    let rows = matrix.length;
+    let cols = matrix[0].length;
 
-      cache[`${r},${c}`] = 0;
-      if (matrix[r][c] == "1") {
-        cache[`${r},${c}`] = 1 + Math.min(down, right, diag);
+    let dp = Array(rows + 1)
+      .fill()
+      .map(() => Array(cols + 1).fill(0));
+
+    let max_side = 0;
+
+    for (let i = 1; i < rows + 1; i += 1) {
+      for (let j = 1; j < cols + 1; j += 1) {
+        if (matrix[i - 1][j - 1] === "1") {
+          dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+          max_side = Math.max(max_side, dp[i][j]);
+        }
       }
     }
-    return cache[`${r},${c}`];
-  };
 
-  helper(0, 0);
-
-  // Find the maxvalue from the array of values
-  let res = [...Object.values(cache)].reduce((a, b) => (a > b ? a : b));
-
-  return Math.pow(res, 2);
-};
-
-/**
- * @param {character[][]} matrix
- * @return {number}
- */
-var maximalSquareDP = function (matrix) {
-  if (!matrix) {
-    return 0;
+    return Math.pow(max_side, 2);
   }
+}
 
-  let rows = matrix.length;
-  let cols = matrix[0].length;
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maximalSquareDP(record.matrix);
+  const pass = result === record.expected;
 
-  let dp = Array(rows + 1)
-    .fill()
-    .map(() => Array(cols + 1).fill(0));
+  console.log(`Input: matrix = ${JSON.stringify(record.matrix)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-  let max_side = 0;
+const records = [
+  new MaximalSquareRecord(
+    [
+      ["1", "0", "1", "0", "0"],
+      ["1", "0", "1", "1", "1"],
+      ["1", "1", "1", "1", "1"],
+      ["1", "0", "0", "1", "0"],
+    ],
+    4
+  ),
+  new MaximalSquareRecord(
+    [
+      ["0", "1"],
+      ["1", "0"],
+    ],
+    1
+  ),
+  new MaximalSquareRecord([["0"]], 0),
+  new MaximalSquareRecord([["1"]], 1),
+  new MaximalSquareRecord(
+    [
+      ["1", "1", "1"],
+      ["1", "1", "1"],
+      ["1", "1", "1"],
+    ],
+    9
+  ),
+];
 
-  //   console.log(JSON.stringify(dp));
-
-  //   for (let i of Array.from({ length: rows + 1 }, (_, ii) => ii + 1)) {
-  //     for (let j of Array.from({ length: cols + 1 }, (_, jj) => jj + 1)) {
-  for (let i = 1; i < rows + 1; i += 1) {
-    for (let j = 1; j < cols + 1; j += 1) {
-      if (matrix[i - 1][j - 1] === "1") {
-        dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-        max_side = Math.max(max_side, dp[i][j]);
-      }
-    }
-  }
-
-  return Math.pow(max_side, 2);
-};
-
-let input1 = {
-  matrix: [
-    ["1", "0", "1", "0", "0"],
-    ["1", "0", "1", "1", "1"],
-    ["1", "1", "1", "1", "1"],
-    ["1", "0", "0", "1", "0"],
-  ],
-  expected: 4,
-};
-console.log("Input: " + JSON.stringify(input1.matrix));
-console.log("Expected: " + input1.expected);
-console.log("Result: " + maximalSquareDP(input1.matrix));
-console.log("-".repeat(50));
-
-let input2 = {
-  matrix: [
-    ["0", "1"],
-    ["1", "0"],
-  ],
-  expected: 1,
-};
-console.log("Input: " + JSON.stringify(input2.matrix));
-console.log("Expected: " + input2.expected);
-console.log("Result: " + maximalSquareDP(input2.matrix));
-console.log("-".repeat(50));
-
-let input3 = {
-  matrix: [["0"]],
-  expected: 0,
-};
-console.log("Input: " + JSON.stringify(input3.matrix));
-console.log("Expected: " + input3.expected);
-console.log("Result: " + maximalSquareDP(input3.matrix));
-console.log("-".repeat(50));
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

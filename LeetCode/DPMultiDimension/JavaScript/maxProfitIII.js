@@ -27,76 +27,87 @@
 // 1 <= prices.length <= 105
 // 0 <= prices[i] <= 105
 
-/**
- * @param {number[]} prices
- * @return {number}
- */
-var maxProfitMem = function (prices) {
-  // This is a 3d array mem[2][3][prices.length]
-  // mem[0-true/1-false][bought/sold/skip][stock positions]
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let mem = new Array(2)
-    .fill()
-    .map(() =>
-      new Array(3).fill().map(() => new Array(prices.length).fill(-1))
-    );
+class MaxProfitIIIRecord {
+  constructor(prices, expected) {
+    this.prices = prices;
+    this.expected = expected;
+  }
+}
 
-  //   console.log(mem);
+class Solution {
+  /**
+   * Top-down memoization over (bought, transactions left, position).
+   * @param {number[]} prices
+   * @return {number}
+   */
+  maxProfitMem(prices) {
+    // This is a 3d array mem[2][3][prices.length]
+    // mem[0-true/1-false][bought/sold/skip][stock positions]
 
-  // bought 0 - false, 1 - true
-  let recursion = (prices, pos, t, bought) => {
-    // console.log("pos: " + pos);
-    // console.log("t: " + t);
-    // console.log("bought: " + bought);
-    if (pos >= prices.length || t === 0) {
-      return 0;
-    }
+    let mem = new Array(2)
+      .fill()
+      .map(() =>
+        new Array(3).fill().map(() => new Array(prices.length).fill(-1))
+      );
 
-    if (mem[bought][t][pos] !== -1) {
-      return mem[bought][t][pos];
-    }
+    // bought 0 - false, 1 - true
+    let recursion = (prices, pos, t, bought) => {
+      if (pos >= prices.length || t === 0) {
+        return 0;
+      }
 
-    // 3 choices for a position-> buy/sell/skip
-    let result = recursion(prices, pos + 1, t, bought); //skip
-    if (bought) {
-      result = Math.max(
-        result,
-        recursion(prices, pos + 1, t - 1, 0) + prices[pos]
-      ); // Sell
-    } else {
-      result = Math.max(result, recursion(prices, pos + 1, t, 1) - prices[pos]); // Buy
-    }
+      if (mem[bought][t][pos] !== -1) {
+        return mem[bought][t][pos];
+      }
 
-    mem[bought][t][pos] = result;
+      // 3 choices for a position-> buy/sell/skip
+      let result = recursion(prices, pos + 1, t, bought); //skip
+      if (bought) {
+        result = Math.max(
+          result,
+          recursion(prices, pos + 1, t - 1, 0) + prices[pos]
+        ); // Sell
+      } else {
+        result = Math.max(
+          result,
+          recursion(prices, pos + 1, t, 1) - prices[pos]
+        ); // Buy
+      }
 
-    return result;
-  };
+      mem[bought][t][pos] = result;
 
-  res = recursion(prices, 0, 2, 0);
+      return result;
+    };
 
-  return res;
-};
+    let res = recursion(prices, 0, 2, 0);
 
-let input1 = [3, 3, 5, 0, 0, 3, 1, 4];
-let expected1 = 6;
-let result1 = maxProfitMem(input1);
-console.log("Input: " + input1);
-console.log("Expected: " + expected1);
-console.log("Result: " + result1);
-console.log("-".repeat(50));
+    return res;
+  }
+}
 
-let input2 = [1, 2, 3, 4, 5];
-let expected2 = 4;
-let result2 = maxProfitMem(input2);
-console.log("Input: " + input2);
-console.log("Expected: " + expected2);
-console.log("Result: " + result2);
-console.log("-".repeat(50));
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxProfitMem(record.prices);
+  const pass = result === record.expected;
 
-let input3 = [7, 6, 4, 3, 1];
-let expected3 = 0;
-let result3 = maxProfitMem(input3);
-console.log("Input: " + input3);
-console.log("Expected: " + expected3);
-console.log("Result: " + result3);
-console.log("-".repeat(50));
+  console.log(`Input: prices = ${JSON.stringify(record.prices)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxProfitIIIRecord([3, 3, 5, 0, 0, 3, 1, 4], 6),
+  new MaxProfitIIIRecord([1, 2, 3, 4, 5], 4),
+  new MaxProfitIIIRecord([7, 6, 4, 3, 1], 0),
+  new MaxProfitIIIRecord([1], 0),
+  new MaxProfitIIIRecord([2, 1, 4, 5, 2, 9, 7], 11),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

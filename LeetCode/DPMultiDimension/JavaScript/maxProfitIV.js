@@ -21,49 +21,71 @@
 // 1 <= prices.length <= 1000
 // 0 <= prices[i] <= 1000
 
-/**
- * @param {number} k
- * @param {number[]} prices
- * @return {number}
- */
-var maxProfit = function (k, prices) {
-  if (!prices) return 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let N = prices.length;
-  let dp = Array(N).fill(0);
-
-  // if (k > N) {
-  //   return Array.from({ length: N }, (_, i) => i + 1) // generate array of values of i starting at 1 to N-1
-  //     .map((i) => prices[i] - prices[i - 1]) // Map i to prices[i] - prices[i-1]
-  //     .filter((p) => p > 0) // filter these prices values that are positive only
-  //     .reduce((a, b) => a + b, 0); // sum all the prices
-  // }
-
-  for (let t = 0; t < k; t += 1) {
-    let pos = -1 * prices[0];
-    let profit = 0;
-    for (let i = 1; i < N; i += 1) {
-      pos = Math.max(pos, dp[i] - prices[i]);
-      profit = Math.max(profit, pos + prices[i]);
-      dp[i] = profit;
-    }
+class MaxProfitIVRecord {
+  constructor(k, prices, expected) {
+    this.k = k;
+    this.prices = prices;
+    this.expected = expected;
   }
+}
 
-  return dp[N - 1];
-};
+class Solution {
+  /**
+   * @param {number} k
+   * @param {number[]} prices
+   * @return {number}
+   */
+  maxProfit(k, prices) {
+    if (!prices) return 0;
 
-let input1 = { prices: [2, 4, 1], k: 2 };
-let expected1 = 2;
-let result1 = maxProfit(input1.k, input1.prices);
-console.log("Input: Prices: " + input1.prices + " k: " + input1.k);
-console.log("Expected: " + expected1);
-console.log("Result: " + result1);
-console.log("-".repeat(50));
+    let N = prices.length;
+    let dp = Array(N).fill(0);
 
-let input2 = { prices: [3, 2, 6, 5, 0, 3], k: 2 };
-let expected2 = 7;
-let result2 = maxProfit(input2.k, input2.prices);
-console.log("Input: Prices: " + input2.prices + " k: " + input2.k);
-console.log("Expected: " + expected2);
-console.log("Result: " + result2);
-console.log("-".repeat(50));
+    // if (k > N) {
+    //   return Array.from({ length: N }, (_, i) => i + 1) // generate array of values of i starting at 1 to N-1
+    //     .map((i) => prices[i] - prices[i - 1]) // Map i to prices[i] - prices[i-1]
+    //     .filter((p) => p > 0) // filter these prices values that are positive only
+    //     .reduce((a, b) => a + b, 0); // sum all the prices
+    // }
+
+    for (let t = 0; t < k; t += 1) {
+      let pos = -1 * prices[0];
+      let profit = 0;
+      for (let i = 1; i < N; i += 1) {
+        pos = Math.max(pos, dp[i] - prices[i]);
+        profit = Math.max(profit, pos + prices[i]);
+        dp[i] = profit;
+      }
+    }
+
+    return dp[N - 1];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxProfit(record.k, [...record.prices]);
+  const pass = result === record.expected;
+
+  console.log(`Input: k = ${record.k}, prices = ${JSON.stringify(record.prices)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxProfitIVRecord(2, [2, 4, 1], 2),
+  new MaxProfitIVRecord(2, [3, 2, 6, 5, 0, 3], 7),
+  new MaxProfitIVRecord(1, [3, 2, 6, 5, 0, 3], 4),
+  new MaxProfitIVRecord(2, [1, 2, 3, 4, 5], 4),
+  new MaxProfitIVRecord(2, [7, 6, 4, 3, 1], 0),
+  new MaxProfitIVRecord(5, [3, 2, 6, 5, 0, 3], 7),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

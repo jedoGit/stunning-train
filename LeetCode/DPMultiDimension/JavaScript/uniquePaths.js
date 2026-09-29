@@ -24,58 +24,96 @@
 // TC: O(n*m) because you'll need to visit all the cells and perform calculations
 // SC: O(n*m), because you'll have to create the nxm matrix to perform calcs
 
-/**
- * @param {number} m
- * @param {number} n
- * @return {number}
- */
-var uniquePaths = function (m, n) {
-  // The intuition here is let's say you have a 3x3 matrix
-  // from the bottom right corner arr[2][2], it will take it
-  // 2 moves from arr[1][1] since you can only go down and right direction.
-  // So, using bottom up approach, to move arr[1][1] to arry[2][2],
-  // it will be the sum of values below that cell and the right of that cell
-  // For example, arr[1][1] = arr[2][1] (bottom cell) + arr[1][2] (right cell)
-  // To setup the bottom up approach, we need to fill the bottom row and righmost column with 1
-  // because, when you're in these cells, you only have 1 way, which is to move right (if youre in the bottom)
-  // or move down (if you're in the rightmost column).
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // m = 3, n = 3
-  //          0   1   2
-  //          ---------
-  //      0 | 6   3   1
-  //      1 | 3   2   1
-  //      2 | 1   1   1
-
-  // If you want to do Top-down approach or memiozation, you'll need to setup a DFS.
-  // Your base case is if you've reached x === m-1 && y = n-1
-  // You'll need to mark all the cells you've visited so you don't do a double count... Use a set for that or another array that you'll
-  // m = 3, n = 3
-  //          0   1   2
-  //          ---------
-  //      0 | 1   1   1
-  //      1 | 1   2   3
-  //      2 | 1   3   6
-
-  // Create 2D matrix and fill with zeros
-  let dp = new Array(m).fill().map(() => new Array(n).fill(0));
-
-  // Initialize the rightmost col and bottom row with 1
-  for (let i = 0; i < m; i++) {
-    dp[i][n - 1] = 1;
+class UniquePathsRecord {
+  constructor(m, n, expected) {
+    this.m = m;
+    this.n = n;
+    this.expected = expected;
   }
-  for (let j = 0; j < n; j++) {
-    dp[m - 1][j] = 1;
-  }
+}
 
-  // Perform bottoms up calculation of dp[i][j] = dp[i+1][j] + dp[i][j+1];
-  // Starting at arr[m-2][n-2]
-  for (let i = m - 2; i > -1; --i) {
-    for (let j = n - 2; j > -1; --j) {
-      dp[i][j] = dp[i + 1][j] + dp[i][j + 1];
+class Solution {
+  /**
+   * @param {number} m
+   * @param {number} n
+   * @return {number}
+   */
+  uniquePaths(m, n) {
+    // The intuition here is let's say you have a 3x3 matrix
+    // from the bottom right corner arr[2][2], it will take it
+    // 2 moves from arr[1][1] since you can only go down and right direction.
+    // So, using bottom up approach, to move arr[1][1] to arry[2][2],
+    // it will be the sum of values below that cell and the right of that cell
+    // For example, arr[1][1] = arr[2][1] (bottom cell) + arr[1][2] (right cell)
+    // To setup the bottom up approach, we need to fill the bottom row and righmost column with 1
+    // because, when you're in these cells, you only have 1 way, which is to move right (if youre in the bottom)
+    // or move down (if you're in the rightmost column).
+
+    // m = 3, n = 3
+    //          0   1   2
+    //          ---------
+    //      0 | 6   3   1
+    //      1 | 3   2   1
+    //      2 | 1   1   1
+
+    // If you want to do Top-down approach or memiozation, you'll need to setup a DFS.
+    // Your base case is if you've reached x === m-1 && y = n-1
+    // You'll need to mark all the cells you've visited so you don't do a double count... Use a set for that or another array that you'll
+    // m = 3, n = 3
+    //          0   1   2
+    //          ---------
+    //      0 | 1   1   1
+    //      1 | 1   2   3
+    //      2 | 1   3   6
+
+    // Create 2D matrix and fill with zeros
+    let dp = new Array(m).fill().map(() => new Array(n).fill(0));
+
+    // Initialize the rightmost col and bottom row with 1
+    for (let i = 0; i < m; i++) {
+      dp[i][n - 1] = 1;
     }
-  }
+    for (let j = 0; j < n; j++) {
+      dp[m - 1][j] = 1;
+    }
 
-  // After all the calc, the value in arr[0][0] will contain the num of possible unique paths
-  return dp[0][0];
-};
+    // Perform bottoms up calculation of dp[i][j] = dp[i+1][j] + dp[i][j+1];
+    // Starting at arr[m-2][n-2]
+    for (let i = m - 2; i > -1; --i) {
+      for (let j = n - 2; j > -1; --j) {
+        dp[i][j] = dp[i + 1][j] + dp[i][j + 1];
+      }
+    }
+
+    // After all the calc, the value in arr[0][0] will contain the num of possible unique paths
+    return dp[0][0];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.uniquePaths(record.m, record.n);
+  const pass = result === record.expected;
+
+  console.log(`Input: m = ${record.m}, n = ${record.n}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new UniquePathsRecord(3, 7, 28),
+  new UniquePathsRecord(3, 2, 3),
+  new UniquePathsRecord(3, 3, 6),
+  new UniquePathsRecord(1, 1, 1),
+  new UniquePathsRecord(1, 5, 1),
+  new UniquePathsRecord(10, 10, 48620),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

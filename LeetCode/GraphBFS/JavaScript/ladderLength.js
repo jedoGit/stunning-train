@@ -26,89 +26,133 @@
 // beginWord != endWord
 // All the words in wordList are unique.
 
-// TC:
-// SC:
+// TC: O(n * m^2) where n is the number of words in wordList and m is the length of each word.
+//     Building the adjacency list creates m patterns per word, each costing O(m) to build.
+//     The BFS visits every word once and rebuilds the same m patterns of length m.
+// SC: O(n * m^2) for the nei adjacency list, plus O(n) for the visited set and the queue.
 
-/**
- * @param {string} beginWord
- * @param {string} endWord
- * @param {string[]} wordList
- * @return {number}
- */
-var ladderLength = function (beginWord, endWord, wordList) {
-  // If the array wordList does not includes the endWord, return 0
-  if (!wordList.includes(endWord)) {
-    // console.log("not in wordlist")
-    return 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class LadderLengthRecord {
+  constructor(beginWord, endWord, wordList, expected) {
+    this.beginWord = beginWord;
+    this.endWord = endWord;
+    this.wordList = wordList;
+    this.expected = expected;
   }
+}
 
-  // nei is a k/v where k is a pattern of words and v is an array of words from the wordList that match the pattern
-  // nei = {"h*t":[hot, hit, hat], "*nt":[ant, int]}
-  let nei = {};
-  wordList.push(beginWord);
-
-  // create an adjacency list
-  // go through each words in the wordlist and match it to the pattern.
-  // create a pattern for each word, hit=> *it, h*t, hi*. for each of these patterns, add the word to the nei.
-  // example: "*it": [hit], "h*t":[hit], "hi*":[hit]
-
-  for (let word of wordList) {
-    // console.log(word)
-    for (let j = 0; j < word.length; j += 1) {
-      // create the pattern
-      let pattern = word.slice(0, j) + "*" + word.slice(j + 1);
-      // add pattern to nei object and add the word to the pattern created.
-      if (!nei[pattern]) nei[pattern] = [];
-      nei[pattern].push(word);
+class Solution {
+  /**
+   * @param {string} beginWord
+   * @param {string} endWord
+   * @param {string[]} wordList
+   * @return {number}
+   */
+  ladderLength(beginWord, endWord, wordList) {
+    // If the array wordList does not includes the endWord, return 0
+    if (!wordList.includes(endWord)) {
+      // console.log("not in wordlist")
+      return 0;
     }
-  }
 
-  // console.log(nei)
-  // At this point we have the nei object... it's a list of the patterns and the words associated to tha pattern.
-  // example: "*it": [hit], "h*t":[hit], "hi*":[hit]
+    // nei is a k/v where k is a pattern of words and v is an array of words from the wordList that match the pattern
+    // nei = {"h*t":[hot, hit, hat], "*nt":[ant, int]}
+    let nei = {};
+    wordList.push(beginWord);
 
-  // We BFS each keys in nei
-  let visited = new Set();
-  // add beginWord as the initial value
-  visited.add(beginWord);
-  // console.log( visited)
-  let q = [];
-  q.push(beginWord);
-  let res = 1;
+    // create an adjacency list
+    // go through each words in the wordlist and match it to the pattern.
+    // create a pattern for each word, hit=> *it, h*t, hi*. for each of these patterns, add the word to the nei.
+    // example: "*it": [hit], "h*t":[hit], "hi*":[hit]
 
-  while (q.length) {
-    let qLen = q.length;
-
-    for (let i = 0; i < qLen; i += 1) {
-      let word = q.shift();
-
+    for (let word of wordList) {
       // console.log(word)
-
-      // If word is equal to endWord, we're done and return res
-      if (word === endWord) return res;
-
-      // For the word we're currently processing, let's create all possible patterns and check the nei object and visit each pattern match
-      // Each time, add the words we visited and add it to the q so we can BFS it next round
       for (let j = 0; j < word.length; j += 1) {
+        // create the pattern
         let pattern = word.slice(0, j) + "*" + word.slice(j + 1);
+        // add pattern to nei object and add the word to the pattern created.
+        if (!nei[pattern]) nei[pattern] = [];
+        nei[pattern].push(word);
+      }
+    }
 
-        // if ( nei[pattern] ) console.log("nei[pattern] exist")
-        // console.log(pattern)
+    // console.log(nei)
+    // At this point we have the nei object... it's a list of the patterns and the words associated to tha pattern.
+    // example: "*it": [hit], "h*t":[hit], "hi*":[hit]
 
-        // nei[pattern] returns an array, so use for-of
-        // process all words under this pattern
-        for (let neiWord of nei[pattern]) {
-          // console.log(neiWord)
-          if (!visited.has(neiWord)) {
-            visited.add(neiWord);
-            q.push(neiWord);
+    // We BFS each keys in nei
+    let visited = new Set();
+    // add beginWord as the initial value
+    visited.add(beginWord);
+    // console.log( visited)
+    let q = [];
+    q.push(beginWord);
+    let res = 1;
+
+    while (q.length) {
+      let qLen = q.length;
+
+      for (let i = 0; i < qLen; i += 1) {
+        let word = q.shift();
+
+        // console.log(word)
+
+        // If word is equal to endWord, we're done and return res
+        if (word === endWord) return res;
+
+        // For the word we're currently processing, let's create all possible patterns and check the nei object and visit each pattern match
+        // Each time, add the words we visited and add it to the q so we can BFS it next round
+        for (let j = 0; j < word.length; j += 1) {
+          let pattern = word.slice(0, j) + "*" + word.slice(j + 1);
+
+          // if ( nei[pattern] ) console.log("nei[pattern] exist")
+          // console.log(pattern)
+
+          // nei[pattern] returns an array, so use for-of
+          // process all words under this pattern
+          for (let neiWord of nei[pattern]) {
+            // console.log(neiWord)
+            if (!visited.has(neiWord)) {
+              visited.add(neiWord);
+              q.push(neiWord);
+            }
           }
         }
       }
+      // increment res after every processing of word in the queue
+      res += 1;
     }
-    // increment res after every processing of word in the queue
-    res += 1;
-  }
 
-  return 0;
-};
+    return 0;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  // ladderLength pushes beginWord into wordList, so hand it a copy to keep the record intact
+  const result = solution.ladderLength(record.beginWord, record.endWord, [
+    ...record.wordList,
+  ]);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: beginWord = "${record.beginWord}", endWord = "${record.endWord}", wordList = ${JSON.stringify(record.wordList)}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new LadderLengthRecord("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"], 5),
+  new LadderLengthRecord("hit", "cog", ["hot", "dot", "dog", "lot", "log"], 0),
+  new LadderLengthRecord("a", "c", ["a", "b", "c"], 2),
+  new LadderLengthRecord("hot", "dog", ["hot", "dog"], 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

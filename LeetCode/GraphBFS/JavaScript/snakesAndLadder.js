@@ -39,58 +39,132 @@
 // TC: O(n*n). Worst case is when there are no ladders, you'll visit all cells. There maybe cycle if you keep on getting a snake? It's hard to quantify
 // SC: O(k). Worst case is when there are no ladders and you keep getting 1 on the die. You'll add 6 moves to your queue.
 
-/**
- * @param {number[][]} board
- * @return {number}
- */
-var snakesAndLadders = function (board) {
-  const length = board.length;
-  // We need to reverse the board. If you look at the snakes and ladder board, cell 1 is in position [5, 0]. Also, in each row, every odd row, the positions are flipped. We have to account for that.
-  // Reversing the rows now will move cell 1 to position [0,0] and cell 36 to position [5,0]. This will make the coding easier.
-  board.reverse();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // console.log(board)
-  // Helper function that converts the value in a cell to a position in the grid. This is used to jump from a cell to another cell if you hit a snake or a ladder
-  function intToPos(cellNum) {
-    // Convert the cell number to a row, column position of the grid
-    let r = Math.floor((cellNum - 1) / length);
-    let c = (cellNum - 1) % length;
-    // For every even row, we need to inverse the column value
-    if (r % 2) {
-      c = length - 1 - c;
-    }
-    return [r, c];
+class SnakesAndLaddersRecord {
+  constructor(board, expected) {
+    this.board = board;
+    this.expected = expected;
   }
+}
 
-  // Using BFS
-  let q = [];
-  q.push([1, 0]); // Here, we're pushing a pair, [cellNumber, numMoves]
-  let visited = new Set(); // We need to keep track of the cell we've visited and we want to visit it only once.
+class Solution {
+  /**
+   * @param {number[][]} board
+   * @return {number}
+   */
+  snakesAndLadders(board) {
+    const length = board.length;
+    // We need to reverse the board. If you look at the snakes and ladder board, cell 1 is in position [5, 0]. Also, in each row, every odd row, the positions are flipped. We have to account for that.
+    // Reversing the rows now will move cell 1 to position [0,0] and cell 36 to position [5,0]. This will make the coding easier.
+    board.reverse();
 
-  while (q.length) {
-    // let qLen = q.length
-    let [cellNum, numMoves] = q.shift(); // pop left from the queue
-
-    // Let's roll the die
-    for (let i = 1; i < 7; i += 1) {
-      // We'll try all cells and find which one will take less moves
-      let nextCell = cellNum + i;
-      // The value in the cell represents the number of cell we need to jump to.
-      // This helper function will return the position of the grid were we need to jump to
-      let [r, c] = intToPos(nextCell);
-      // Jump to the next cell if the cell we landed is not -1
-      if (board[r][c] !== -1) {
-        nextCell = board[r][c];
+    // console.log(board)
+    // Helper function that converts the value in a cell to a position in the grid. This is used to jump from a cell to another cell if you hit a snake or a ladder
+    function intToPos(cellNum) {
+      // Convert the cell number to a row, column position of the grid
+      let r = Math.floor((cellNum - 1) / length);
+      let c = (cellNum - 1) % length;
+      // For every even row, we need to inverse the column value
+      if (r % 2) {
+        c = length - 1 - c;
       }
-      // this is the case were we reached the cell last cell and we're done!
-      if (nextCell === length * length) return numMoves + 1;
-      // Check if we've have not visited this cell. Add it to the visited and BFS to the next cell
-      if (!visited.has(nextCell)) {
-        visited.add(nextCell);
-        q.push([nextCell, numMoves + 1]);
+      return [r, c];
+    }
+
+    // Using BFS
+    let q = [];
+    q.push([1, 0]); // Here, we're pushing a pair, [cellNumber, numMoves]
+    let visited = new Set(); // We need to keep track of the cell we've visited and we want to visit it only once.
+
+    while (q.length) {
+      // let qLen = q.length
+      let [cellNum, numMoves] = q.shift(); // pop left from the queue
+
+      // Let's roll the die
+      for (let i = 1; i < 7; i += 1) {
+        // We'll try all cells and find which one will take less moves
+        let nextCell = cellNum + i;
+        // The value in the cell represents the number of cell we need to jump to.
+        // This helper function will return the position of the grid were we need to jump to
+        let [r, c] = intToPos(nextCell);
+        // Jump to the next cell if the cell we landed is not -1
+        if (board[r][c] !== -1) {
+          nextCell = board[r][c];
+        }
+        // this is the case were we reached the cell last cell and we're done!
+        if (nextCell === length * length) return numMoves + 1;
+        // Check if we've have not visited this cell. Add it to the visited and BFS to the next cell
+        if (!visited.has(nextCell)) {
+          visited.add(nextCell);
+          q.push([nextCell, numMoves + 1]);
+        }
       }
     }
-  }
 
-  return -1;
-};
+    return -1;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  // The BFS reverses the rows of the board in place, so we hand it a copy
+  const result = solution.snakesAndLadders(record.board.map((row) => [...row]));
+  const pass = result === record.expected;
+
+  console.log(`Input: board = ${JSON.stringify(record.board)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SnakesAndLaddersRecord(
+    [
+      [-1, -1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1, -1],
+      [-1, 35, -1, -1, 13, -1],
+      [-1, -1, -1, -1, -1, -1],
+      [-1, 15, -1, -1, -1, -1],
+    ],
+    4
+  ),
+  new SnakesAndLaddersRecord(
+    [
+      [-1, -1],
+      [-1, 3],
+    ],
+    1
+  ),
+  new SnakesAndLaddersRecord(
+    [
+      [-1, -1],
+      [-1, -1],
+    ],
+    1
+  ),
+  new SnakesAndLaddersRecord(
+    [
+      [-1, -1, -1],
+      [-1, 9, 8],
+      [-1, 8, 9],
+    ],
+    1
+  ),
+  // Every square other than 1 and n2 sends you back to square 1, so the game can never be finished
+  new SnakesAndLaddersRecord(
+    [
+      [1, 1, -1],
+      [1, 1, 1],
+      [-1, 1, 1],
+    ],
+    -1
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

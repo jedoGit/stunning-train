@@ -32,78 +32,100 @@
 // TC: O(n), we'll have to visit n rooms
 // SC: O(n), we maintain a set of n keys for table lookup
 
-/**
- * @param {number[][]} rooms
- * @return {boolean}
- */
-var canVisitAllRooms = function (rooms) {
-  // This is graph problem
-  // For each room, we'll have information (the key) on which room we have access to
-  // We'll visit each room and save the information on a set() so we can keep track of the rooms we visited
-  // Also, we can use either DFS or BFS. We'll use DFS.
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // DFS
-  let stack = [];
-  let visited = new Set();
+class CanVisitAllRoomsRecord {
+  constructor(rooms, expected) {
+    this.rooms = rooms;
+    this.expected = expected;
+  }
+}
 
-  // From the problem statement, we always have access to room 0. From room 0, we'll see what keys we have there.
-  stack.push(rooms[0]);
-  visited.add(0);
+class Solution {
+  /**
+   * @param {number[][]} rooms
+   * @return {boolean}
+   */
+  canVisitAllRooms(rooms) {
+    // This is graph problem
+    // For each room, we'll have information (the key) on which room we have access to
+    // We'll visit each room and save the information on a set() so we can keep track of the rooms we visited
+    // Also, we can use either DFS or BFS. We'll use DFS.
 
-  while (stack.length) {
-    let curRoom = stack.pop();
+    // DFS
+    let visited = new Set();
 
-    // In the current room, we will get a set of keys. So, we'll check our visited set if we have key, if not, we add it, if
-    // it exist we move on.
-    for (let key of curRoom) {
-      if (!visited.has(key)) {
-        visited.add(key);
-        stack.push(rooms[key]);
+    // We allways have access to room 0. We just pass in the room 0 index
+    dfs(0);
+
+    function dfs(room) {
+      // Mark the room as visited
+      visited.add(room);
+      // In the current room, we will get a set of keys. So, we'll check our visited set if we
+      // have visited the room that we got the set of keys, if we have not visited it, we add it
+      // if we have visited it, we move on.
+      for (let key of rooms[room]) {
+        if (!visited.has(key)) {
+          dfs(key);
+        }
       }
     }
+
+    // At this point, we check our visited set if it's equal to the number of rooms.
+    if (rooms.length === visited.size) return true;
+
+    return false;
   }
 
-  // console.log(rooms.length)
-  // console.log(visited.size)
+  // Iterative DFS using an explicit stack instead of recursion
+  canVisitAllRoomsIterative(rooms) {
+    let stack = [];
+    let visited = new Set();
 
-  // At this point, we check our visited set if it's equal to the number of rooms.
-  if (rooms.length === visited.size) return true;
+    // From the problem statement, we always have access to room 0. From room 0, we'll see what keys we have there.
+    stack.push(rooms[0]);
+    visited.add(0);
 
-  return false;
-};
+    while (stack.length) {
+      let curRoom = stack.pop();
 
-/**
- * @param {number[][]} rooms
- * @return {boolean}
- */
-var canVisitAllRooms = function (rooms) {
-  // This is graph problem
-  // For each room, we'll have information (the key) on which room we have access to
-  // We'll visit each room and save the information on a set() so we can keep track of the rooms we visited
-  // Also, we can use either DFS or BFS. We'll use DFS.
-
-  // DFS
-  let numRooms = rooms.length;
-  let visited = new Set();
-
-  // We allways have access to room 0. We just pass in the room 0 index
-  dfs(0);
-
-  function dfs(room) {
-    // Mark the room as visited
-    visited.add(room);
-    // In the current room, we will get a set of keys. So, we'll check our visited set if we
-    // have visited the room that we got the set of keys, if we have not visited it, we add it
-    // if we have visited it, we move on.
-    for (let key of rooms[room]) {
-      if (!visited.has(key)) {
-        dfs(key);
+      // In the current room, we will get a set of keys. So, we'll check our visited set if we have key, if not, we add it, if
+      // it exist we move on.
+      for (let key of curRoom) {
+        if (!visited.has(key)) {
+          visited.add(key);
+          stack.push(rooms[key]);
+        }
       }
     }
+
+    // At this point, we check our visited set if it's equal to the number of rooms.
+    if (rooms.length === visited.size) return true;
+
+    return false;
   }
+}
 
-  // At this point, we check our visited set if it's equal to the number of rooms.
-  if (rooms.length === visited.size) return true;
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.canVisitAllRooms(record.rooms);
 
-  return false;
-};
+  console.log(`Input: rooms = ${JSON.stringify(record.rooms)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(result === record.expected ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CanVisitAllRoomsRecord([[1], [2], [3], []], true),
+  new CanVisitAllRoomsRecord([[1, 3], [3, 0, 1], [2], [0]], false),
+  new CanVisitAllRoomsRecord([[1], [0]], true),
+  new CanVisitAllRoomsRecord([[1, 2], [], []], true),
+  new CanVisitAllRoomsRecord([[], [1, 0]], false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

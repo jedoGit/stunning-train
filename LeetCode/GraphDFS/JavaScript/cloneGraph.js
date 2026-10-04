@@ -55,34 +55,135 @@
  *    this.neighbors = neighbors === undefined ? [] : neighbors;
  * };
  */
+class _Node {
+  constructor(val, neighbors) {
+    this.val = val === undefined ? 0 : val;
+    this.neighbors = neighbors === undefined ? [] : neighbors;
+  }
+}
 
-/**
- * @param {_Node} node
- * @return {_Node}
- */
-var cloneGraph = function (node) {
-  if (!node) return null;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let oldToNew = new Map();
+class CloneGraphRecord {
+  constructor(adjList, expected) {
+    this.adjList = adjList;
+    this.expected = expected;
+  }
+}
 
-  function dfs(node) {
-    // Check if the node is in our old to new node hashmap, if so, return the old to new mapping
-    if (oldToNew.has(node)) {
-      return oldToNew.get(node);
+class Solution {
+  /**
+   * @param {_Node} node
+   * @return {_Node}
+   */
+  cloneGraph(node) {
+    if (!node) return null;
+
+    let oldToNew = new Map();
+
+    function dfs(node) {
+      // Check if the node is in our old to new node hashmap, if so, return the old to new mapping
+      if (oldToNew.has(node)) {
+        return oldToNew.get(node);
+      }
+
+      // The node is not in our hashmap, so we save a copy of the node to the hashmap
+      let copy = new _Node(node.val);
+      oldToNew.set(node, copy);
+
+      // Copy and update the adjacency list of the old node to the neighbor
+      for (let nei of node.neighbors) {
+        copy.neighbors.push(dfs(nei));
+      }
+
+      // Return copy
+      return copy;
     }
 
-    // The node is not in our hashmap, so we save a copy of the node to the hashmap
-    let copy = new _Node(node.val);
-    oldToNew.set(node, copy);
+    return dfs(node);
+  }
+}
 
-    // Copy and update the adjacency list of the old node to the neighbor
-    for (let nei of node.neighbors) {
-      copy.neighbors.push(dfs(nei));
+// Build the graph from an adjacency list. Node values are 1-indexed and the
+// first node (val = 1) is returned as the entry point, or null for an empty graph.
+function buildGraph(adjList) {
+  if (!adjList.length) return null;
+
+  const nodes = adjList.map((_, index) => new _Node(index + 1));
+
+  adjList.forEach((neighbors, index) => {
+    for (let val of neighbors) {
+      nodes[index].neighbors.push(nodes[val - 1]);
     }
+  });
 
-    // Return copy
-    return copy;
+  return nodes[0];
+}
+
+// Serialize a graph back into an adjacency list so it can be compared with the expected output
+function toAdjList(node) {
+  if (!node) return [];
+
+  const visited = new Map();
+  const stack = [node];
+
+  while (stack.length) {
+    const cur = stack.pop();
+    if (visited.has(cur.val)) continue;
+    visited.set(cur.val, cur);
+
+    for (let nei of cur.neighbors) {
+      if (!visited.has(nei.val)) stack.push(nei);
+    }
   }
 
-  return dfs(node);
-};
+  return [...visited.keys()]
+    .sort((a, b) => a - b)
+    .map((val) => visited.get(val).neighbors.map((nei) => nei.val));
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const node = buildGraph(record.adjList);
+  const clone = solution.cloneGraph(node);
+  const result = toAdjList(clone);
+
+  // A valid clone must have the same shape and must not reuse any of the original nodes
+  const isDeepCopy = !node || (clone !== node && clone.neighbors.every((nei, i) => nei !== node.neighbors[i]));
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected) && isDeepCopy;
+
+  console.log(`Input: adjList = ${JSON.stringify(record.adjList)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CloneGraphRecord(
+    [
+      [2, 4],
+      [1, 3],
+      [2, 4],
+      [1, 3],
+    ],
+    [
+      [2, 4],
+      [1, 3],
+      [2, 4],
+      [1, 3],
+    ]
+  ),
+  new CloneGraphRecord([[]], [[]]),
+  new CloneGraphRecord([], []),
+  new CloneGraphRecord([[2], [1]], [[2], [1]]),
+  new CloneGraphRecord(
+    [[2, 3], [1], [1]],
+    [[2, 3], [1], [1]]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

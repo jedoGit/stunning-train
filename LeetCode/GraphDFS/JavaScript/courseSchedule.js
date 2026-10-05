@@ -27,67 +27,130 @@
 // TC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 // SC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 
-/**
- * @param {number} numCourses
- * @param {number[][]} prerequisites
- * @return {boolean}
- */
-var canFinish = function (numCourses, prerequisites) {
-  // Map each course to prereq list
-  let preMap = {};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Create the key to val mapping first... with the numCourses as key
-  for (let i = 0; i < numCourses; i += 1) {
-    if (!preMap[String(i)]) {
-      preMap[String(i)] = [];
-    }
+class CourseScheduleRecord {
+  constructor(numCourses, prerequisites, expected) {
+    this.numCourses = numCourses;
+    this.prerequisites = prerequisites;
+    this.expected = expected;
   }
+}
 
-  // Create the adjacency list
-  for (let [crs, pre] of prerequisites) {
-    preMap[String(crs)].push(pre);
-  }
+class Solution {
+  /**
+   * @param {number} numCourses
+   * @param {number[][]} prerequisites
+   * @return {boolean}
+   */
+  canFinish(numCourses, prerequisites) {
+    // Map each course to prereq list
+    let preMap = {};
 
-  // console.log(preMap)
-
-  // Visit all courses along the current DFS path
-  let visited = new Set();
-
-  // Helper function to DFS the adjacency list
-  function dfs(crs) {
-    if (visited.has(String(crs))) {
-      return false;
+    // Create the key to val mapping first... with the numCourses as key
+    for (let i = 0; i < numCourses; i += 1) {
+      if (!preMap[String(i)]) {
+        preMap[String(i)] = [];
+      }
     }
 
-    // The k/v of preMap is k: []. It returns an array
-    // Check if the array is empty
-    if (preMap[String(crs)].length === 0) {
+    // Create the adjacency list
+    for (let [crs, pre] of prerequisites) {
+      preMap[String(crs)].push(pre);
+    }
+
+    // Visit all courses along the current DFS path
+    let visited = new Set();
+
+    // Helper function to DFS the adjacency list
+    function dfs(crs) {
+      if (visited.has(String(crs))) {
+        return false;
+      }
+
+      // The k/v of preMap is k: []. It returns an array
+      // Check if the array is empty
+      if (preMap[String(crs)].length === 0) {
+        return true;
+      }
+
+      // Let's add crs to the visited set prior to DFS'ing
+      visited.add(String(crs));
+
+      // preMap[String(crs)] returns an array, so use for-of
+      for (let pre of preMap[String(crs)]) {
+        if (!dfs(pre)) {
+          return false;
+        }
+      }
+
+      // After DFS'ing, remove crs from visited and reset preMap[String(crs)] to empty array
+      visited.delete(String(crs));
+      preMap[String(crs)] = [];
+
       return true;
     }
 
-    // Let's add crs to the visited set prior to DFS'ing
-    visited.add(String(crs));
-
-    // preMap[String(crs)] returns an array, so use for-of
-    for (let pre of preMap[String(crs)]) {
-      if (!dfs(pre)) {
+    // DFS for all courses
+    for (let i = 0; i < numCourses; i += 1) {
+      if (!dfs(i)) {
         return false;
       }
     }
 
-    // After DFS'ing, remove crs from visited and reset preMap[String(crs)] to empty array
-    visited.delete(String(crs));
-    preMap[String(crs)] = [];
-
     return true;
   }
+}
 
-  // DFS for all courses
-  for (let i = 0; i < numCourses; i += 1) {
-    if (!dfs(i)) {
-      return false;
-    }
-  }
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.canFinish(record.numCourses, record.prerequisites);
+  const pass = result === record.expected;
 
-  return true;
-};
+  console.log(
+    `Input: numCourses = ${record.numCourses}, prerequisites = ${JSON.stringify(
+      record.prerequisites
+    )}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CourseScheduleRecord(2, [[1, 0]], true),
+  new CourseScheduleRecord(
+    2,
+    [
+      [1, 0],
+      [0, 1],
+    ],
+    false
+  ),
+  new CourseScheduleRecord(1, [], true),
+  new CourseScheduleRecord(
+    5,
+    [
+      [1, 4],
+      [2, 4],
+      [3, 1],
+      [3, 2],
+    ],
+    true
+  ),
+  new CourseScheduleRecord(
+    3,
+    [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+    ],
+    false
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

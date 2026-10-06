@@ -31,67 +31,133 @@
 // TC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 // SC: O(edge + Node(vertex)) - each Node(vertex) have edges going in and going out of each nodes, it's possible that you'll visit each nodes multiple times.
 
-/**
- * @param {number} numCourses
- * @param {number[][]} prerequisites
- * @return {number[]}
- */
-var findOrder = function (numCourses, prerequisites) {
-  // Create an adjacency list
-  let prereq = {};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Create the K/v with keys as the courses and values are empty arrays
-  for (let i = 0; i < numCourses; i += 1) {
-    if (!prereq[i]) {
-      prereq[i] = [];
-    }
+class CourseScheduleIIRecord {
+  constructor(numCourses, prerequisites, expected) {
+    this.numCourses = numCourses;
+    this.prerequisites = prerequisites;
+    this.expected = expected;
   }
+}
 
-  // console.log(prereq)
+class Solution {
+  /**
+   * @param {number} numCourses
+   * @param {number[][]} prerequisites
+   * @return {number[]}
+   */
+  findOrder(numCourses, prerequisites) {
+    // Create an adjacency list
+    let prereq = {};
 
-  for (let [crs, pre] of prerequisites) {
-    prereq[crs].push(pre);
-  }
-
-  // console.log(prereq)
-
-  let output = [];
-  let visited = new Set();
-  let cycle = new Set();
-
-  // Helper function
-  // DFS on a crs adjacency list. Returns false if a cycle is detected and returns true otherwise add to visited set.
-  function dfs(crs) {
-    // Check first if we have a cycle
-    if (cycle.has(crs)) return false;
-    // Check if we've visited this course
-    if (visited.has(crs)) return true;
-
-    // Add course to cycle set
-    cycle.add(crs);
-
-    // DFS all the courses in the prereq of this course
-    // prereq[crs] returns an array, so use for-of
-    for (let pre of prereq[crs]) {
-      if (dfs(pre) === false) return false; // this means we have a cycle and we can't continue
+    // Create the K/v with keys as the courses and values are empty arrays
+    for (let i = 0; i < numCourses; i += 1) {
+      if (!prereq[i]) {
+        prereq[i] = [];
+      }
     }
 
-    // Remove course from cycle set
-    cycle.delete(crs);
-    // Add crs to the visited set so we don't have to visit it again
-    visited.add(crs);
-    // Finally add it to our output array
-    output.push(crs);
+    // console.log(prereq)
 
-    return true;
-  }
-
-  // Now, let's dfs on all courses
-  for (let c = 0; c < numCourses; c += 1) {
-    if (dfs(c) === false) {
-      return []; // need to return an empty array if there's a cycle.
+    for (let [crs, pre] of prerequisites) {
+      prereq[crs].push(pre);
     }
-  }
 
-  return output;
-};
+    // console.log(prereq)
+
+    let output = [];
+    let visited = new Set();
+    let cycle = new Set();
+
+    // Helper function
+    // DFS on a crs adjacency list. Returns false if a cycle is detected and returns true otherwise add to visited set.
+    function dfs(crs) {
+      // Check first if we have a cycle
+      if (cycle.has(crs)) return false;
+      // Check if we've visited this course
+      if (visited.has(crs)) return true;
+
+      // Add course to cycle set
+      cycle.add(crs);
+
+      // DFS all the courses in the prereq of this course
+      // prereq[crs] returns an array, so use for-of
+      for (let pre of prereq[crs]) {
+        if (dfs(pre) === false) return false; // this means we have a cycle and we can't continue
+      }
+
+      // Remove course from cycle set
+      cycle.delete(crs);
+      // Add crs to the visited set so we don't have to visit it again
+      visited.add(crs);
+      // Finally add it to our output array
+      output.push(crs);
+
+      return true;
+    }
+
+    // Now, let's dfs on all courses
+    for (let c = 0; c < numCourses; c += 1) {
+      if (dfs(c) === false) {
+        return []; // need to return an empty array if there's a cycle.
+      }
+    }
+
+    return output;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findOrder(record.numCourses, record.prerequisites);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(
+    `Input: numCourses = ${record.numCourses}, prerequisites = ${JSON.stringify(
+      record.prerequisites
+    )}`
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+// Many orderings can be valid, so the expected values below are the specific
+// valid topological order this DFS produces.
+const records = [
+  new CourseScheduleIIRecord(2, [[1, 0]], [0, 1]),
+  new CourseScheduleIIRecord(
+    4,
+    [
+      [1, 0],
+      [2, 0],
+      [3, 1],
+      [3, 2],
+    ],
+    [0, 1, 2, 3]
+  ),
+  new CourseScheduleIIRecord(1, [], [0]),
+  new CourseScheduleIIRecord(
+    2,
+    [
+      [1, 0],
+      [0, 1],
+    ],
+    []
+  ),
+  new CourseScheduleIIRecord(
+    3,
+    [
+      [0, 1],
+      [1, 2],
+    ],
+    [2, 1, 0]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

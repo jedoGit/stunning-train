@@ -27,93 +27,159 @@
 // TC: O(n) we visit all the cities
 // SC: O(n) we visit all the cities
 
-/**
- * @param {number[][]} isConnected
- * @return {number}
- */
-var findCircleNum = function (isConnected) {
-  let numCities = isConnected.length;
-  let provinceCount = 0;
-  let visited = new Set();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let's do a dfs on all the cities
-  for (let city = 0; city < numCities; city++) {
-    // Check if we've visited this city before
-    if (!visited.has(city)) {
-      dfs(city);
-      // After we dfs (check the neighbor city basically)
-      // We increment the province count
-      provinceCount = provinceCount + 1;
-    }
+class FindCircleNumRecord {
+  constructor(isConnected, expected) {
+    this.isConnected = isConnected;
+    this.expected = expected;
   }
+}
 
-  function dfs(city) {
-    // first thing we need to do is to add the city to our visited set
-    visited.add(city);
+class Solution {
+  /**
+   * @param {number[][]} isConnected
+   * @return {number}
+   */
+  findCircleNum(isConnected) {
+    let g = new Map();
+    let visited = new Set();
+    let numCities = isConnected.length;
 
-    for (let neighborCity = 0; neighborCity < numCities; neighborCity++) {
-      // We need to check if we've visitied this neighbor city and if
-      // it's connected to our city
-      if (!visited.has(neighborCity) && isConnected[city][neighborCity]) {
-        dfs(neighborCity);
+    let provinceCount = 0;
+
+    // Create an adjacency list... basically list the neighbors of the city
+    for (let i = 0; i < isConnected.length; i++) {
+      for (let j = 0; j < isConnected[i].length; j++) {
+        if (isConnected[i][j] === 1) {
+          if (!g.has(i)) g.set(i, []);
+          if (!g.has(j)) g.set(j, []);
+
+          let temp = g.get(i);
+          temp.push(j);
+          g.set(i, temp);
+
+          temp = g.get(j);
+          temp.push(i);
+          g.set(j, temp);
+        }
       }
     }
-  }
 
-  return provinceCount;
-};
-
-/**
- * @param {number[][]} isConnected
- * @return {number}
- */
-var findCircleNum = function (isConnected) {
-  let g = new Map();
-  let visited = new Set();
-  let numCities = isConnected.length;
-
-  let provinceCount = 0;
-
-  // Create an adjacency list... basically list the neighbors of the city
-  for (let i = 0; i < isConnected.length; i++) {
-    for (let j = 0; j < isConnected[i].length; j++) {
-      if (isConnected[i][j] === 1) {
-        if (!g.has(i)) g.set(i, []);
-        if (!g.has(j)) g.set(j, []);
-
-        let temp = g.get(i);
-        temp.push(j);
-        g.set(i, temp);
-
-        temp = g.get(j);
-        temp.push(i);
-        g.set(j, temp);
+    // Let's do a dfs on all the cities
+    for (let city = 0; city < numCities; city++) {
+      // Check if we've visited this city before
+      if (!visited.has(city)) {
+        dfs(city);
+        // After we dfs (check the neighbor city basically)
+        // We increment the province count
+        provinceCount = provinceCount + 1;
       }
     }
-  }
 
-  // Let's do a dfs on all the cities
-  for (let city = 0; city < numCities; city++) {
-    // Check if we've visited this city before
-    if (!visited.has(city)) {
-      dfs(city);
-      // After we dfs (check the neighbor city basically)
-      // We increment the province count
-      provinceCount = provinceCount + 1;
-    }
-  }
-
-  // This function will only mark the cities as visited
-  // It will visit all the neighbors listed in the adjacency list
-  function dfs(city) {
-    visited.add(city);
-    // visit all of the cities connected to the current city
-    for (let nei of g.get(city)) {
-      if (!visited.has(nei)) {
-        dfs(nei);
+    // This function will only mark the cities as visited
+    // It will visit all the neighbors listed in the adjacency list
+    function dfs(city) {
+      visited.add(city);
+      // visit all of the cities connected to the current city
+      for (let nei of g.get(city)) {
+        if (!visited.has(nei)) {
+          dfs(nei);
+        }
       }
     }
+
+    return provinceCount;
   }
 
-  return provinceCount;
-};
+  /**
+   * Alternate approach: dfs straight on the matrix, no adjacency list needed
+   * @param {number[][]} isConnected
+   * @return {number}
+   */
+  findCircleNumMatrix(isConnected) {
+    let numCities = isConnected.length;
+    let provinceCount = 0;
+    let visited = new Set();
+
+    // Let's do a dfs on all the cities
+    for (let city = 0; city < numCities; city++) {
+      // Check if we've visited this city before
+      if (!visited.has(city)) {
+        dfs(city);
+        // After we dfs (check the neighbor city basically)
+        // We increment the province count
+        provinceCount = provinceCount + 1;
+      }
+    }
+
+    function dfs(city) {
+      // first thing we need to do is to add the city to our visited set
+      visited.add(city);
+
+      for (let neighborCity = 0; neighborCity < numCities; neighborCity++) {
+        // We need to check if we've visitied this neighbor city and if
+        // it's connected to our city
+        if (!visited.has(neighborCity) && isConnected[city][neighborCity]) {
+          dfs(neighborCity);
+        }
+      }
+    }
+
+    return provinceCount;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findCircleNum(record.isConnected);
+  const pass = result === record.expected;
+
+  console.log(`Input: isConnected = ${JSON.stringify(record.isConnected)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new FindCircleNumRecord(
+    [
+      [1, 1, 0],
+      [1, 1, 0],
+      [0, 0, 1],
+    ],
+    2
+  ),
+  new FindCircleNumRecord(
+    [
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+    ],
+    3
+  ),
+  new FindCircleNumRecord([[1]], 1),
+  new FindCircleNumRecord(
+    [
+      [1, 1, 1],
+      [1, 1, 1],
+      [1, 1, 1],
+    ],
+    1
+  ),
+  new FindCircleNumRecord(
+    [
+      [1, 1, 0, 0],
+      [1, 1, 0, 0],
+      [0, 0, 1, 1],
+      [0, 0, 1, 1],
+    ],
+    2
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

@@ -37,78 +37,118 @@
 // TC: O(n) , we're doing multiple loops here
 // SC: O(n) , we're creating multiple memories here
 
-/**
- * @param {string} word1
- * @param {string} word2
- * @return {boolean}
- */
-var closeStrings = function (word1, word2) {
-  // Two conditions required for satisfying a close string:
-  // 1. All UNIQUE characters present in String 1 should be available in String 2 & vice versa. (NOT CONSIDERING THEIR FREQUENCY).
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // If condition 1 is satisfied, then a Sorted Frequency Arr of One String should be the same as the Sorted Frequency Arr of the Other.
-  // If both Conditions are true, then it's a closeString.
-
-  // ================================
-  // first we need to check if the size of the input is the same
-  if (word1.length !== word2.length) return false;
-
-  // At this point, we start building our maps. We'll use the map to
-  // check for the frequency of each characters found
-  let map1 = new Map();
-  let map2 = new Map();
-
-  for (let i = 0; i < word1.length; i++) {
-    if (map1.has(word1[i])) {
-      let temp = map1.get(word1[i]);
-      temp++;
-      map1.set(word1[i], temp);
-    } else {
-      map1.set(word1[i], 1);
-    }
-
-    if (map2.has(word2[i])) {
-      let temp = map2.get(word2[i]);
-      temp++;
-      map2.set(word2[i], temp);
-    } else {
-      map2.set(word2[i], 1);
-    }
+class CloseStringsRecord {
+  constructor(word1, word2, expected) {
+    this.word1 = word1;
+    this.word2 = word2;
+    this.expected = expected;
   }
+}
 
-  // We then check if all unique chars in word1 is also in word2
-  // We'll use set for this. A set does not allo duplicates so, this is a
-  // good DS structure to use to compare the two input arrays
-  let set1 = new Set(word1);
-  let set2 = new Set(word2);
+class Solution {
+  /**
+   * @param {string} word1
+   * @param {string} word2
+   * @return {boolean}
+   */
+  closeStrings(word1, word2) {
+    // Two conditions required for satisfying a close string:
+    // 1. All UNIQUE characters present in String 1 should be available in String 2 & vice versa. (NOT CONSIDERING THEIR FREQUENCY).
 
-  for (let num of set1) {
-    if (!set2.has(num)) {
-      return false;
+    // If condition 1 is satisfied, then a Sorted Frequency Arr of One String should be the same as the Sorted Frequency Arr of the Other.
+    // If both Conditions are true, then it's a closeString.
+
+    // ================================
+    // first we need to check if the size of the input is the same
+    if (word1.length !== word2.length) return false;
+
+    // At this point, we start building our maps. We'll use the map to
+    // check for the frequency of each characters found
+    let map1 = new Map();
+    let map2 = new Map();
+
+    for (let i = 0; i < word1.length; i++) {
+      if (map1.has(word1[i])) {
+        let temp = map1.get(word1[i]);
+        temp++;
+        map1.set(word1[i], temp);
+      } else {
+        map1.set(word1[i], 1);
+      }
+
+      if (map2.has(word2[i])) {
+        let temp = map2.get(word2[i]);
+        temp++;
+        map2.set(word2[i], temp);
+      } else {
+        map2.set(word2[i], 1);
+      }
     }
-  }
 
-  // Now, we check for the frequency of each chars in the map.
-  // We sort the values (ascending order) of the map, and after sorting, each index should have the same values
-  // Since the character count is in our maps, we'll use the rest operator to move the map values to an array so
-  // we can sort the values in the array.
+    // We then check if all unique chars in word1 is also in word2
+    // We'll use set for this. A set does not allo duplicates so, this is a
+    // good DS structure to use to compare the two input arrays
+    let set1 = new Set(word1);
+    let set2 = new Set(word2);
 
-  let val1 = [...map1.values()]; //.sort((a,b) => {return a-b})
-  let val2 = [...map2.values()]; //.sort((a,b) => {return a-b})
-
-  val1.sort((a, b) => {
-    return a - b;
-  });
-  val2.sort((a, b) => {
-    return a - b;
-  });
-
-  //console.log(val1, val2)
-  for (let i = 0; i < val1.length; i++) {
-    if (val1[i] !== val2[i]) {
-      return false;
+    for (let num of set1) {
+      if (!set2.has(num)) {
+        return false;
+      }
     }
-  }
 
-  return true;
-};
+    // Now, we check for the frequency of each chars in the map.
+    // We sort the values (ascending order) of the map, and after sorting, each index should have the same values
+    // Since the character count is in our maps, we'll use the rest operator to move the map values to an array so
+    // we can sort the values in the array.
+
+    let val1 = [...map1.values()];
+    let val2 = [...map2.values()];
+
+    val1.sort((a, b) => {
+      return a - b;
+    });
+    val2.sort((a, b) => {
+      return a - b;
+    });
+
+    for (let i = 0; i < val1.length; i++) {
+      if (val1[i] !== val2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.closeStrings(record.word1, record.word2);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: word1 = ${JSON.stringify(record.word1)}, word2 = ${JSON.stringify(
+      record.word2
+    )}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new CloseStringsRecord("abc", "bca", true),
+  new CloseStringsRecord("a", "aa", false),
+  new CloseStringsRecord("cabbba", "abbccc", true),
+  new CloseStringsRecord("abc", "abd", false),
+  new CloseStringsRecord("uau", "ssx", false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

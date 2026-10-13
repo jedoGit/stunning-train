@@ -22,33 +22,72 @@
 // TC: O(n), worst case is we visit all the elements of nums of size n
 // SC: O(k), worst case is we have a hash set of size k, which is the size of the window
 
-/**
- * @param {number[]} nums
- * @param {number} k
- * @return {boolean}
- */
-var containsNearbyDuplicate = function (nums, k) {
-  // Here, we'll use sliding window technique together
-  // with a hash set to check if we have duplicates
-  let window = new Set();
-  let l = 0; // This is our left pointer
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  for (let r = 0; r < nums.length; r++) {
-    // First, check if we exceed the window length specified by k
-    // if so, let's slide the window
-    if (r - l > k) {
-      // we'll move r and l pointer which means we need to remove
-      // nums[l] from the window
-      window.delete(nums[l]);
-      l++;
-    }
-
-    // We check if nums[r] is in the window, if so, we return true
-    if (window.has(nums[r])) {
-      return true;
-    }
-
-    window.add(nums[r]);
+class ContainsNearbyDuplicateRecord {
+  constructor(nums, k, expected) {
+    this.nums = nums;
+    this.k = k;
+    this.expected = expected;
   }
-  return false;
-};
+}
+
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @param {number} k
+   * @return {boolean}
+   */
+  containsNearbyDuplicate(nums, k) {
+    // Here, we'll use sliding window technique together
+    // with a hash set to check if we have duplicates
+    let window = new Set();
+    let l = 0; // This is our left pointer
+
+    for (let r = 0; r < nums.length; r++) {
+      // First, check if we exceed the window length specified by k
+      // if so, let's slide the window
+      if (r - l > k) {
+        // we'll move r and l pointer which means we need to remove
+        // nums[l] from the window
+        window.delete(nums[l]);
+        l++;
+      }
+
+      // We check if nums[r] is in the window, if so, we return true
+      if (window.has(nums[r])) {
+        return true;
+      }
+
+      window.add(nums[r]);
+    }
+    return false;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.containsNearbyDuplicate([...record.nums], record.k);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: nums = ${JSON.stringify(record.nums)}, k = ${record.k}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new ContainsNearbyDuplicateRecord([1, 2, 3, 1], 3, true),
+  new ContainsNearbyDuplicateRecord([1, 0, 1, 1], 1, true),
+  new ContainsNearbyDuplicateRecord([1, 2, 3, 1, 2, 3], 2, false),
+  new ContainsNearbyDuplicateRecord([1], 0, false),
+  new ContainsNearbyDuplicateRecord([99, 99], 2, true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

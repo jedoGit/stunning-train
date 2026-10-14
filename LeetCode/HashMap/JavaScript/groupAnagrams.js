@@ -34,90 +34,94 @@
 // TC: O(n*m), we're visiting each strings in the strs array and for each string, we're visiting each chars
 // SC: O(n*m), we're creating a map of word count for each string and for each of the word count, we append all the strings that match the word count
 
-/**
- * @param {string[]} strs
- * @return {string[][]}
- */
-var groupAnagrams = function (strs) {
-  let select = 2;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  if (select === 1) {
-    console.log("Using groupAnagrams1()");
-    return groupAnagrams1(strs);
-  } else {
-    console.log("Using groupAnagrams2()");
-    return groupAnagrams2(strs);
+class GroupAnagramsRecord {
+  constructor(strs, expected) {
+    this.strs = strs;
+    this.expected = expected;
   }
-};
+}
 
-var groupAnagrams1 = function (strs) {
-  let res = {};
+class Solution {
+  /**
+   * @param {string[]} strs
+   * @return {string[][]}
+   */
+  groupAnagrams(strs) {
+    let select = 2;
 
-  for (let s of strs) {
-    let count = new Array(26).fill(0); // we need an array of size 26 to store the counts for each chars
-    // console.log(s)
-    for (let c of s) {
-      // Let's count the chars in each strings
-      // What were doing here is to map a char to a certain value
-      // for example, "d" = 100, "a" = 97 => d-a = 100 - 97 = 3 => "d"
-      // here "d" is mapped to 3, and we count the occurence of d, which is mapped to index 3.
-      // console.log(c)
-      count[c.charCodeAt(0) - "a".charCodeAt(0)] += 1;
+    if (select === 1) {
+      console.log("Using groupAnagrams1()");
+      return this.groupAnagrams1(strs);
+    } else {
+      console.log("Using groupAnagrams2()");
+      return this.groupAnagrams2(strs);
     }
-
-    // console.log(count.join())
-    // We need to convert count to a string so we can search our hashmap
-    // The whole count array will become our key in the hashmap.
-    const countStr = count.join();
-
-    // Check first if we have the count string in our hashmap
-    // if not, create it and for the value, create an array and push the string s
-    // If so, get the k/v pair and push s to the values array
-    if (!(countStr in res)) {
-      res[countStr] = [];
-    }
-
-    res[countStr].push(s);
   }
-  // console.log(Object.values(res))
-  return Object.values(res);
-};
 
-var groupAnagrams2 = function (strs) {
-  let res = {};
+  groupAnagrams1(strs) {
+    let res = {};
 
-  for (let s of strs) {
-    //  Convert the string to a char array and sort them.
-    let charsArr = s.split("");
-    charsArr.sort();
+    for (let s of strs) {
+      let count = new Array(26).fill(0); // we need an array of size 26 to store the counts for each chars
+      // console.log(s)
+      for (let c of s) {
+        // Let's count the chars in each strings
+        // What were doing here is to map a char to a certain value
+        // for example, "d" = 100, "a" = 97 => d-a = 100 - 97 = 3 => "d"
+        // here "d" is mapped to 3, and we count the occurence of d, which is mapped to index 3.
+        // console.log(c)
+        count[c.charCodeAt(0) - "a".charCodeAt(0)] += 1;
+      }
 
-    // We need to convert count to a string so we can search our hashmap
-    // The whole count array will become our key in the hashmap.
-    const countStr = charsArr.join("");
+      // console.log(count.join())
+      // We need to convert count to a string so we can search our hashmap
+      // The whole count array will become our key in the hashmap.
+      const countStr = count.join();
 
-    // Check first if we have the count string in our hashm
-    // if not, create it and for the value, create an array and push the string s
-    // If so, get the k/v pair and push s to the values array
-    if (!(countStr in res)) {
-      res[countStr] = [];
+      // Check first if we have the count string in our hashmap
+      // if not, create it and for the value, create an array and push the string s
+      // If so, get the k/v pair and push s to the values array
+      if (!(countStr in res)) {
+        res[countStr] = [];
+      }
+
+      res[countStr].push(s);
     }
-
-    res[countStr].push(s);
+    // console.log(Object.values(res))
+    return Object.values(res);
   }
-  // console.log(Object.values(res))
-  return Object.values(res);
-};
 
-var testSolution = (input) => {
-  console.log("Input: strs: " + JSON.stringify(input["strs"]));
-  console.log("Expected: " + JSON.stringify(input["expected"]));
-  let res = groupAnagrams(input["strs"]);
-  console.log("Result: " + JSON.stringify(res));
-  console.log(isEqual(res, input["expected"]) ? "PASS" : "FAIL");
-  console.log("-".repeat(50));
-};
+  groupAnagrams2(strs) {
+    let res = {};
 
-var isEqual = (arr1, arr2) => {
+    for (let s of strs) {
+      //  Convert the string to a char array and sort them.
+      let charsArr = s.split("");
+      charsArr.sort();
+
+      // We need to convert count to a string so we can search our hashmap
+      // The whole count array will become our key in the hashmap.
+      const countStr = charsArr.join("");
+
+      // Check first if we have the count string in our hashm
+      // if not, create it and for the value, create an array and push the string s
+      // If so, get the k/v pair and push s to the values array
+      if (!(countStr in res)) {
+        res[countStr] = [];
+      }
+
+      res[countStr].push(s);
+    }
+    // console.log(Object.values(res))
+    return Object.values(res);
+  }
+}
+
+// The groups can be returned in any order, and so can the strings within a
+// group, so we normalize both levels before comparing.
+function isEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -143,29 +147,30 @@ var isEqual = (arr1, arr2) => {
   }
 
   return true;
-};
+}
 
-// =======================================
-// Test Vectors
-// =======================================
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.groupAnagrams(record.strs);
+  const pass = isEqual(result, record.expected);
 
-let input = {
-  strs: ["eat", "tea", "tan", "ate", "nat", "bat"],
-  expected: [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]],
-};
+  console.log(`Input: strs = ${JSON.stringify(record.strs)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-testSolution(input);
+const records = [
+  new GroupAnagramsRecord(
+    ["eat", "tea", "tan", "ate", "nat", "bat"],
+    [["bat"], ["nat", "tan"], ["ate", "eat", "tea"]]
+  ),
+  new GroupAnagramsRecord([""], [[""]]),
+  new GroupAnagramsRecord(["a"], [["a"]]),
+];
 
-input = {
-  strs: [""],
-  expected: [[""]],
-};
-
-testSolution(input);
-
-input = {
-  strs: ["a"],
-  expected: [["a"]],
-};
-
-testSolution(input);
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

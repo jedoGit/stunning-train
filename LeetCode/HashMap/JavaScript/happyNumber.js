@@ -29,42 +29,78 @@
 //            r is the number of digits per iteration to compute the sum of squares.
 // SC: O(k) where k is the number of values computed as sum of square of digits until we find 1 or a duplicate. It could go to the limit of an integer
 
-/**
- * @param {number} n
- * @return {boolean}
- */
-var isHappy = function (n) {
-  // We'll use a set to store the values that we've already visited
-  // This is used to detect if we've reached a loop
-  let visited = new Set();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (!visited.has(n)) {
-    // add n to our visited list
-    visited.add(n);
-
-    // compute the new n which is the square of each digits of the previous n
-    n = computeN(n);
-    // console.log(n_)
-
-    // check if it's a happy number
-    if (n === 1) {
-      return true;
-    }
+class HappyNumberRecord {
+  constructor(n, expected) {
+    this.n = n;
+    this.expected = expected;
   }
+}
 
-  // This is our helper function
-  function computeN(n) {
-    let res = 0;
-    // This goes through all the digit of n and accumulate the square of all the digits
-    while (n) {
-      let temp = n % 10; // This returns the most significant digit
-      res += temp ** 2; // let's square the most significant digit and accumulate it on the res variable
-      n = (n / 10) | 0; // we want to perform an integer division so we can get the next digit
+class Solution {
+  /**
+   * @param {number} n
+   * @return {boolean}
+   */
+  isHappy(n) {
+    // We'll use a set to store the values that we've already visited
+    // This is used to detect if we've reached a loop
+    let visited = new Set();
+
+    while (!visited.has(n)) {
+      // add n to our visited list
+      visited.add(n);
+
+      // compute the new n which is the square of each digits of the previous n
+      n = computeN(n);
       // console.log(n_)
+
+      // check if it's a happy number
+      if (n === 1) {
+        return true;
+      }
     }
 
-    return res;
-  }
+    // This is our helper function
+    function computeN(n) {
+      let res = 0;
+      // This goes through all the digit of n and accumulate the square of all the digits
+      while (n) {
+        let temp = n % 10; // This returns the most significant digit
+        res += temp ** 2; // let's square the most significant digit and accumulate it on the res variable
+        n = (n / 10) | 0; // we want to perform an integer division so we can get the next digit
+        // console.log(n_)
+      }
 
-  return false;
-};
+      return res;
+    }
+
+    return false;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.isHappy(record.n);
+  const pass = result === record.expected;
+
+  console.log(`Input: n = ${record.n}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new HappyNumberRecord(19, true),
+  new HappyNumberRecord(2, false),
+  new HappyNumberRecord(1, true),
+  new HappyNumberRecord(7, true),
+  new HappyNumberRecord(4, false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

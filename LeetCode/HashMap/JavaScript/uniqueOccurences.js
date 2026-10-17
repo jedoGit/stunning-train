@@ -22,35 +22,69 @@
 // TC: O(n) , we use 2 loops
 // SC: O(n) , we use created a map and a set
 
-/**
- * @param {number[]} arr
- * @return {boolean}
- */
-var uniqueOccurrences = function (arr) {
-  // Here we'll use a Map to store the number of occurence for each of the element
-  let myMap = new Map();
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We loop through the input array and check our map if we've already added it in the past iteration and increment the count
-  for (let num of arr) {
-    if (myMap.has(num)) {
-      let tempCount = myMap.get(num);
-      tempCount++;
-      myMap.set(num, tempCount);
-    } else {
-      myMap.set(num, 1);
-    }
+class UniqueOccurrencesRecord {
+  constructor(arr, expected) {
+    this.arr = arr;
+    this.expected = expected;
   }
+}
 
-  // Now, we check the values saved in the Map are not repeating, which means the values are unique.
-  // We'll use set here...
-  let mySet = new Set();
-  for (let val of myMap.values()) {
-    if (mySet.has(val)) {
-      return false;
-    } else {
-      mySet.add(val);
+class Solution {
+  /**
+   * @param {number[]} arr
+   * @return {boolean}
+   */
+  uniqueOccurrences(arr) {
+    // Here we'll use a Map to store the number of occurence for each of the element
+    let myMap = new Map();
+
+    // We loop through the input array and check our map if we've already added it in the past iteration and increment the count
+    for (let num of arr) {
+      if (myMap.has(num)) {
+        let tempCount = myMap.get(num);
+        tempCount++;
+        myMap.set(num, tempCount);
+      } else {
+        myMap.set(num, 1);
+      }
     }
-  }
 
-  return true;
-};
+    // Now, we check the values saved in the Map are not repeating, which means the values are unique.
+    // We'll use set here...
+    let mySet = new Set();
+    for (let val of myMap.values()) {
+      if (mySet.has(val)) {
+        return false;
+      } else {
+        mySet.add(val);
+      }
+    }
+
+    return true;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.uniqueOccurrences([...record.arr]);
+  const pass = result === record.expected;
+
+  console.log(`Input: arr = ${JSON.stringify(record.arr)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new UniqueOccurrencesRecord([1, 2, 2, 1, 1, 3], true),
+  new UniqueOccurrencesRecord([1, 2], false),
+  new UniqueOccurrencesRecord([-3, 0, 1, -3, 1, 1, 1, -3, 10, 0], true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

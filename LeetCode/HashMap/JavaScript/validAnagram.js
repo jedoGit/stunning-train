@@ -24,43 +24,82 @@
 // TC: O(n+m), O(n) since both s and t need to have same length. We're going to visit each elements of s and t, first to create a hashmap then to compare the hashmaps.
 // SC: O(n+m), O(n) since both s and t need to have same length. We're going to create a hashmap for both s and t
 
-/**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
- */
-var isAnagram = function (s, t) {
-  // Without using hashmap, we can first sort s and t then compare the sorted string.
-  // Both s and t need to have the same length
-  if (s.length !== t.length) {
-    return false;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class ValidAnagramRecord {
+  constructor(s, t, expected) {
+    this.s = s;
+    this.t = t;
+    this.expected = expected;
   }
+}
 
-  // Using hashmap
-  let countS = {};
-  let countT = {};
-
-  // Create the char counter for s and t
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] in countS) {
-      countS[s[i]] += 1;
-    } else {
-      countS[s[i]] = 1;
-    }
-
-    if (t[i] in countT) {
-      countT[t[i]] += 1;
-    } else {
-      countT[t[i]] = 1;
-    }
-  }
-
-  // Now let's compare the two hashmaps
-  for (let c in countS) {
-    if (countS[c] !== countT[c]) {
+class Solution {
+  /**
+   * @param {string} s
+   * @param {string} t
+   * @return {boolean}
+   */
+  isAnagram(s, t) {
+    // Without using hashmap, we can first sort s and t then compare the sorted string.
+    // Both s and t need to have the same length
+    if (s.length !== t.length) {
       return false;
     }
-  }
 
-  return true;
-};
+    // Using hashmap
+    let countS = {};
+    let countT = {};
+
+    // Create the char counter for s and t
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] in countS) {
+        countS[s[i]] += 1;
+      } else {
+        countS[s[i]] = 1;
+      }
+
+      if (t[i] in countT) {
+        countT[t[i]] += 1;
+      } else {
+        countT[t[i]] = 1;
+      }
+    }
+
+    // Now let's compare the two hashmaps
+    for (let c in countS) {
+      if (countS[c] !== countT[c]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.isAnagram(record.s, record.t);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: s = ${JSON.stringify(record.s)}, t = ${JSON.stringify(record.t)}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new ValidAnagramRecord("anagram", "nagaram", true),
+  new ValidAnagramRecord("rat", "car", false),
+  new ValidAnagramRecord("a", "a", true),
+  new ValidAnagramRecord("ab", "a", false),
+  new ValidAnagramRecord("aacc", "ccac", false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

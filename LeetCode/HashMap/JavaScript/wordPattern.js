@@ -43,59 +43,86 @@
 // SC: O(m+n) => O(n), we have 2 hashmaps to store k/v pairs. m is number words after we split string s and n is
 // number of chars in pattern. This will end up as O(n) because m and n are equal.
 
-/**
- * @param {string} pattern
- * @param {string} s
- * @return {boolean}
- */
-var wordPattern = function (pattern, s) {
-  const words = s.split(" "); // We need to create an array of words from the input s
-  // We need to make sure that the length of the list of words is equal to the length
-  // of the number of chars in the pattern string.
-  if (pattern.length !== words.length) {
-    return false;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
+
+class WordPatternRecord {
+  constructor(pattern, s, expected) {
+    this.pattern = pattern;
+    this.s = s;
+    this.expected = expected;
   }
+}
 
-  // We'll use a JS Object to keep track of k/v pairs
-  let charToWord = {};
-  let wordToChar = {};
-
-  // console.log(pattern, words)
-
-  // Since we know that both the pattern and words array should have the same length,
-  // we'll use the pattern lenght to bound the for-loop
-  for (let i = 0; i < pattern.length; i++) {
-    let c = pattern[i];
-    let w = words[i];
-    // console.log( c, w)
-    // console.log(wordToChar, charToWord)
-
-    // if ( !(c in charToWord) ) {
-    //     charToWord[c] = ""
-    // }
-    // if ( !(w in wordToChar) ) {
-    //     wordToChar[w] = ""
-    // }
-
-    if (c in charToWord && charToWord[c] !== w) {
-      // console.log( c + " is not in charToWord. " + w )
+class Solution {
+  /**
+   * @param {string} pattern
+   * @param {string} s
+   * @return {boolean}
+   */
+  wordPattern(pattern, s) {
+    const words = s.split(" "); // We need to create an array of words from the input s
+    // We need to make sure that the length of the list of words is equal to the length
+    // of the number of chars in the pattern string.
+    if (pattern.length !== words.length) {
       return false;
     }
 
-    // console.log(wordToChar[w])
-    // I had to add the object.hasOwnProperty(key) here... for some reason, it does not
-    // work without it. Ref: https://www.geeksforgeeks.org/how-to-get-a-key-in-a-javascript-object-by-its-value/
-    if (
-      w in wordToChar &&
-      wordToChar.hasOwnProperty(w) &&
-      wordToChar[w] !== c
-    ) {
-      // console.log( w + " is not in wordToChar. " + c )
-      return false;
-    }
+    // We'll use a JS Object to keep track of k/v pairs
+    let charToWord = {};
+    let wordToChar = {};
 
-    charToWord[c] = w;
-    wordToChar[w] = c;
+    // Since we know that both the pattern and words array should have the same length,
+    // we'll use the pattern lenght to bound the for-loop
+    for (let i = 0; i < pattern.length; i++) {
+      let c = pattern[i];
+      let w = words[i];
+
+      if (c in charToWord && charToWord[c] !== w) {
+        return false;
+      }
+
+      // I had to add the object.hasOwnProperty(key) here... for some reason, it does not
+      // work without it. Ref: https://www.geeksforgeeks.org/how-to-get-a-key-in-a-javascript-object-by-its-value/
+      if (
+        w in wordToChar &&
+        wordToChar.hasOwnProperty(w) &&
+        wordToChar[w] !== c
+      ) {
+        return false;
+      }
+
+      charToWord[c] = w;
+      wordToChar[w] = c;
+    }
+    return true;
   }
-  return true;
-};
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.wordPattern(record.pattern, record.s);
+  const pass = result === record.expected;
+
+  console.log(
+    `Input: pattern = ${JSON.stringify(record.pattern)}, s = ${JSON.stringify(
+      record.s
+    )}`
+  );
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new WordPatternRecord("abba", "dog cat cat dog", true),
+  new WordPatternRecord("abba", "dog cat cat fish", false),
+  new WordPatternRecord("aaaa", "dog cat cat dog", false),
+  new WordPatternRecord("abba", "dog dog dog dog", false),
+  new WordPatternRecord("a", "dog", true),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

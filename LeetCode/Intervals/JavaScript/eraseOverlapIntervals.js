@@ -27,39 +27,106 @@
 // TC: O(nlogn + n), we have to sort the intervals array first (nlogn) and visit each intervals (n)
 // SC: O(1) in place processing... disregarding the space required for sorting.
 
-/**
- * @param {number[][]} intervals
- * @return {number}
- */
-var eraseOverlapIntervals = function (intervals) {
-  // We need to sort the intervals in ascending order based on index zero of the intervals
-  // Index zero is the starting point and index 1 is the ending point
-  // [[start0, end0],[start1, end1],[start2, end2]...]
-  intervals.sort((a, b) => a[0] - b[0]);
-  // console.log(intervals)
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let res = 0;
-  // Let's save the previous end value. It is index 0, element 1 of the intervals array
-  let prevEnd = intervals[0][1];
-
-  // We want to start at index 1 of the intervals array..
-  // JS array slice method return all values of the array starting at index 1.
-  // We're using array deconstruction here
-  for (let [start, end] of intervals.slice(1)) {
-    // console.log(start, end)
-
-    // Check if the current start value is greater/equal to the previous end value
-    // This means that this interval is NOT overlapping with the previous interval.
-    // If it's less than the prevEnd, it IS overlapping.
-    // If overlapping, we need to remove this interval. To remove interval, we set
-    // a new prevEnd by taking the min of the current end and the previous end values
-    if (start >= prevEnd) {
-      prevEnd = end;
-    } else {
-      res += 1;
-      prevEnd = Math.min(end, prevEnd);
-    }
+class EraseOverlapIntervalsRecord {
+  constructor(intervals, expected) {
+    this.intervals = intervals;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {number[][]} intervals
+   * @return {number}
+   */
+  eraseOverlapIntervals(intervals) {
+    // We need to sort the intervals in ascending order based on index zero of the intervals
+    // Index zero is the starting point and index 1 is the ending point
+    // [[start0, end0],[start1, end1],[start2, end2]...]
+    intervals.sort((a, b) => a[0] - b[0]);
+    // console.log(intervals)
+
+    let res = 0;
+    // Let's save the previous end value. It is index 0, element 1 of the intervals array
+    let prevEnd = intervals[0][1];
+
+    // We want to start at index 1 of the intervals array..
+    // JS array slice method return all values of the array starting at index 1.
+    // We're using array deconstruction here
+    for (let [start, end] of intervals.slice(1)) {
+      // console.log(start, end)
+
+      // Check if the current start value is greater/equal to the previous end value
+      // This means that this interval is NOT overlapping with the previous interval.
+      // If it's less than the prevEnd, it IS overlapping.
+      // If overlapping, we need to remove this interval. To remove interval, we set
+      // a new prevEnd by taking the min of the current end and the previous end values
+      if (start >= prevEnd) {
+        prevEnd = end;
+      } else {
+        res += 1;
+        prevEnd = Math.min(end, prevEnd);
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  // The solution sorts the intervals in place, so we pass a clone to keep the record intact
+  const intervals = record.intervals.map((interval) => [...interval]);
+  const result = solution.eraseOverlapIntervals(intervals);
+  const pass = result === record.expected;
+
+  console.log(`Input: intervals = ${JSON.stringify(record.intervals)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new EraseOverlapIntervalsRecord(
+    [
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [1, 3],
+    ],
+    1
+  ),
+  new EraseOverlapIntervalsRecord(
+    [
+      [1, 2],
+      [1, 2],
+      [1, 2],
+    ],
+    2
+  ),
+  new EraseOverlapIntervalsRecord(
+    [
+      [1, 2],
+      [2, 3],
+    ],
+    0
+  ),
+  new EraseOverlapIntervalsRecord([[1, 2]], 0),
+  new EraseOverlapIntervalsRecord(
+    [
+      [1, 100],
+      [11, 22],
+      [1, 11],
+      [2, 12],
+    ],
+    2
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

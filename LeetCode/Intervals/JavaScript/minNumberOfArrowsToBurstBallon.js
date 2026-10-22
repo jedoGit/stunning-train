@@ -33,40 +33,110 @@
 // TC: O(nlogn) due to sorting
 // SC: O(1) in place processing... disregarding the space required for sorting
 
-/**
- * @param {number[][]} points
- * @return {number}
- */
-var findMinArrowShots = function (points) {
-  // What we need to do is:
-  // 1. Sort the intervals by their starting point: [start, end]
-  // 2. Detect if there are overlapping intervals
-  // 3. If overlapping, we want to merge them. We want to take the intersection of the overlapping intervals:
-  //    ex. [1,7] intersect [2,8] => [2,7] , [1,7] intersect [2,5] => [2,5]
-  // 4. Count the number of intersections we have and the intervals that do not have an intersection
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  points.sort((a, b) => a[0] - b[0]);
-
-  let res = points.length; // we'll initially assume that we need an arrow for each interval. We'll decrement each time we see an intersect
-  let prev = points[0];
-
-  // Let's start at the element #1 of the input array
-  // For each iteration, we compare the previous interval from the current one and update the previous interval
-  for (let i = 1; i < points.length; i++) {
-    const curr = points[i];
-
-    // At this point, we know that our array is sorted by the starting point
-    // Let's compare the starting point of our current interval from the previous if they are overlapping
-    // It's overlapping if the start of the current is less than or equal to the end of the previous
-    if (curr[0] <= prev[1]) {
-      // We know it's overlapping, so let's decrement the arrow count
-      res -= 1;
-      // Let's get the intersection of the intervals
-      // The new prev is the intersection
-      prev = [curr[0], Math.min(prev[1], curr[1])];
-    } else {
-      prev = curr;
-    }
+class MinNumberOfArrowsToBurstBallonRecord {
+  constructor(points, expected) {
+    this.points = points;
+    this.expected = expected;
   }
-  return res;
-};
+}
+
+class Solution {
+  /**
+   * @param {number[][]} points
+   * @return {number}
+   */
+  findMinArrowShots(points) {
+    // What we need to do is:
+    // 1. Sort the intervals by their starting point: [start, end]
+    // 2. Detect if there are overlapping intervals
+    // 3. If overlapping, we want to merge them. We want to take the intersection of the overlapping intervals:
+    //    ex. [1,7] intersect [2,8] => [2,7] , [1,7] intersect [2,5] => [2,5]
+    // 4. Count the number of intersections we have and the intervals that do not have an intersection
+
+    points.sort((a, b) => a[0] - b[0]);
+
+    let res = points.length; // we'll initially assume that we need an arrow for each interval. We'll decrement each time we see an intersect
+    let prev = points[0];
+
+    // Let's start at the element #1 of the input array
+    // For each iteration, we compare the previous interval from the current one and update the previous interval
+    for (let i = 1; i < points.length; i++) {
+      const curr = points[i];
+
+      // At this point, we know that our array is sorted by the starting point
+      // Let's compare the starting point of our current interval from the previous if they are overlapping
+      // It's overlapping if the start of the current is less than or equal to the end of the previous
+      if (curr[0] <= prev[1]) {
+        // We know it's overlapping, so let's decrement the arrow count
+        res -= 1;
+        // Let's get the intersection of the intervals
+        // The new prev is the intersection
+        prev = [curr[0], Math.min(prev[1], curr[1])];
+      } else {
+        prev = curr;
+      }
+    }
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  // The solution sorts the points in place, so we pass a clone to keep the record intact
+  const points = record.points.map((point) => [...point]);
+  const result = solution.findMinArrowShots(points);
+  const pass = result === record.expected;
+
+  console.log(`Input: points = ${JSON.stringify(record.points)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MinNumberOfArrowsToBurstBallonRecord(
+    [
+      [10, 16],
+      [2, 8],
+      [1, 6],
+      [7, 12],
+    ],
+    2
+  ),
+  new MinNumberOfArrowsToBurstBallonRecord(
+    [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+      [7, 8],
+    ],
+    4
+  ),
+  new MinNumberOfArrowsToBurstBallonRecord(
+    [
+      [1, 2],
+      [2, 3],
+      [3, 4],
+      [4, 5],
+    ],
+    2
+  ),
+  new MinNumberOfArrowsToBurstBallonRecord([[1, 2]], 1),
+  new MinNumberOfArrowsToBurstBallonRecord(
+    [
+      [1, 100],
+      [11, 22],
+      [1, 11],
+      [2, 12],
+    ],
+    1
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

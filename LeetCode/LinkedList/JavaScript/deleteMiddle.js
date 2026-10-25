@@ -36,36 +36,96 @@
 // TC: O(n) we're traverse the LL to find the middle
 // SC: O(1) we're not creating new memory
 
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-var deleteMiddle = function (head) {
-  // Edge cases
-  if (!head || !head.next) return null;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We'll use two pointers, one fast and the other slow.
-  // The slow pointer will be used to find the middle node of the LL
-  let slowPtr = head;
-  let fastPtr = head.next.next; // We want to the fast pointer move 2 steps ahead so we find the prev node of the middle node
+class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
 
-  // Let's traverse the Singly LL and find the middle
-  while (fastPtr && fastPtr.next) {
-    slowPtr = slowPtr.next;
-    fastPtr = fastPtr.next.next;
+class DeleteMiddleRecord {
+  constructor(head, expected) {
+    this.head = head;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {ListNode} head
+   * @return {ListNode}
+   */
+  deleteMiddle(head) {
+    // Edge cases
+    if (!head || !head.next) return null;
+
+    // We'll use two pointers, one fast and the other slow.
+    // The slow pointer will be used to find the middle node of the LL
+    let slowPtr = head;
+    let fastPtr = head.next.next; // We want to the fast pointer move 2 steps ahead so we find the prev node of the middle node
+
+    // Let's traverse the Singly LL and find the middle
+    while (fastPtr && fastPtr.next) {
+      slowPtr = slowPtr.next;
+      fastPtr = fastPtr.next.next;
+    }
+
+    // We found the node prev to the middle node
+    // We'll start deleting the middle note
+    slowPtr.next = slowPtr.next.next;
+
+    // Return the head
+    return head;
+  }
+}
+
+function buildList(values) {
+  const dummy = new ListNode();
+  let current = dummy;
+
+  values.forEach((value) => {
+    current.next = new ListNode(value);
+    current = current.next;
+  });
+
+  return dummy.next;
+}
+
+function listToArray(head) {
+  const values = [];
+  let current = head;
+
+  while (current) {
+    values.push(current.val);
+    current = current.next;
   }
 
-  // We found the node prev to the middle node
-  // We'll start deleting the middle note
-  slowPtr.next = slowPtr.next.next;
+  return values;
+}
 
-  // Return the head
-  return head;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = listToArray(solution.deleteMiddle(buildList(record.head)));
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: head = ${JSON.stringify(record.head)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new DeleteMiddleRecord([1, 3, 4, 7, 1, 2, 6], [1, 3, 4, 1, 2, 6]),
+  new DeleteMiddleRecord([1, 2, 3, 4], [1, 2, 4]),
+  new DeleteMiddleRecord([2, 1], [2]),
+  new DeleteMiddleRecord([1], []),
+  new DeleteMiddleRecord([1, 2, 3, 4, 5], [1, 2, 4, 5]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

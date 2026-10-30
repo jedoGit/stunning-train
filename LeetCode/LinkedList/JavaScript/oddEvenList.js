@@ -22,42 +22,104 @@
 
 // TC: O(n) we're traversing the LL
 // SC: O(1) in place processing
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @return {ListNode}
- */
-var oddEvenList = function (head) {
-  if (!head) return head;
 
-  // From the requirements, the first node is considered odd, the second node is even.
-  // We'll defince our indices like this.
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let odd = head;
-  let even = head.next;
-  let evenHead = even; // We need to save the even head so we can connect the odd LL to the even LL later
+class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
 
-  // We only check for the even node. If there's only 1 node, then it's an odd node
-  while (even && even.next) {
-    // Point the odd.next pointer to the next odd node
-    odd.next = even.next;
-    // Move the odd pointer to the next odd node
-    odd = odd.next;
-    // Point the even.next pointer to the next even node
-    even.next = odd.next;
-    // Move the even pointer to the next even node
-    even = even.next;
+class OddEvenListRecord {
+  constructor(head, expected) {
+    this.head = head;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {ListNode} head
+   * @return {ListNode}
+   */
+  oddEvenList(head) {
+    if (!head) return head;
+
+    // From the requirements, the first node is considered odd, the second node is even.
+    // We'll defince our indices like this.
+
+    let odd = head;
+    let even = head.next;
+    let evenHead = even; // We need to save the even head so we can connect the odd LL to the even LL later
+
+    // We only check for the even node. If there's only 1 node, then it's an odd node
+    while (even && even.next) {
+      // Point the odd.next pointer to the next odd node
+      odd.next = even.next;
+      // Move the odd pointer to the next odd node
+      odd = odd.next;
+      // Point the even.next pointer to the next even node
+      even.next = odd.next;
+      // Move the even pointer to the next even node
+      even = even.next;
+    }
+
+    // After exiting the while loop, we know that the even LL is terminated with a null
+    // We need to link the odd LL to the even LL.
+    odd.next = evenHead;
+
+    return head;
+  }
+}
+
+function buildList(values) {
+  const dummy = new ListNode();
+  let current = dummy;
+
+  values.forEach((value) => {
+    current.next = new ListNode(value);
+    current = current.next;
+  });
+
+  return dummy.next;
+}
+
+function listToArray(head) {
+  const values = [];
+  let current = head;
+
+  while (current) {
+    values.push(current.val);
+    current = current.next;
   }
 
-  // After exiting the while loop, we know that the even LL is terminated with a null
-  // We need to link the odd LL to the even LL.
-  odd.next = evenHead;
+  return values;
+}
 
-  return head;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = listToArray(solution.oddEvenList(buildList(record.head)));
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: head = ${JSON.stringify(record.head)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new OddEvenListRecord([1, 2, 3, 4, 5], [1, 3, 5, 2, 4]),
+  new OddEvenListRecord([2, 1, 3, 5, 6, 4, 7], [2, 3, 6, 7, 1, 5, 4]),
+  new OddEvenListRecord([], []),
+  new OddEvenListRecord([1], [1]),
+  new OddEvenListRecord([1, 2], [1, 2]),
+  new OddEvenListRecord([1, 2, 3, 4], [1, 3, 2, 4]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

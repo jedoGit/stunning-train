@@ -37,73 +37,119 @@
 // TC: O(n), we're looping through the LL 3 times to find the middle, reverse the 2nd half and compute the max
 // SC: O(1), In place processing
 
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @return {number}
- */
-var pairSum = function (head) {
-  if (!head || !head.next) return head;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Find the middle of the LL
-  // We'll use a fast and slow pointer to
-  // find the middle of the LL
-
-  let slow = head;
-  let fast = head.next.next;
-
-  while (fast && fast.next) {
-    slow = slow.next;
-    fast = fast.next.next;
+class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
   }
+}
 
-  //  console.log("slow: " + slow.val)
-  // //  if(!fast.val) console.log("fast: " + fast.val)
-
-  // Severe and Reverse the 2nd half of the LL
-  // We'll use 2 pointers a prev and cur pointer
-  // to reverse the nodes.
-  // At this point, the head of the 2nd half of the LL is the slow pointer
-
-  let prev = null;
-  let cur = slow.next;
-
-  // We want to severe the slow.next pointer so it's not connected to the the 2nd half of the LL
-  slow.next = null;
-
-  while (cur) {
-    // Let's save the node pointed by cur.next
-    let temp = cur.next;
-    // Let's point cur.next to prev
-    cur.next = prev;
-    // Let's move prev to cur
-    prev = cur;
-    // Let's move cur to the node pointed by temp
-    cur = temp;
+class PairSumRecord {
+  constructor(head, expected) {
+    this.head = head;
+    this.expected = expected;
   }
+}
 
-  // At this point, the prev pointer is the head of the reversed 2nd half of LL. The 2nd half is terminated with a null.
-  // Note, the 1st half is terminated with a null.
+class Solution {
+  /**
+   * @param {ListNode} head
+   * @return {number}
+   */
+  pairSum(head) {
+    if (!head || !head.next) return head;
 
-  // Compute the sum of each nodes of the first and 2nd half of the LL
-  // Update the max value every time you see a max value
+    // Find the middle of the LL
+    // We'll use a fast and slow pointer to
+    // find the middle of the LL
 
-  // head is the head of the 1st half and prev is the head of the 2nd half. Both are null terminated
-  let maxVal = -Infinity;
-  let first = head;
-  let second = prev;
+    let slow = head;
+    let fast = head.next.next;
 
-  while (first && second) {
-    maxVal = Math.max(maxVal, first.val + second.val);
-    first = first.next;
-    second = second.next;
+    while (fast && fast.next) {
+      slow = slow.next;
+      fast = fast.next.next;
+    }
+
+    // Severe and Reverse the 2nd half of the LL
+    // We'll use 2 pointers a prev and cur pointer
+    // to reverse the nodes.
+    // At this point, the head of the 2nd half of the LL is the slow pointer
+
+    let prev = null;
+    let cur = slow.next;
+
+    // We want to severe the slow.next pointer so it's not connected to the the 2nd half of the LL
+    slow.next = null;
+
+    while (cur) {
+      // Let's save the node pointed by cur.next
+      let temp = cur.next;
+      // Let's point cur.next to prev
+      cur.next = prev;
+      // Let's move prev to cur
+      prev = cur;
+      // Let's move cur to the node pointed by temp
+      cur = temp;
+    }
+
+    // At this point, the prev pointer is the head of the reversed 2nd half of LL. The 2nd half is terminated with a null.
+    // Note, the 1st half is terminated with a null.
+
+    // Compute the sum of each nodes of the first and 2nd half of the LL
+    // Update the max value every time you see a max value
+
+    // head is the head of the 1st half and prev is the head of the 2nd half. Both are null terminated
+    let maxVal = -Infinity;
+    let first = head;
+    let second = prev;
+
+    while (first && second) {
+      maxVal = Math.max(maxVal, first.val + second.val);
+      first = first.next;
+      second = second.next;
+    }
+
+    return maxVal;
   }
+}
 
-  return maxVal;
-};
+function buildList(values) {
+  const dummy = new ListNode();
+  let current = dummy;
+
+  values.forEach((value) => {
+    current.next = new ListNode(value);
+    current = current.next;
+  });
+
+  return dummy.next;
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.pairSum(buildList(record.head));
+  const pass = result === record.expected;
+
+  console.log(`Input: head = ${JSON.stringify(record.head)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new PairSumRecord([5, 4, 2, 1], 6),
+  new PairSumRecord([4, 2, 2, 3], 7),
+  new PairSumRecord([1, 100000], 100001),
+  new PairSumRecord([1, 2, 3, 4, 5, 6], 7),
+  new PairSumRecord([1, 2, 3, 4, 5, 6, 7, 8], 9),
+  new PairSumRecord([1, 5, 2, 9], 10),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

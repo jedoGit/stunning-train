@@ -20,51 +20,114 @@
 // TC: O(n), we visit all input nodes
 // SC: O(1), in place processing
 
-/**
- * Definition for singly-linked list.
- * function ListNode(val, next) {
- *     this.val = (val===undefined ? 0 : val)
- *     this.next = (next===undefined ? null : next)
- * }
- */
-/**
- * @param {ListNode} head
- * @param {number} x
- * @return {ListNode}
- */
-var partition = function (head, x) {
-  let left = new ListNode(); // initialize to an empty node. This is our dummy left node
-  let right = new ListNode(); // Initialized to an empty node. This is our dummy right node
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let cur = head;
-  let curLeft = left;
-  let curRight = right;
+class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
 
-  // We'll traverse through all the nodes and filter the nodes.
-  // All nodes that have val less than x will be linked to the left dummy node, and the rest is on the right dummy node
-  // We need current pointers listed above
-  while (cur) {
-    // console.log(cur)
-    if (cur.val < x) {
-      // Connect this node to the left pointer
-      curLeft.next = cur;
-      curLeft = curLeft.next;
-    } else {
-      // Connect this node to the right pointer
-      curRight.next = cur;
-      curRight = curRight.next;
+class PartitionListRecord {
+  constructor(head, x, expected) {
+    this.head = head;
+    this.x = x;
+    this.expected = expected;
+  }
+}
+
+class Solution {
+  /**
+   * @param {ListNode} head
+   * @param {number} x
+   * @return {ListNode}
+   */
+  partition(head, x) {
+    let left = new ListNode(); // initialize to an empty node. This is our dummy left node
+    let right = new ListNode(); // Initialized to an empty node. This is our dummy right node
+
+    let cur = head;
+    let curLeft = left;
+    let curRight = right;
+
+    // We'll traverse through all the nodes and filter the nodes.
+    // All nodes that have val less than x will be linked to the left dummy node, and the rest is on the right dummy node
+    // We need current pointers listed above
+    while (cur) {
+      if (cur.val < x) {
+        // Connect this node to the left pointer
+        curLeft.next = cur;
+        curLeft = curLeft.next;
+      } else {
+        // Connect this node to the right pointer
+        curRight.next = cur;
+        curRight = curRight.next;
+      }
+
+      cur = cur.next;
     }
 
-    cur = cur.next;
+    // Last step is to connect the left dummy pointer to the right dummy pointer,
+    curLeft.next = right.next;
+    // Then, set curRight.next to null to create a new end node
+    curRight.next = null;
+
+    // We're done and return left.next
+    return left.next;
+  }
+}
+
+function buildList(values) {
+  const dummy = new ListNode();
+  let current = dummy;
+
+  values.forEach((value) => {
+    current.next = new ListNode(value);
+    current = current.next;
+  });
+
+  return dummy.next;
+}
+
+function listToArray(head) {
+  const values = [];
+  let current = head;
+
+  while (current) {
+    values.push(current.val);
+    current = current.next;
   }
 
-  // console.log(curRight, curLeft)
+  return values;
+}
 
-  // Last step is to connect the left dummy pointer to the right dummy pointer,
-  curLeft.next = right.next;
-  // Then, set curRight.next to null to create a new end node
-  curRight.next = null;
+function testSolution(record) {
+  const solution = new Solution();
+  const result = listToArray(
+    solution.partition(buildList(record.head), record.x)
+  );
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
 
-  // We're done and return left.next
-  return left.next;
-};
+  console.log(
+    `Input: head = ${JSON.stringify(record.head)}, x = ${record.x}`
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new PartitionListRecord([1, 4, 3, 2, 5, 2], 3, [1, 2, 2, 4, 3, 5]),
+  new PartitionListRecord([2, 1], 2, [1, 2]),
+  new PartitionListRecord([], 0, []),
+  new PartitionListRecord([1], 2, [1]),
+  new PartitionListRecord([3, 1, 2], 10, [3, 1, 2]),
+  new PartitionListRecord([3, 1, 2], -5, [3, 1, 2]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

@@ -35,37 +35,68 @@
 // TC: O(n)
 // SC: O(n)
 
-var StockSpanner = function () {
-  this.stack = []; // This will hold a pair array [price, span]
-};
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {number} price
- * @return {number}
- */
-StockSpanner.prototype.next = function (price) {
-  // Let's initialize the span variable to be 1. This is the default value daily.
-  let span = 1;
+class StockSpannerRecord {
+  constructor(prices, expected) {
+    this.prices = prices;
+    this.expected = expected;
+  }
+}
 
-  // Let's check the stack if it's not empty and if the last element, check the price if it's less than the current price
-  // The element in the stack is a pair array [price, span], so we'll check index 0 to check to price. Index 1 is the span value of the pair.
-  while (this.stack.length > 0 && this.stack.at(-1)[0] <= price) {
-    // We keep popping the top of the stack until the price is greater than the current price
-    // Each time we pop, we add the value of the span we extracted from the elements to our span variable
-    span += this.stack.at(-1)[1];
-    this.stack.pop();
+class Solution {
+  constructor() {
+    this.stack = []; // This will hold a pair array [price, span]
   }
 
-  // We've popped all the elements and/or our the current price is less than what's in the stack,
-  // so we push the current price and the span we computed to our stack.
-  this.stack.push([price, span]);
+  /**
+   * @param {number} price
+   * @return {number}
+   */
+  next(price) {
+    // Let's initialize the span variable to be 1. This is the default value daily.
+    let span = 1;
 
-  // We return the span we computed for today's price. It will be in the top of the stack and index 1 of that element.
-  return this.stack.at(-1)[1];
-};
+    // Let's check the stack if it's not empty and if the last element, check the price if it's less than the current price
+    // The element in the stack is a pair array [price, span], so we'll check index 0 to check to price. Index 1 is the span value of the pair.
+    while (this.stack.length > 0 && this.stack.at(-1)[0] <= price) {
+      // We keep popping the top of the stack until the price is greater than the current price
+      // Each time we pop, we add the value of the span we extracted from the elements to our span variable
+      span += this.stack.at(-1)[1];
+      this.stack.pop();
+    }
 
-/**
- * Your StockSpanner object will be instantiated and called as such:
- * var obj = new StockSpanner()
- * var param_1 = obj.next(price)
- */
+    // We've popped all the elements and/or our the current price is less than what's in the stack,
+    // so we push the current price and the span we computed to our stack.
+    this.stack.push([price, span]);
+
+    // We return the span we computed for today's price. It will be in the top of the stack and index 1 of that element.
+    return this.stack.at(-1)[1];
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = record.prices.map((price) => solution.next(price));
+  const status =
+    JSON.stringify(result) === JSON.stringify(record.expected) ? Result.PASS : Result.FAIL;
+
+  console.log(`Input: prices = ${JSON.stringify(record.prices)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(status);
+}
+
+const records = [
+  new StockSpannerRecord([100, 80, 60, 70, 60, 75, 85], [1, 1, 1, 2, 1, 4, 6]),
+  new StockSpannerRecord([7, 2, 1, 2, 2], [1, 1, 1, 3, 4]),
+  new StockSpannerRecord([7, 34, 1, 2, 8], [1, 2, 1, 2, 3]),
+  new StockSpannerRecord([1, 2, 3, 4], [1, 2, 3, 4]),
+  new StockSpannerRecord([100], [1]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

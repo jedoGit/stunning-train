@@ -22,26 +22,62 @@
 // TC: O(n) because we'll loop through the gain one time
 // SC: O(n) because we create an array of the size of the input array
 
-/**
- * @param {number[]} gain
- * @return {number}
- */
-var largestAltitude = function (gain) {
-  // We will be using prefix sum algorithm. In prefix sum, the 0th element of the
-  // computed array is always 0. In this case, we're computing for the altitude for
-  // each waypoint. Each waypoint, there is a gain.
-  let alt = [0];
-  let maxAlt = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We loop through formula of the prefix sum
-  // computed[n+1] = computed[n] + value[n]
-  for (let i = 0; i < gain.length; i++) {
-    alt[i + 1] = alt[i] + gain[i];
-
-    // After every computation of the altitude, we save the max altitude we see
-    maxAlt = Math.max(maxAlt, alt[i + 1]);
+class LargestAltitudeRecord {
+  constructor(gain, expected) {
+    this.gain = gain;
+    this.expected = expected;
   }
+}
 
-  // Return the max altitude
-  return maxAlt;
-};
+class Solution {
+  /**
+   * @param {number[]} gain
+   * @return {number}
+   */
+  largestAltitude(gain) {
+    // We will be using prefix sum algorithm. In prefix sum, the 0th element of the
+    // computed array is always 0. In this case, we're computing for the altitude for
+    // each waypoint. Each waypoint, there is a gain.
+    let alt = [0];
+    let maxAlt = 0;
+
+    // We loop through formula of the prefix sum
+    // computed[n+1] = computed[n] + value[n]
+    for (let i = 0; i < gain.length; i++) {
+      alt[i + 1] = alt[i] + gain[i];
+
+      // After every computation of the altitude, we save the max altitude we see
+      maxAlt = Math.max(maxAlt, alt[i + 1]);
+    }
+
+    // Return the max altitude
+    return maxAlt;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.largestAltitude([...record.gain]);
+  const pass = result === record.expected;
+
+  console.log(`Input: gain = ${JSON.stringify(record.gain)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new LargestAltitudeRecord([-5, 1, 5, 0, -7], 1),
+  new LargestAltitudeRecord([-4, -3, -2, -1, 4, 3, 2], 0),
+  new LargestAltitudeRecord([1, 2, 3], 6),
+  new LargestAltitudeRecord([-1], 0),
+  new LargestAltitudeRecord([10, -5, 8], 13),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

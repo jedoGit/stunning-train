@@ -37,40 +37,76 @@
 // TC: O(n) we're looping through the input array and on our queues
 // SC: O(n) we're creating arrays to hold our senate party members
 
-/**
- * @param {string} senate
- * @return {string}
- */
-var predictPartyVictory = function (senate) {
-  // We're going ot use queues
-  let radQ = [];
-  let dirQ = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Populate the q with indices of the senators
-  for (let i = 0; i < senate.length; i++) {
-    if (senate.at(i) === "R") {
-      radQ.push(i);
-    } else {
-      dirQ.push(i);
-    }
+class PredictPartyVictoryRecord {
+  constructor(senate, expected) {
+    this.senate = senate;
+    this.expected = expected;
   }
+}
 
-  // Simulate the voting process
-  while (radQ.length > 0 && dirQ.length > 0) {
-    let rIdx = radQ.shift();
-    let dIdx = dirQ.shift();
+class Solution {
+  /**
+   * @param {string} senate
+   * @return {string}
+   */
+  predictPartyVictory(senate) {
+    // We're going ot use queues
+    let radQ = [];
+    let dirQ = [];
 
-    // The senator with the larger index will be eliminated
-    // Since we removed the tail of the queues, we add the smaller index back to the head of the winning queue
-    // Here, we add the length of the senate string so we don't overwrite the index of the last senate we
-    // added from the prior step
-    if (rIdx < dIdx) {
-      radQ.push(rIdx + senate.length);
-    } else {
-      dirQ.push(dIdx + senate.length);
+    // Populate the q with indices of the senators
+    for (let i = 0; i < senate.length; i++) {
+      if (senate.at(i) === "R") {
+        radQ.push(i);
+      } else {
+        dirQ.push(i);
+      }
     }
-  }
 
-  // Check the winner
-  return radQ.length < 1 ? "Dire" : "Radiant";
-};
+    // Simulate the voting process
+    while (radQ.length > 0 && dirQ.length > 0) {
+      let rIdx = radQ.shift();
+      let dIdx = dirQ.shift();
+
+      // The senator with the larger index will be eliminated
+      // Since we removed the tail of the queues, we add the smaller index back to the head of the winning queue
+      // Here, we add the length of the senate string so we don't overwrite the index of the last senate we
+      // added from the prior step
+      if (rIdx < dIdx) {
+        radQ.push(rIdx + senate.length);
+      } else {
+        dirQ.push(dIdx + senate.length);
+      }
+    }
+
+    // Check the winner
+    return radQ.length < 1 ? "Dire" : "Radiant";
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.predictPartyVictory(record.senate);
+  const pass = result === record.expected;
+
+  console.log(`Input: senate = ${JSON.stringify(record.senate)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new PredictPartyVictoryRecord("RD", "Radiant"),
+  new PredictPartyVictoryRecord("RDD", "Dire"),
+  new PredictPartyVictoryRecord("R", "Radiant"),
+  new PredictPartyVictoryRecord("D", "Dire"),
+  new PredictPartyVictoryRecord("DDRRR", "Dire"),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

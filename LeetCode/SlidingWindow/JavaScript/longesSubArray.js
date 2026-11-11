@@ -26,46 +26,82 @@
 // TC: O(n), we're looping through the array only one time
 // SC: O(1), in place processing
 
-/**
- * @param {number[]} nums
- * @return {number}
- */
-var longestSubarray = function (nums) {
-  const maxZeroRequired = 1;
-  let numsLen = nums.length;
-  let rp = 0;
-  let lp = 0;
-  let zeroCount = 0;
-  let currLen = 0;
-  let maxLen = -Infinity;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (rp < numsLen) {
-    // We start sliding the right pointer and count all the zeroes we see
-    if (nums[rp] === 0) {
-      zeroCount++;
-    }
-
-    // At this point, we counted zeroes greater than 1 inside our window.
-    // So, we want to slide the left pointer to the right until there
-    // is only one zero inside the window
-    while (zeroCount > maxZeroRequired) {
-      if (nums[lp] === 0) {
-        zeroCount--;
-      }
-      lp++;
-    }
-
-    // In this window, there should only be one 0
-    // So, our current length can be calculated as right pointer - left pointer.
-    // Since we're zero based index, this works.
-    currLen = rp - lp;
-
-    // Save the max length
-    maxLen = Math.max(maxLen, currLen);
-
-    // Slide the right pointer
-    rp++;
+class LongestSubarrayRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return maxLen;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @return {number}
+   */
+  longestSubarray(nums) {
+    const maxZeroRequired = 1;
+    let numsLen = nums.length;
+    let rp = 0;
+    let lp = 0;
+    let zeroCount = 0;
+    let currLen = 0;
+    let maxLen = -Infinity;
+
+    while (rp < numsLen) {
+      // We start sliding the right pointer and count all the zeroes we see
+      if (nums[rp] === 0) {
+        zeroCount++;
+      }
+
+      // At this point, we counted zeroes greater than 1 inside our window.
+      // So, we want to slide the left pointer to the right until there
+      // is only one zero inside the window
+      while (zeroCount > maxZeroRequired) {
+        if (nums[lp] === 0) {
+          zeroCount--;
+        }
+        lp++;
+      }
+
+      // In this window, there should only be one 0
+      // So, our current length can be calculated as right pointer - left pointer.
+      // Since we're zero based index, this works.
+      currLen = rp - lp;
+
+      // Save the max length
+      maxLen = Math.max(maxLen, currLen);
+
+      // Slide the right pointer
+      rp++;
+    }
+
+    return maxLen;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.longestSubarray(record.nums);
+  const pass = result === record.expected;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new LongestSubarrayRecord([1, 1, 0, 1], 3),
+  new LongestSubarrayRecord([0, 1, 1, 1, 0, 1, 1, 0, 1], 5),
+  new LongestSubarrayRecord([1, 1, 1], 2),
+  new LongestSubarrayRecord([0, 0, 0], 0),
+  new LongestSubarrayRecord([1], 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

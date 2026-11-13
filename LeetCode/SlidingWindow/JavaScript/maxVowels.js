@@ -27,52 +27,89 @@
 // TC: O(n) we're looping only one time
 // SC: O(1) we're doing in-place processing, but we're using a Set as lookup table for our vowels
 
-/**
- * @param {string} s
- * @param {number} k
- * @return {number}
- */
-var maxVowels = function (s, k) {
-  let rp = 0;
-  let lp = 0;
-  let maxVowelCount = -Infinity;
-  let vowelSet = new Set(["a", "e", "i", "o", "u"]);
-  let windowVowelCount = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let' find the vowels on the first k elements
-  // then update the maxVowelCount
+class MaxVowelsRecord {
+  constructor(s, k, expected) {
+    this.s = s;
+    this.k = k;
+    this.expected = expected;
+  }
+}
 
-  while (rp < k) {
-    if (vowelSet.has(s[rp])) {
-      windowVowelCount++;
+class Solution {
+  /**
+   * @param {string} s
+   * @param {number} k
+   * @return {number}
+   */
+  maxVowels(s, k) {
+    let rp = 0;
+    let lp = 0;
+    let maxVowelCount = -Infinity;
+    let vowelSet = new Set(["a", "e", "i", "o", "u"]);
+    let windowVowelCount = 0;
+
+    // Let' find the vowels on the first k elements
+    // then update the maxVowelCount
+
+    while (rp < k) {
+      if (vowelSet.has(s[rp])) {
+        windowVowelCount++;
+      }
+      rp++;
     }
-    rp++;
+
+    // At this point, rp has a value of k (we're 0 index based)
+
+    maxVowelCount = windowVowelCount;
+
+    // Now that we created the window, we' continue by using the sliding window
+    // algorithm. If you do a bruteforce calculation, you'll notice that
+    // algorithm is=> windowVowelCount = windowVowelCount - the vowel leaving the sliding window
+    //                             + the vowel entering the sliding window
+    while (rp < s.length) {
+      let vowelLeaving = vowelSet.has(s[lp]) ? 1 : 0;
+      let vowelEntering = vowelSet.has(s[rp]) ? 1 : 0;
+
+      windowVowelCount =
+        windowVowelCount - // This is the previous windowVowelCount
+        vowelLeaving + // This is the vowel that left the sliding window
+        vowelEntering; // This is the vowel entering the sliding window
+
+      // Slide the window
+      lp++;
+      rp++;
+
+      // Update the maxVowelCount
+      maxVowelCount = Math.max(maxVowelCount, windowVowelCount);
+    }
+
+    return maxVowelCount;
   }
+}
 
-  // At this point, rp has a value of k (we're 0 index based)
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxVowels(record.s, record.k);
+  const pass = result === record.expected;
 
-  maxVowelCount = windowVowelCount;
+  console.log(`Input: s = ${JSON.stringify(record.s)}, k = ${record.k}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
 
-  // Now that we created the window, we' continue by using the sliding window
-  // algorithm. If you do a bruteforce calculation, you'll notice that
-  // algorithm is=> windowVowelCount = windowVowelCount - the vowel leaving the sliding window
-  //                             + the vowel entering the sliding window
-  while (rp < s.length) {
-    let vowelLeaving = vowelSet.has(s[lp]) ? 1 : 0;
-    let vowelEntering = vowelSet.has(s[rp]) ? 1 : 0;
+const records = [
+  new MaxVowelsRecord("abciiidef", 3, 3),
+  new MaxVowelsRecord("aeiou", 2, 2),
+  new MaxVowelsRecord("leetcode", 3, 2),
+  new MaxVowelsRecord("a", 1, 1),
+  new MaxVowelsRecord("rhythms", 4, 0),
+];
 
-    windowVowelCount =
-      windowVowelCount - // This is the previous windowVowelCount
-      vowelLeaving + // This is the vowel that left the sliding window
-      vowelEntering; // This is the vowel entering the sliding window
-
-    // Slide the window
-    lp++;
-    rp++;
-
-    // Update the maxVowelCount
-    maxVowelCount = Math.max(maxVowelCount, windowVowelCount);
-  }
-
-  return maxVowelCount;
-};
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

@@ -27,42 +27,79 @@
 // TC: O(n), loop through the input only once... we're increasing the window and decreasing it
 // SC: O(1) , in place processing
 
-/**
- * @param {number} target
- * @param {number[]} nums
- * @return {number}
- */
-var minSubArrayLen = function (target, nums) {
-  // Using Sliding window method...
-  // We'll set the l and r pointer to start at 0.
-  // Then we move the r pointer and each time,
-  // we compute if the total is close to the target value
-  // If total is less than target, we don't move the l pointer... we move the r pointer.
-  // If total is greater than or equal to the target, we don't move the r pointer, we move the l pointer and at the
-  // same time, we subtract the value that left the window.
-  // Since we need to find the minimum length of the subarray, we compute the minimun length when
-  // the total is greater than or equal to the target
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let l = 0;
-  let total = 0;
-  let res = Infinity;
-  const n = nums.length;
-
-  // We start the sliding window by moving r.,..
-  for (let r = 0; r < n; r += 1) {
-    // We compute the total every time we move r...
-    total += nums[r];
-    // We then check if the total is greater or equal to the target
-    // If so, we keep on moving the l pointer until it's not
-    while (total >= target) {
-      // Every time we move the l pointer, we update the resulting minimum length
-      // Also, update the total... since we shrunk our window, any element that move out of the window need to be
-      // subtracted from the total
-      res = Math.min(r - l + 1, res);
-      total -= nums[l];
-      l += 1;
-    }
+class MinSubArrayLenRecord {
+  constructor(target, nums, expected) {
+    this.target = target;
+    this.nums = nums;
+    this.expected = expected;
   }
+}
 
-  return res === Infinity ? 0 : res;
-};
+class Solution {
+  /**
+   * @param {number} target
+   * @param {number[]} nums
+   * @return {number}
+   */
+  minSubArrayLen(target, nums) {
+    // Using Sliding window method...
+    // We'll set the l and r pointer to start at 0.
+    // Then we move the r pointer and each time,
+    // we compute if the total is close to the target value
+    // If total is less than target, we don't move the l pointer... we move the r pointer.
+    // If total is greater than or equal to the target, we don't move the r pointer, we move the l pointer and at the
+    // same time, we subtract the value that left the window.
+    // Since we need to find the minimum length of the subarray, we compute the minimun length when
+    // the total is greater than or equal to the target
+
+    let l = 0;
+    let total = 0;
+    let res = Infinity;
+    const n = nums.length;
+
+    // We start the sliding window by moving r.,..
+    for (let r = 0; r < n; r += 1) {
+      // We compute the total every time we move r...
+      total += nums[r];
+      // We then check if the total is greater or equal to the target
+      // If so, we keep on moving the l pointer until it's not
+      while (total >= target) {
+        // Every time we move the l pointer, we update the resulting minimum length
+        // Also, update the total... since we shrunk our window, any element that move out of the window need to be
+        // subtracted from the total
+        res = Math.min(r - l + 1, res);
+        total -= nums[l];
+        l += 1;
+      }
+    }
+
+    return res === Infinity ? 0 : res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minSubArrayLen(record.target, [...record.nums]);
+  const pass = result === record.expected;
+
+  console.log(`Input: target = ${record.target}, nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MinSubArrayLenRecord(7, [2, 3, 1, 2, 4, 3], 2),
+  new MinSubArrayLenRecord(4, [1, 4, 4], 1),
+  new MinSubArrayLenRecord(11, [1, 1, 1, 1, 1, 1, 1, 1], 0),
+  new MinSubArrayLenRecord(5, [5], 1),
+  new MinSubArrayLenRecord(15, [1, 2, 3, 4, 5], 5),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

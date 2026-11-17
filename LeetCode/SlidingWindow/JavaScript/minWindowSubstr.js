@@ -33,87 +33,117 @@
 // TC: O(n) we're doing one pass of all elements in s
 // SC: O(n) worst case scenario we have unique elements we we fill our maps
 
-/**
- * @param {string} s
- * @param {string} t
- * @return {string}
- */
-var minWindow = function (s, t) {
-  // Edge case
-  if (t === "") return "";
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  let countT = {}; // This represents the chars we need to have
-  let window = {}; // This represent the chars we currently have on the window. We update it as we slide our window.
-
-  // Get a count of each chars of t. This represents the chars we need for the substring
-  for (const c of t) {
-    if (countT[c]) {
-      countT[c] += 1;
-    } else {
-      countT[c] = 1;
-    }
+class MinWindowSubstrRecord {
+  constructor(s, t, expected) {
+    this.s = s;
+    this.t = t;
+    this.expected = expected;
   }
+}
 
-  // console.log(countT)
+class Solution {
+  /**
+   * @param {string} s
+   * @param {string} t
+   * @return {string}
+   */
+  minWindow(s, t) {
+    // Edge case
+    if (t === "") return "";
 
-  let have = 0; // We update it every time we see chars that we need
-  let need = Object.keys(countT).length; // This represent the number of chars that we need for the substring. The countT map holds the count of the chars we need. Because this is an object, we'll get the length using Object.keys(obj1).length
-  let res = [-1, -1]; // Initialized with default
-  let resLen = Infinity; // Initialize with large value
-  let l = 0; // This is our l pointer
+    let countT = {}; // This represents the chars we need to have
+    let window = {}; // This represent the chars we currently have on the window. We update it as we slide our window.
 
-  // We'll use sliding window to move through chars in s
-  // We'll move the r pointer first until we find all the chars in t
-  // Then, we'll the l pointer until we find a substr that is minimum in length
-  for (let r = 0; r < s.length; r++) {
-    const c = s[r];
-    // console.log(c)
-
-    // Check our window map if we have the current char and update it
-    if (window[c]) {
-      window[c] += 1;
-    } else {
-      window[c] = 1;
+    // Get a count of each chars of t. This represents the chars we need for the substring
+    for (const c of t) {
+      if (countT[c]) {
+        countT[c] += 1;
+      } else {
+        countT[c] = 1;
+      }
     }
 
-    // console.log(window)
+    let have = 0; // We update it every time we see chars that we need
+    let need = Object.keys(countT).length; // This represent the number of chars that we need for the substring. The countT map holds the count of the chars we need. Because this is an object, we'll get the length using Object.keys(obj1).length
+    let res = [-1, -1]; // Initialized with default
+    let resLen = Infinity; // Initialize with large value
+    let l = 0; // This is our l pointer
 
-    // Check if this satisfy the condition?
-    // Check if c is in our countT map and
-    // Check if the count of c is equal, then update our have count
-    if (c in countT && window[c] === countT[c]) {
-      have += 1;
-      // console.log("have: ", have)
-    }
+    // We'll use sliding window to move through chars in s
+    // We'll move the r pointer first until we find all the chars in t
+    // Then, we'll the l pointer until we find a substr that is minimum in length
+    for (let r = 0; r < s.length; r++) {
+      const c = s[r];
 
-    // console.log("have: " + have + "need: " + need)
-    // Let's move the l pointers and update our result
-    while (have === need) {
-      if (r - l + 1 < resLen) {
-        res = [l, r];
-        resLen = r - l + 1;
+      // Check our window map if we have the current char and update it
+      if (window[c]) {
+        window[c] += 1;
+      } else {
+        window[c] = 1;
       }
 
-      // console.log("res1: ", res )
-      // We shrink the window by moving the l pointer
-      // Make sure we remove chars from the window map and update our have count
-      window[s[l]] -= 1;
-
-      // If count if s[l] is less in window than in countT map,
-      // we need to decrement our have variable
-      if (s[l] in countT && window[s[l]] < countT[s[l]]) {
-        have -= 1;
+      // Check if this satisfy the condition?
+      // Check if c is in our countT map and
+      // Check if the count of c is equal, then update our have count
+      if (c in countT && window[c] === countT[c]) {
+        have += 1;
       }
 
-      // Lastly, we increment our l pointer
-      l++;
+      // Let's move the l pointers and update our result
+      while (have === need) {
+        if (r - l + 1 < resLen) {
+          res = [l, r];
+          resLen = r - l + 1;
+        }
+
+        // We shrink the window by moving the l pointer
+        // Make sure we remove chars from the window map and update our have count
+        window[s[l]] -= 1;
+
+        // If count if s[l] is less in window than in countT map,
+        // we need to decrement our have variable
+        if (s[l] in countT && window[s[l]] < countT[s[l]]) {
+          have -= 1;
+        }
+
+        // Lastly, we increment our l pointer
+        l++;
+      }
     }
+
+    // We need to return the minimun substring, we get the index from the res array
+    let [lp, rp] = res;
+
+    // Check if resLen was updated, if so, we return the s starting from index l to r + 1, else and empty string
+    return resLen !== Infinity ? s.slice(lp, rp + 1) : "";
   }
+}
 
-  // We need to return the minimun substring, we get the index from the res array
-  let [lp, rp] = res;
-  // console.log("res2: ", lp, rp )
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.minWindow(record.s, record.t);
+  const pass = result === record.expected;
 
-  // Check if resLen was updated, if so, we return the s starting from index l to r + 1, else and empty string
-  return resLen !== Infinity ? s.slice(lp, rp + 1) : "";
-};
+  console.log(
+    `Input: s = ${JSON.stringify(record.s)}, t = ${JSON.stringify(record.t)}`
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MinWindowSubstrRecord("ADOBECODEBANC", "ABC", "BANC"),
+  new MinWindowSubstrRecord("a", "a", "a"),
+  new MinWindowSubstrRecord("a", "aa", ""),
+  new MinWindowSubstrRecord("ab", "b", "b"),
+  new MinWindowSubstrRecord("a", "", ""),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

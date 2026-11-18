@@ -48,78 +48,124 @@
 // TC: O(n) we're visiting each elements of s once
 // SC: O(n) worst case is each elements are unique and we add them to our maps
 
-/**
- * @param {string} s
- * @param {string[]} words
- * @return {number[]}
- */
-var findSubstring = function (s, words) {
-  // Edge case
-  if (s === "" || words === "") return [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // Let's get a map of the words we need to check
-  let word_freq = {};
-
-  for (let word of words) {
-    if (word_freq[word]) {
-      word_freq[word] += 1;
-    } else {
-      word_freq[word] = 1;
-    }
+class SubstringWithConcatenationRecord {
+  constructor(s, words, expected) {
+    this.s = s;
+    this.words = words;
+    this.expected = expected;
   }
+}
 
-  // We need these lengths in order to update our window
-  const word_len = words[0].length; // represents the length of word at index 0
-  const window_len = words.length * word_len; // represents the length of the window we need to check.
+class Solution {
+  /**
+   * @param {string} s
+   * @param {string[]} words
+   * @return {number[]}
+   */
+  findSubstring(s, words) {
+    // Edge case
+    if (s === "" || words === "") return [];
 
-  let res = [];
+    // Let's get a map of the words we need to check
+    let word_freq = {};
 
-  // We'll loop through each char of s and slide the window
-  // Let's create a window by using r + window_len
-  // In this window, let's set the current word of s and check of each word is in our need word list
-  for (let r = 0; r < s.length - window_len + 1; r++) {
-    let substr_freq = {};
-    let l = r;
-
-    // let's check window length at a time
-    while (l < r + window_len) {
-      // in our window, let's check the word we need
-      let cur_word = s.slice(l, l + word_len);
-
-      // If the current word does not exist in our required word map, we break the while loop
-      if (!(cur_word in word_freq)) {
-        // console.log("Not here!")
-        break;
-      }
-
-      // console.log(cur_word)
-
-      // At this point, the current word is in our required word list
-      // Now, let's create a map of our current word list.. This are the words we see in the window
-      if (substr_freq[cur_word]) {
-        substr_freq[cur_word] += 1;
+    for (let word of words) {
+      if (word_freq[word]) {
+        word_freq[word] += 1;
       } else {
-        substr_freq[cur_word] = 1;
+        word_freq[word] = 1;
       }
-
-      // console.log(substr_freq)
-
-      // Let's check if the number of words we see in our current word list is greater than the required word list
-      // If so, we found all the words we need and let's break out of the while loop
-      if (substr_freq[cur_word] > word_freq[cur_word]) {
-        break;
-      }
-
-      // We keep going and slide our window
-      l += word_len;
     }
 
-    // At ths point, we exited the while loop and our l and r + window_len pointer overlapped
-    // So we push index r to our results array
-    if (l === r + window_len) {
-      res.push(r);
+    // We need these lengths in order to update our window
+    const word_len = words[0].length; // represents the length of word at index 0
+    const window_len = words.length * word_len; // represents the length of the window we need to check.
+
+    let res = [];
+
+    // We'll loop through each char of s and slide the window
+    // Let's create a window by using r + window_len
+    // In this window, let's set the current word of s and check of each word is in our need word list
+    for (let r = 0; r < s.length - window_len + 1; r++) {
+      let substr_freq = {};
+      let l = r;
+
+      // let's check window length at a time
+      while (l < r + window_len) {
+        // in our window, let's check the word we need
+        let cur_word = s.slice(l, l + word_len);
+
+        // If the current word does not exist in our required word map, we break the while loop
+        if (!(cur_word in word_freq)) {
+          break;
+        }
+
+        // At this point, the current word is in our required word list
+        // Now, let's create a map of our current word list.. This are the words we see in the window
+        if (substr_freq[cur_word]) {
+          substr_freq[cur_word] += 1;
+        } else {
+          substr_freq[cur_word] = 1;
+        }
+
+        // Let's check if the number of words we see in our current word list is greater than the required word list
+        // If so, we found all the words we need and let's break out of the while loop
+        if (substr_freq[cur_word] > word_freq[cur_word]) {
+          break;
+        }
+
+        // We keep going and slide our window
+        l += word_len;
+      }
+
+      // At ths point, we exited the while loop and our l and r + window_len pointer overlapped
+      // So we push index r to our results array
+      if (l === r + window_len) {
+        res.push(r);
+      }
     }
+
+    return res;
   }
+}
 
-  return res;
-};
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.findSubstring(record.s, [...record.words]);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(
+    `Input: s = ${JSON.stringify(record.s)}, words = ${JSON.stringify(
+      record.words
+    )}`
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new SubstringWithConcatenationRecord(
+    "barfoothefoobarman",
+    ["foo", "bar"],
+    [0, 9]
+  ),
+  new SubstringWithConcatenationRecord(
+    "wordgoodgoodgoodbestword",
+    ["word", "good", "best", "word"],
+    []
+  ),
+  new SubstringWithConcatenationRecord(
+    "barfoofoobarthefoobarman",
+    ["bar", "foo", "the"],
+    [6, 9, 12]
+  ),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

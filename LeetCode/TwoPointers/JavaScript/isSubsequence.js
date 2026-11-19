@@ -22,26 +22,63 @@
 // TC: O(m+n) = O(n) because we have to loop through both string array
 // SC: O(1)
 
-/**
- * @param {string} s
- * @param {string} t
- * @return {boolean}
- */
-var isSubsequence = function (s, t) {
-  // We'll two pointers. One pointer to point on the elements in the s string, the other on the t string
-  // We increment the pointer t until we find s===t, then we increment pointer s.
-  let sp = 0;
-  let tp = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // we need to loop through both string array and exit once we reach the end of the array
-  while (sp < s.length && tp < t.length) {
-    // Keep on checking if s is equal to t, if so, move the s pointer to the right
-    if (s[sp] === t[tp]) {
-      sp++;
-    }
-    tp++;
+class IsSubsequenceRecord {
+  constructor(s, t, expected) {
+    this.s = s;
+    this.t = t;
+    this.expected = expected;
   }
+}
 
-  // This means that all of the elements in s are found in t
-  return sp === s.length ? true : false;
-};
+class Solution {
+  /**
+   * @param {string} s
+   * @param {string} t
+   * @return {boolean}
+   */
+  isSubsequence(s, t) {
+    // We'll two pointers. One pointer to point on the elements in the s string, the other on the t string
+    // We increment the pointer t until we find s===t, then we increment pointer s.
+    let sp = 0;
+    let tp = 0;
+
+    // we need to loop through both string array and exit once we reach the end of the array
+    while (sp < s.length && tp < t.length) {
+      // Keep on checking if s is equal to t, if so, move the s pointer to the right
+      if (s[sp] === t[tp]) {
+        sp++;
+      }
+      tp++;
+    }
+
+    // This means that all of the elements in s are found in t
+    return sp === s.length ? true : false;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.isSubsequence(record.s, record.t);
+  const pass = result === record.expected;
+
+  console.log(`Input: s = "${record.s}", t = "${record.t}"`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new IsSubsequenceRecord("abc", "ahbgdc", true),
+  new IsSubsequenceRecord("axc", "ahbgdc", false),
+  new IsSubsequenceRecord("", "ahbgdc", true),
+  new IsSubsequenceRecord("abc", "", false),
+  new IsSubsequenceRecord("aaa", "aa", false),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

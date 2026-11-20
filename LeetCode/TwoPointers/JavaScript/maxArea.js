@@ -23,33 +23,69 @@
 // TC: O(n), we have to loop through one time
 // SC: O(1), we're not creating memory
 
-/**
- * @param {number[]} height
- * @return {number}
- */
-var maxArea = function (height) {
-  let lp = 0;
-  let rp = height.length - 1;
-  let max_area = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  while (lp < rp) {
-    // We need to compute the area of a triangle A = H * W
-    // For the height, we need to chose the lower hieght so water will not spill
-    // To calculate the width, it's just the right pointer - left pointer
-    let h = Math.min(height[lp], height[rp]);
-    let w = rp - lp;
-    let current_area = h * w;
-    max_area = Math.max(max_area, current_area);
-
-    // Now, we need to move the left or right pointer
-    // We want to keep the height with the larger value
-    // in case there are other taller height that will give us a larger area
-    if (height[lp] < height[rp]) {
-      lp++; // increament to the right so we can compute if the current_area is larger
-    } else {
-      rp--; // decrement to the left so we can compute if the current_area is larger
-    }
+class MaxAreaRecord {
+  constructor(height, expected) {
+    this.height = height;
+    this.expected = expected;
   }
+}
 
-  return max_area;
-};
+class Solution {
+  /**
+   * @param {number[]} height
+   * @return {number}
+   */
+  maxArea(height) {
+    let lp = 0;
+    let rp = height.length - 1;
+    let max_area = 0;
+
+    while (lp < rp) {
+      // We need to compute the area of a triangle A = H * W
+      // For the height, we need to chose the lower hieght so water will not spill
+      // To calculate the width, it's just the right pointer - left pointer
+      let h = Math.min(height[lp], height[rp]);
+      let w = rp - lp;
+      let current_area = h * w;
+      max_area = Math.max(max_area, current_area);
+
+      // Now, we need to move the left or right pointer
+      // We want to keep the height with the larger value
+      // in case there are other taller height that will give us a larger area
+      if (height[lp] < height[rp]) {
+        lp++; // increament to the right so we can compute if the current_area is larger
+      } else {
+        rp--; // decrement to the left so we can compute if the current_area is larger
+      }
+    }
+
+    return max_area;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxArea([...record.height]);
+  const pass = result === record.expected;
+
+  console.log(`Input: height = ${JSON.stringify(record.height)}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxAreaRecord([1, 8, 6, 2, 5, 4, 8, 3, 7], 49),
+  new MaxAreaRecord([1, 1], 1),
+  new MaxAreaRecord([4, 3, 2, 1, 4], 16),
+  new MaxAreaRecord([1, 2, 1], 2),
+  new MaxAreaRecord([2, 3, 4, 5, 18, 17, 6], 17),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

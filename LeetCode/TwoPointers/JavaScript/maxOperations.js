@@ -29,42 +29,79 @@
 // TC: O(n) because we have to sort it first then we loop through once
 // SC: O(1) we're doing in place operations
 
-/**
- * @param {number[]} nums
- * @param {number} k
- * @return {number}
- */
-var maxOperations = function (nums, k) {
-  let numsLen = nums.length - 1;
-  let lp = 0;
-  let rp = numsLen;
-  let count = 0;
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // If using 2 pointers, we need to sort the array first
-  // By default, js sort will sort on strings
-  // We need to supply a compare function to sort numerics in ascending order or descending order
-  //  if a-b returns negative, a is the lower number than b...
-  nums.sort((a, b) => {
-    return a - b;
-  });
-
-  // Then we start moving the pointers
-  // 1. If nums[lp] + nums[rp] == k, lp++, rp--, count++
-  // 2. If nums[lp] + nums[rp] < k, lp++
-  // 3. If nums[lp] + nums[rp] > k, rp--
-
-  while (lp < rp) {
-    let temp = nums[lp] + nums[rp];
-    if (temp === k) {
-      lp++;
-      rp--;
-      count++;
-    } else if (temp < k) {
-      lp++;
-    } else if (temp > k) {
-      rp--;
-    }
+class MaxOperationsRecord {
+  constructor(nums, k, expected) {
+    this.nums = nums;
+    this.k = k;
+    this.expected = expected;
   }
+}
 
-  return count;
-};
+class Solution {
+  /**
+   * @param {number[]} nums
+   * @param {number} k
+   * @return {number}
+   */
+  maxOperations(nums, k) {
+    let numsLen = nums.length - 1;
+    let lp = 0;
+    let rp = numsLen;
+    let count = 0;
+
+    // If using 2 pointers, we need to sort the array first
+    // By default, js sort will sort on strings
+    // We need to supply a compare function to sort numerics in ascending order or descending order
+    //  if a-b returns negative, a is the lower number than b...
+    nums.sort((a, b) => {
+      return a - b;
+    });
+
+    // Then we start moving the pointers
+    // 1. If nums[lp] + nums[rp] == k, lp++, rp--, count++
+    // 2. If nums[lp] + nums[rp] < k, lp++
+    // 3. If nums[lp] + nums[rp] > k, rp--
+
+    while (lp < rp) {
+      let temp = nums[lp] + nums[rp];
+      if (temp === k) {
+        lp++;
+        rp--;
+        count++;
+      } else if (temp < k) {
+        lp++;
+      } else if (temp > k) {
+        rp--;
+      }
+    }
+
+    return count;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.maxOperations([...record.nums], record.k);
+  const pass = result === record.expected;
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}, k = ${record.k}`);
+  console.log(`Expected: ${record.expected}`);
+  console.log(`Result: ${result}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new MaxOperationsRecord([1, 2, 3, 4], 5, 2),
+  new MaxOperationsRecord([3, 1, 3, 4, 3], 6, 1),
+  new MaxOperationsRecord([1, 1, 1, 1], 2, 2),
+  new MaxOperationsRecord([2, 2, 2, 3], 4, 1),
+  new MaxOperationsRecord([1, 2, 3, 4], 100, 0),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

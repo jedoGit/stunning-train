@@ -33,37 +33,76 @@
 // TC: O(n) worst case is we visit all elements because we don't break the loop early
 // SC: O(1) in place processing
 
-/**
- * @param {number[]} numbers
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function (numbers, target) {
-  // Using two pointers pointing initially on both ends
-  let l = 0;
-  let r = numbers.length - 1;
-  let res = [];
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-  // We stop if both pointers overlap
-  while (l < r) {
-    // Let's compute the current sum
-    let sum = numbers[l] + numbers[r];
-    // console.log(sum)
-
-    // if the sum is greater than the target, we know that the input are in ascending order
-    // so we move the right pointer
-    if (sum > target) {
-      r--;
-    } else if (sum < target) {
-      // The sum is less than the target, so we move the left pointer
-      l++;
-    } else {
-      // We found the combination.. we return the indices.. make sure we add 1 because it's 1 based index.
-      res.push(l + 1);
-      res.push(r + 1);
-      break;
-    }
+class TwoSum2Record {
+  constructor(numbers, target, expected) {
+    this.numbers = numbers;
+    this.target = target;
+    this.expected = expected;
   }
+}
 
-  return res;
-};
+class Solution {
+  /**
+   * @param {number[]} numbers
+   * @param {number} target
+   * @return {number[]}
+   */
+  twoSum(numbers, target) {
+    // Using two pointers pointing initially on both ends
+    let l = 0;
+    let r = numbers.length - 1;
+    let res = [];
+
+    // We stop if both pointers overlap
+    while (l < r) {
+      // Let's compute the current sum
+      let sum = numbers[l] + numbers[r];
+      // console.log(sum)
+
+      // if the sum is greater than the target, we know that the input are in ascending order
+      // so we move the right pointer
+      if (sum > target) {
+        r--;
+      } else if (sum < target) {
+        // The sum is less than the target, so we move the left pointer
+        l++;
+      } else {
+        // We found the combination.. we return the indices.. make sure we add 1 because it's 1 based index.
+        res.push(l + 1);
+        res.push(r + 1);
+        break;
+      }
+    }
+
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  const result = solution.twoSum([...record.numbers], record.target);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(
+    `Input: numbers = ${JSON.stringify(record.numbers)}, target = ${record.target}`
+  );
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new TwoSum2Record([2, 7, 11, 15], 9, [1, 2]),
+  new TwoSum2Record([2, 3, 4], 6, [1, 3]),
+  new TwoSum2Record([-1, 0], -1, [1, 2]),
+  new TwoSum2Record([1, 2, 3, 4, 4, 9, 56, 90], 8, [4, 5]),
+  new TwoSum2Record([0, 0], 0, [1, 2]),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});

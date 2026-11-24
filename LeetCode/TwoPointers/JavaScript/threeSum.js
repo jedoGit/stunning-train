@@ -28,54 +28,91 @@
 // 3 <= nums.length <= 3000
 // -105 <= nums[i] <= 105
 
-// TC: O(nlogn) + O (n^2), because of sorting and we have to loop within a loop to find the combination
-// SC: O(1) or O(n) due to sorting
+const Result = { PASS: "\x1b[92mPASS\x1b[0m", FAIL: "\x1b[91mFAIL\x1b[0m" };
 
-/**
- * @param {number[]} nums
- * @return {number[][]}
- */
-var threeSum = function (nums) {
-  // We need to sort the nums first in ascending order
-  let res = [];
-  let n = nums.length;
-  nums.sort((a, b) => a - b);
+class ThreeSumRecord {
+  constructor(nums, expected) {
+    this.nums = nums;
+    this.expected = expected;
+  }
+}
 
-  // Loop through each elements in nums... We'll use forEach((nums, index)=> {})
-  nums.forEach((a, i) => {
-    // For each elements, let's check for duplicates...
-    // Checking if current nums is the same as the previous...
-    // If so, we want to skip to the next element..
-    // To do that with forEach, we just return... continue does not work in this case
-    if (i > 0 && a === nums[i - 1]) {
-      return;
-    }
-    // We'll use two pointers, starting at oposite ends..
-    // The l will start after the current element a, which has an index i
-    let l = i + 1;
-    let r = n - 1;
-    // We'll stop once l crosses r
-    while (l < r) {
-      // Compute the three
-      let threeSum = a + nums[l] + nums[r];
-      // if the sum is greater than 0, we move r
-      if (threeSum > 0) {
-        r--;
-      } else if (threeSum < 0) {
-        // if the sum is negative, we move l
-        l++;
-      } else {
-        // if it's zero, we found the numbers and we push it to our results array
-        res.push([a, nums[l], nums[r]]);
-        // move l
-        l++;
-        // If there are duplicates in the l side, we keep incrementing l
-        while (nums[l] === nums[l - 1] && l < r) {
+class Solution {
+  // TC: O(nlogn) + O (n^2), because of sorting and we have to loop within a loop to find the combination
+  // SC: O(1) or O(n) due to sorting
+
+  /**
+   * @param {number[]} nums
+   * @return {number[][]}
+   */
+  threeSum(nums) {
+    // We need to sort the nums first in ascending order
+    let res = [];
+    let n = nums.length;
+    nums.sort((a, b) => a - b);
+
+    // Loop through each elements in nums... We'll use forEach((nums, index)=> {})
+    nums.forEach((a, i) => {
+      // For each elements, let's check for duplicates...
+      // Checking if current nums is the same as the previous...
+      // If so, we want to skip to the next element..
+      // To do that with forEach, we just return... continue does not work in this case
+      if (i > 0 && a === nums[i - 1]) {
+        return;
+      }
+      // We'll use two pointers, starting at oposite ends..
+      // The l will start after the current element a, which has an index i
+      let l = i + 1;
+      let r = n - 1;
+      // We'll stop once l crosses r
+      while (l < r) {
+        // Compute the three
+        let threeSum = a + nums[l] + nums[r];
+        // if the sum is greater than 0, we move r
+        if (threeSum > 0) {
+          r--;
+        } else if (threeSum < 0) {
+          // if the sum is negative, we move l
           l++;
+        } else {
+          // if it's zero, we found the numbers and we push it to our results array
+          res.push([a, nums[l], nums[r]]);
+          // move l
+          l++;
+          // If there are duplicates in the l side, we keep incrementing l
+          while (nums[l] === nums[l - 1] && l < r) {
+            l++;
+          }
         }
       }
-    }
-  });
+    });
 
-  return res;
-};
+    return res;
+  }
+}
+
+function testSolution(record) {
+  const solution = new Solution();
+  // The solution sorts in place, so we hand it a copy to keep the record's input intact
+  const result = solution.threeSum([...record.nums]);
+  const pass = JSON.stringify(result) === JSON.stringify(record.expected);
+
+  console.log(`Input: nums = ${JSON.stringify(record.nums)}`);
+  console.log(`Expected: ${JSON.stringify(record.expected)}`);
+  console.log(`Result: ${JSON.stringify(result)}`);
+  console.log(pass ? Result.PASS : Result.FAIL);
+}
+
+const records = [
+  new ThreeSumRecord([-1, 0, 1, 2, -1, -4], [[-1, -1, 2], [-1, 0, 1]]),
+  new ThreeSumRecord([0, 1, 1], []),
+  new ThreeSumRecord([0, 0, 0], [[0, 0, 0]]),
+  new ThreeSumRecord([-2, 0, 1, 1, 2], [[-2, 0, 2], [-2, 1, 1]]),
+  new ThreeSumRecord([1, 2, -2, -1], []),
+];
+
+records.forEach((record, index) => {
+  console.log(`# Test case ${index + 1}`);
+  testSolution(record);
+  console.log("----------------------------------------");
+});
